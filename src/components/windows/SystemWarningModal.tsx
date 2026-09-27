@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { retroAudio } from "../../utils/audioSystem";
 
 interface SystemWarningModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ export const SystemWarningModal: React.FC<SystemWarningModalProps> = ({
         className="bevel-raised shadow-2xl"
         style={{
           width: "380px",
+          maxWidth: "100%",
           backgroundColor: "#c0c0c0",
           padding: "3px"
         }}
@@ -39,7 +41,14 @@ export const SystemWarningModal: React.FC<SystemWarningModalProps> = ({
         {/* Title bar */}
         <div className="win-titlebar" style={{ background: "linear-gradient(90deg, #800000 0%, #d91e18 100%)" }}>
           <span>System Warning</span>
-          <button type="button" className="win-btn" onClick={onClose}>
+          <button
+            type="button"
+            className="win-btn"
+            onClick={() => {
+              retroAudio.playClick(0.9);
+              onClose();
+            }}
+          >
             ✕
           </button>
         </div>
@@ -59,7 +68,7 @@ export const SystemWarningModal: React.FC<SystemWarningModalProps> = ({
             <div
               style={{
                 fontFamily: "var(--font-pixel)",
-                fontSize: "16px",
+                fontSize: "15px",
                 color: "#000",
                 lineHeight: "1.4"
               }}
@@ -81,10 +90,11 @@ export const SystemWarningModal: React.FC<SystemWarningModalProps> = ({
                 type="button"
                 className="bevel-button"
                 onClick={() => {
+                  retroAudio.playClick(1.0);
                   setHasClickedYes(false);
                   onClose();
                 }}
-                style={{ width: "90px" }}
+                style={{ width: "100px", fontWeight: "bold" }}
               >
                 Accept Fate
               </button>
@@ -93,19 +103,25 @@ export const SystemWarningModal: React.FC<SystemWarningModalProps> = ({
                 <button
                   type="button"
                   className="bevel-button"
-                  onClick={() => setHasClickedYes(true)}
+                  onClick={() => {
+                    retroAudio.playErrorChord();
+                    setHasClickedYes(true);
+                  }}
                   style={{ width: "80px", color: "#800000" }}
                 >
-                  yes
+                  Yes
                 </button>
                 <button
                   type="button"
                   className="bevel-button"
-                  onClick={onClose}
+                  onClick={() => {
+                    retroAudio.playClick(1.0);
+                    onClose();
+                  }}
                   style={{ width: "80px", fontWeight: "bold" }}
                   autoFocus
                 >
-                  cancel
+                  Cancel
                 </button>
               </>
             )}
