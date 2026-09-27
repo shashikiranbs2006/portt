@@ -11,17 +11,33 @@ const getTime = () => new Date().toLocaleTimeString([], { hour: "2-digit", minut
 
 const SHASHI_RESPONSES: Record<string, string[]> = {
   "hi|hello|hey|yo|sup": [
-    "hey!! welcome to MSN Messenger lol. I'm Shashi — 3rd year CSE (AI/ML) @ BMSIT 👋 Ask me anything about my projects, internship, or tech stack!",
-    "heyyy!! glad you found the messenger. What are you looking to chat about? Internships, backend architecture, or hackathons?",
+    "hey!! welcome to MSN Messenger 👋 I'm Shashi — 3rd year CSE (AI/ML) @ BMSIT. Ask me anything about my projects, my KlarDataLabs internship, or hiring for Summer 2027!",
+    "heyyy!! glad you found the messenger. What are you looking to chat about? Systems architecture, multi-tenant isolation, or hackathons?",
     "Yo! Welcome to the cyber deck 🌐 Feel free to ask about my shipped work or hit the Nudge button!"
   ],
   "who are you|who r u|introduce yourself|bio": [
     "I'm Shashikiran B S! 3rd year CSE (AI/ML) at BMSIT, Bengaluru (CGPA 8.7/10). Currently interning at KlarDataLabs (Zurich, Remote) building agentic workflows with AWS Bedrock. Seeking Summer 2027 SWE Intern (AMTS) roles!",
     "Backend & Agentic AI engineer. I build multi-tenant query systems by day and retro OS gig-poster portfolios by night!"
   ],
-  "hire|job|internship|opportunity|amts|recruiter": [
+  "bmsit|college|cgpa|education|degree|gpa": [
+    "I am pursuing B.E. Computer Science & Engineering (AI/ML) at BMS Institute of Technology & Management (BMSIT), Bengaluru. Current CGPA: 8.7 / 10.0, graduating May 2028!",
+    "BMSIT CSE (AI/ML) student with an 8.7 CGPA. Also serve as Treasurer of Coding Club and was Lead Organiser for NIRMAAN 2026."
+  ],
+  "klar|klardatalabs|zurich|internship|work experience": [
+    "At KlarDataLabs (Zurich, Remote), I work on agent orchestration and developer tooling using the Strands Agents SDK integrated with AWS Bedrock. I build and test agent behavior against cloud-hosted backends before deployment.",
+    "My KlarDataLabs internship focuses on agentic AI pipelines and validating LLM tools with strict CI/CD gates."
+  ],
+  "hire|job|intern|amts|recruiter|opportunity|role": [
     "Yes please! I am actively looking for Summer 2027 SWE Intern (AMTS) roles. My email is shashibs238@gmail.com — feel free to drop a note or send an offer!",
     "Let's talk! You can email me at shashibs238@gmail.com or call +91 7676104288. You can also send a fast-track SMS via the Motorola RAZR on the desktop!"
+  ],
+  "contact|email|phone|call|reach": [
+    "You can reach me at:\n✉️ Email: shashibs238@gmail.com\n📞 Phone: +91 7676104288\n🐙 GitHub: github.com/shashikiranbs2006\n💼 LinkedIn: linkedin.com/in/shashikiran-bs",
+    "Drop me an email at shashibs238@gmail.com or dial +91 7676104288 anytime!"
+  ],
+  "resume|cv|pdf": [
+    "You can download my verified 1-page resume directly from /resume.pdf or click 'Download Resume' in the Meet The Artist window!",
+    "Check out my resume at /resume.pdf — it highlights my Multi-Tenant architecture, Relay AI router, and EduRAG service."
   ],
   "multi-tenant|ticket|postgres|database": [
     "My Multi-Tenant Ticketing Platform is built on FastAPI & PostgreSQL with a shared-schema model across 9 relational tables. Tenant isolation happens at the query-builder level via request-scoped org_id. Tested using Testcontainers in CI so cross-tenant leakage fails by construction!",
@@ -62,10 +78,11 @@ function getShashiReply(input: string): string {
 }
 
 const QUICK_PROMPTS = [
-  "🏢 Tell me about Multi-Tenant platform",
-  "⚡ How does Relay LLM router work?",
-  "💼 Why should we hire you for Summer 2027?",
-  "🏷️ Tell me about NIRMAAN 2026",
+  "🏢 Multi-Tenant architecture",
+  "⚡ Relay LLM router failover",
+  "💼 Why hire for Summer 2027?",
+  "🏷️ NIRMAAN 2026 Hackathon",
+  "📄 How can I view your resume?",
   "📳 Send Nudge!"
 ];
 
@@ -80,6 +97,7 @@ export const MessengerWindow: React.FC = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isNudging, setIsNudging] = useState(false);
+  const [userStatus, setUserStatus] = useState<"online" | "busy" | "away">("online");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -104,9 +122,11 @@ export const MessengerWindow: React.FC = () => {
     setTimeout(() => {
       const reply = getShashiReply(trimmed);
       setIsTyping(false);
-      retroAudio.playClick(1.3);
+      // Dual-tone incoming MSN chime
+      retroAudio.playClick(1.4);
+      setTimeout(() => retroAudio.playClick(1.7), 80);
       setMessages((prev) => [...prev, { from: "shashi", text: reply, time: getTime() }]);
-    }, 700 + Math.random() * 800);
+    }, 600 + Math.random() * 600);
   };
 
   const triggerNudge = () => {
@@ -133,6 +153,22 @@ export const MessengerWindow: React.FC = () => {
     }, 600);
   };
 
+  const clearChat = () => {
+    retroAudio.playClick(0.9);
+    setMessages([
+      {
+        from: "shashi",
+        text: "Chat cleared! What else would you like to ask?",
+        time: getTime()
+      }
+    ]);
+  };
+
+  const cycleStatus = () => {
+    retroAudio.playClick(1.05);
+    setUserStatus((prev) => (prev === "online" ? "away" : prev === "away" ? "busy" : "online"));
+  };
+
   return (
     <div
       style={{
@@ -156,30 +192,66 @@ export const MessengerWindow: React.FC = () => {
           color: "#fff"
         }}
       >
-        {/* Shashi Avatar */}
+        {/* Real Shashi Avatar photo */}
         <div
           style={{
-            width: "36px",
-            height: "36px",
+            width: "38px",
+            height: "38px",
             borderRadius: "50%",
-            background: "linear-gradient(135deg, #ffe500, #ff3b30)",
-            border: "2px solid #fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "18px",
-            fontWeight: "bold"
+            overflow: "hidden",
+            border: "2px solid #ffe500",
+            flexShrink: 0,
+            boxShadow: "0 0 6px rgba(0,0,0,0.5)"
           }}
         >
-          ⚡
+          <img
+            src="/avatar.jpg"
+            alt="Shashikiran B S"
+            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+            onError={(e) => {
+              (e.currentTarget as HTMLElement).style.display = "none";
+            }}
+          />
         </div>
+
         <div>
-          <div style={{ color: "#fff", fontWeight: "bold", fontSize: "13px" }}>Shashikiran B S</div>
+          <div style={{ color: "#fff", fontWeight: "bold", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}>
+            <span>Shashikiran B S</span>
+            <button
+              type="button"
+              onClick={cycleStatus}
+              title="Click to toggle status"
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: "10px",
+                color: userStatus === "online" ? "#39ff14" : userStatus === "away" ? "#ffe500" : "#ff4444",
+                cursor: "pointer",
+                padding: 0
+              }}
+            >
+              ● {userStatus.toUpperCase()}
+            </button>
+          </div>
           <div style={{ color: "#cde", fontSize: "11px" }}>
-            🟢 Online — Agentic AI Intern @ KlarDataLabs · AMTS 2027
+            Agentic AI Intern @ KlarDataLabs · AMTS 2027
           </div>
         </div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: "6px" }}>
+
+        <div style={{ marginLeft: "auto", display: "flex", gap: "4px" }}>
+          <button
+            type="button"
+            className="bevel-button"
+            onClick={clearChat}
+            style={{
+              fontSize: "10px",
+              padding: "2px 5px",
+              cursor: "pointer"
+            }}
+            title="Clear Chat History"
+          >
+            🗑️
+          </button>
           <button
             type="button"
             className="bevel-button"
@@ -237,29 +309,45 @@ export const MessengerWindow: React.FC = () => {
               gap: "6px"
             }}
           >
-            <div
-              style={{
-                width: "26px",
-                height: "26px",
-                borderRadius: "50%",
-                background:
-                  msg.from === "shashi"
-                    ? "linear-gradient(135deg, #ffe500, #ff3b30)"
-                    : "linear-gradient(135deg, #c0c0c0, #808080)",
-                flexShrink: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "13px",
-                border: "1px solid #777"
-              }}
-            >
-              {msg.from === "shashi" ? "⚡" : "👤"}
-            </div>
+            {msg.from === "shashi" ? (
+              <div
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  border: "1px solid #ffe500",
+                  flexShrink: 0
+                }}
+              >
+                <img
+                  src="/avatar.jpg"
+                  alt="Shashi"
+                  style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }}
+                />
+              </div>
+            ) : (
+              <div
+                style={{
+                  width: "26px",
+                  height: "26px",
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #c0c0c0, #808080)",
+                  flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "13px",
+                  border: "1px solid #777"
+                }}
+              >
+                👤
+              </div>
+            )}
 
             <div
               style={{
-                maxWidth: "75%",
+                maxWidth: "78%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: msg.from === "visitor" ? "flex-end" : "flex-start"
@@ -284,7 +372,8 @@ export const MessengerWindow: React.FC = () => {
                   fontSize: "13px",
                   lineHeight: "1.45",
                   color: "#1a1a1a",
-                  wordBreak: "break-word"
+                  wordBreak: "break-word",
+                  whiteSpace: "pre-line"
                 }}
               >
                 {msg.text}
