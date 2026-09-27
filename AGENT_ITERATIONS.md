@@ -25,3 +25,28 @@ This document records each iteration cycle of the autonomous portfolio improveme
   - All interactive elements functional, zero regressions.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 02
+- **Timestamp**: 2026-09-27T16:03:00+05:30
+- **Observations & Diagnosis**:
+  - *Broken / Unresponsive*: `PaintWindow.tsx` only had mouse event listeners (`onMouseDown`, `onMouseMove`), making drawing completely broken on touchscreens and mobile devices.
+  - *Unpolished*: Tool selection, color palette clicks, and canvas operations lacked tactile audio feedback.
+  - *Missing*: In the DIY gig-poster/riso-print aesthetic, rubber stamps and riso badges are essential. MS Paint currently lacked a Stamp Tool for imprinting riso-style badges (`★ STAR`, `[APPROVED]`, `[LIVE GIG]`, `[NIRMAAN 2026]`, `[SHASHI★]`), as well as an export feature to download or set user art as desktop wallpaper.
+- **Tasks Chosen for this Iteration**:
+  1. Add touch events (`onTouchStart`, `onTouchMove`, `onTouchEnd`) and `touch-action: none` to the Paint canvas.
+  2. Implement Riso Rubber Stamp Tool with selectable gig-poster badges.
+  3. Add canvas download as PNG and "Set as Desktop Wallpaper" callback.
+  4. Wire `retroAudio` tactile sound feedback to tools, palette, and stamp imprints.
+- **Deferred to Later Iterations**:
+  - Custom user brush textures (crayon, ink bleed).
+  - Multiple canvas layers or undo/redo stack.
+- **Verification Outcome**:
+  - `npm run build` (`tsc -b && vite build`) built in 197ms with 0 errors.
+  - Touch support verified with `onTouchStart`, `onTouchMove`, and `onTouchEnd` alongside `touch-action: none`.
+  - Rubber stamp tool verified with 5 gig-poster badges (`★ STAR`, `[APPROVED]`, `[NIRMAAN 2026]`, `[SHASHI★]`, `[LIVE GIG]`).
+  - Audio tactile clicks and canvas export verified.
+- **Status**: Completed & Verified.
+
+
+
