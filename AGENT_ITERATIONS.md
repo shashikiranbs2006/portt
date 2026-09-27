@@ -332,6 +332,26 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 293ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 18
+- **Timestamp**: 2026-09-27T16:44:40+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `AboutWindow.tsx` retro menu bar (`File`, `Edit`, `View`, `Insert`, `Format`, `Help`) had non-functional plain text labels with zero click handlers or dropdowns.
+  - *Missing*: No in-window way to copy Shashi's email address or social links without opening external windows.
+  - *Missing*: No section jump navigation for long-scroll content (Tour Dates, Experience, Likes/Dislikes, Bag).
+  - *Missing*: No toast notification system to confirm clipboard copy events.
+- **Tasks Chosen for this Iteration**:
+  1. **AboutWindow.tsx**: Converted the menu bar into an interactive classic OS menu system with active states, click-outside dismissal, and drop-downs.
+  2. **File Menu**: Added `Download Resume (PDF)`, `Print / Save Document` (`window.print()`), and `Exit Notepad`.
+  3. **Edit Menu**: Integrated direct clipboard copying for `Email Address` (`shashibs238@gmail.com`), `GitHub URL`, and `LinkedIn URL`.
+  4. **View Menu**: Added smooth anchor scrolling to `#tour-dates`, `#experience-section`, `#prefs-section`, and `#bag-section`.
+  5. **Help Menu**: Added AMTS 2027 mission briefing and Shashi OS v3.0 specs.
+  6. **Toast System**: Built animated navy/yellow top notification banner giving immediate tactile feedback on actions.
+  7. **Profile Card**: Added direct `✉️ Copy Email` button right beside `📄 Download Resume (PDF)`.
+- **Verification Outcome**: `npm run build` succeeded in 305ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
