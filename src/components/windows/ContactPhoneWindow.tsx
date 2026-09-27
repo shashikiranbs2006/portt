@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { portfolioData } from "../../data/portfolioData";
 import { retroAudio } from "../../utils/audioSystem";
 
@@ -7,9 +7,11 @@ export const ContactPhoneWindow: React.FC = () => {
   const [senderEmail, setSenderEmail] = useState("");
   const [message, setMessage] = useState("");
   const [dialedNumber, setDialedNumber] = useState("");
+  const [dialStatusMsg, setDialStatusMsg] = useState<string | null>(null);
   const [sentStatus, setSentStatus] = useState<string | null>(null);
   const [activeScreen, setActiveScreen] = useState<"home" | "sms" | "contacts" | "dialer">("home");
   const [pressedKey, setPressedKey] = useState<string | null>(null);
+  const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
 
   const { contact } = portfolioData;
 
@@ -20,20 +22,80 @@ export const ContactPhoneWindow: React.FC = () => {
     "☕ Free for a tech chat in Bengaluru?"
   ];
 
-  const handleKeyPress = (key: string) => {
+  const handleKeyPress = useCallback((key: string) => {
     retroAudio.playDTMF(key);
     setPressedKey(key);
     setTimeout(() => setPressedKey(null), 150);
 
     if (activeScreen === "sms") {
-      // In SMS mode, keypress can append or beep
       return;
     }
 
     // Otherwise dialer
     setActiveScreen("dialer");
     setDialedNumber((prev) => (prev.length < 14 ? prev + key : prev));
-  };
+  }, [activeScreen]);
+
+  const handleCallDialed = useCallback(() => {
+    if (!dialedNumber) return;
+    retroAudio.playClick(1.1);
+    window.open(`tel:${dialedNumber}`);
+  }, [dialedNumber]);
+
+  // Easter eggs for dialed numbers
+  useEffect(() => {
+    if (dialedNumber === "2027") {
+      retroAudio.playBootJingle();
+      setDialStatusMsg("★ AMTS 2027 PASS UNLOCKED ★");
+    } else if (dialedNumber === "911") {
+      retroAudio.playErrorChord();
+      setDialStatusMsg("🚨 EMERGENCY: HIRE SHASHI NOW!");
+    } else if (dialedNumber === "87") {
+      retroAudio.playClick(1.3);
+      setDialStatusMsg("⚡ BMSIT CGPA 8.7/10.0 ENGINE");
+    } else if (dialedNumber === "42") {
+      retroAudio.playClick(1.2);
+      setDialStatusMsg("🌌 THE ANSWER TO EVERYTHING");
+    } else {
+      setDialStatusMsg(null);
+    }
+  }, [dialedNumber]);
+
+  // Physical Keyboard Listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept when user is typing in inputs or textareas
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      const validKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "*", "#"];
+      if (validKeys.includes(e.key)) {
+        e.preventDefault();
+        handleKeyPress(e.key);
+      } else if (e.key === "Backspace") {
+        if (activeScreen === "dialer") {
+          e.preventDefault();
+          retroAudio.playClick(0.8);
+          setDialedNumber((prev) => prev.slice(0, -1));
+        }
+      } else if (e.key === "Enter") {
+        if (activeScreen === "dialer" && dialedNumber) {
+          e.preventDefault();
+          handleCallDialed();
+        }
+      } else if (e.key === "Escape") {
+        if (activeScreen !== "home") {
+          e.preventDefault();
+          retroAudio.playClick(0.9);
+          setActiveScreen("home");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeScreen, dialedNumber, handleKeyPress, handleCallDialed]);
 
   const handleSendSMS = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,10 +119,13 @@ export const ContactPhoneWindow: React.FC = () => {
     }, 3500);
   };
 
-  const handleCallDialed = () => {
-    if (!dialedNumber) return;
-    retroAudio.playClick(1.1);
-    window.open(`tel:${dialedNumber}`);
+  const copyContact = (val: string, label: string) => {
+    retroAudio.playClick(1.2);
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(val);
+      setCopiedLabel(label);
+      setTimeout(() => setCopiedLabel(null), 2000);
+    }
   };
 
   return (
@@ -112,6 +177,10 @@ export const ContactPhoneWindow: React.FC = () => {
             filter: "drop-shadow(0 14px 34px rgba(0,120,255,0.5))",
             userSelect: "none",
             pointerEvents: "none"
+          }}
+          onError={(e) => {
+            const target = e.currentTarget;
+            target.style.display = "none";
           }}
         />
 
@@ -189,7 +258,7 @@ export const ContactPhoneWindow: React.FC = () => {
                     textAlign: "center"
                   }}
                 >
-                  <div style={{ fontSize: "14px", textShadow: "0 0 8px #39ff14" }}>★ MOTOSERVICE ★</div>
+                  <div style={{ fontSize: "13px", textShadow: "0 0 8px #39ff14" }}>★ MOTOSERVICE ★</div>
                   <div style={{ fontSize: "9px", color: "#ffe500" }}>SHASHIKIRAN B S</div>
                   <div style={{ fontSize: "7px", color: "rgba(57,255,20,0.7)" }}>
                     Bengaluru · AMTS Intern 2027
@@ -274,12 +343,30 @@ export const ContactPhoneWindow: React.FC = () => {
                       letterSpacing: "2px",
                       color: "#fff",
                       textShadow: "0 0 8px #39ff14",
-                      minHeight: "20px",
+                      minHeight: "18px",
                       wordBreak: "break-all"
                     }}
                   >
                     {dialedNumber || "________"}
                   </div>
+
+                  {/* Easter Egg Message Display */}
+                  {dialStatusMsg && (
+                    <div
+                      style={{
+                        fontSize: "7px",
+                        color: "#ffe500",
+                        fontFamily: "monospace",
+                        backgroundColor: "rgba(0,0,0,0.8)",
+                        padding: "1px 4px",
+                        border: "1px solid #ffe500",
+                        animation: "blink 1s infinite"
+                      }}
+                    >
+                      {dialStatusMsg}
+                    </div>
+                  )}
+
                   <div style={{ display: "flex", gap: "6px" }}>
                     <button
                       type="button"
@@ -458,19 +545,22 @@ export const ContactPhoneWindow: React.FC = () => {
               {/* CONTACTS SCREEN */}
               {activeScreen === "contacts" && (
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "2px", overflowY: "auto", padding: "2px 4px" }}>
-                  <div style={{ fontSize: "8px", color: "rgba(57,255,20,0.6)", marginBottom: "2px" }}>PHONEBOOK</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2px" }}>
+                    <span style={{ fontSize: "8px", color: "rgba(57,255,20,0.6)" }}>PHONEBOOK</span>
+                    {copiedLabel && (
+                      <span style={{ fontSize: "7px", color: "#ffe500", fontWeight: "bold" }}>
+                        {copiedLabel} COPIED!
+                      </span>
+                    )}
+                  </div>
                   {[
                     { icon: "🐙", label: "GitHub", value: "shashikiranbs2006", url: contact.github },
                     { icon: "💼", label: "LinkedIn", value: "shashikiran-bs", url: contact.linkedin },
                     { icon: "✉️", label: "Email", value: contact.email, url: `mailto:${contact.email}` },
                     { icon: "📞", label: "Phone", value: contact.phone, url: `tel:${contact.phone}` }
                   ].map((item) => (
-                    <a
+                    <div
                       key={item.label}
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => retroAudio.playClick(1.0)}
                       style={{
                         display: "flex",
                         alignItems: "center",
@@ -478,19 +568,44 @@ export const ContactPhoneWindow: React.FC = () => {
                         padding: "2px 4px",
                         background: "rgba(57,255,20,0.1)",
                         border: "1px solid rgba(57,255,20,0.25)",
-                        textDecoration: "none",
-                        color: "#39ff14",
                         fontSize: "7px",
                         fontFamily: "var(--font-pixel)"
                       }}
                     >
                       <span>{item.icon}</span>
-                      <div>
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => retroAudio.playClick(1.0)}
+                        style={{
+                          textDecoration: "none",
+                          color: "#39ff14",
+                          flex: 1,
+                          overflow: "hidden"
+                        }}
+                      >
                         <div style={{ color: "rgba(57,255,20,0.5)", fontSize: "5px" }}>{item.label}</div>
-                        <div style={{ fontSize: "7px" }}>{item.value.slice(0, 16)}</div>
-                      </div>
-                      <span style={{ marginLeft: "auto", fontSize: "7px" }}>→</span>
-                    </a>
+                        <div style={{ fontSize: "7px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {item.value}
+                        </div>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => copyContact(item.value, item.label)}
+                        title={`Copy ${item.label}`}
+                        style={{
+                          background: "rgba(57,255,20,0.2)",
+                          border: "1px solid rgba(57,255,20,0.4)",
+                          color: "#39ff14",
+                          fontSize: "6px",
+                          padding: "1px 3px",
+                          cursor: "pointer"
+                        }}
+                      >
+                        COPY
+                      </button>
+                    </div>
                   ))}
                   <button
                     type="button"
@@ -580,7 +695,7 @@ export const ContactPhoneWindow: React.FC = () => {
           border: "1px solid rgba(0,220,255,0.3)"
         }}
       >
-        CLICK RAZR KEYPAD FOR DTMF AUDIO TONES · TYPE & SEND REAL SMS
+        PRESS KEYBOARD NUMPAD OR CLICK RAZR KEYS · DIAL 2027 OR 911 FOR EASTER EGGS
       </div>
     </div>
   );
