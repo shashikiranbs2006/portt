@@ -224,8 +224,50 @@ This document records each iteration cycle of the autonomous portfolio improveme
   - `npm run build` succeeded in 186ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
 
+## Iteration 11
+- **Timestamp**: 2026-09-27T16:25:40+05:30
+- **Observations & Diagnosis**:
+  - *Broken / Non-functional*: `Wallpaper.tsx` used Tailwind CSS classNames (`absolute inset-0`, `opacity-25`, `translate-x-1/2`, `-bottom-20`, etc.) for all 3 alternative themes (cyber, sunset, matrix). Since Tailwind CSS is **not installed** (only `tailwind-merge` utility is a dep), these classes were no-ops — the cyber, sunset, and matrix wallpaper themes rendered as plain black screens.
+  - *Unpolished*: `StartMenu.tsx` used orphaned Tailwind classNames (`font-bold`, `text-xs`, `text-gray-600`, `shadow-2xl`) throughout — visually harmless but semantically broken and inconsistent.
+- **Tasks Chosen for this Iteration**:
+  1. **Wallpaper.tsx** — completely rewrote all theme branches with pure inline styles. Cyber: perspective grid + horizon glow + scanlines + vignette. Sunset: gradient background + sun disc + horizontal stripe bands + grid overlay. Matrix: green grid + top glow + scanlines. Default (bliss): XP photo with SVG `feTurbulence` fractalNoise grain overlay for riso authenticity.
+  2. **StartMenu.tsx** — replaced all 11 instances of orphaned Tailwind classes with correct inline styles (`fontWeight: 700`, `fontSize: "11px"`, `color: "#555"`). Removed `shadow-2xl` from the menu box (already styled by `bevel-raised`).
+- **Deferred**: Adding a 5th "riso" dedicated wallpaper theme with animated halftone.
+- **Verification Outcome**: `npm run build` succeeded in 263ms with 0 errors.
+- **Status**: Completed & Verified.
 
+---
+
+## Iteration 12
+- **Timestamp**: 2026-09-27T16:27:01+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `RetroWindow.tsx` used `className="bevel-raised shadow-2xl"` — `shadow-2xl` is Tailwind (orphaned).
+  - *Broken*: `Taskbar.tsx` Start button used `className={\`bevel-button ${isStartOpen ? "active font-bold" : ""}\`}` — `font-bold` is Tailwind.
+  - *Missing*: The system tray only showed an icon + clock. No date, no visual personality.
+- **Tasks Chosen for this Iteration**:
+  1. **RetroWindow.tsx** — removed orphaned `shadow-2xl` from the window `className`.
+  2. **Taskbar.tsx** — replaced `font-bold` with `fontWeight: 700` inline. Added live **date display** above the clock (compact, pixel-font). Added a **CGPA "battery meter"** easter egg (8.7/10 = 87% green fill) with hover tooltip "CGPA Charge: 8.7/10 ⚡ (87% charged)". Bold active window tab titles via `fontWeight` inline.
+- **Verification Outcome**: `npm run build` succeeded in 270ms with 0 errors.
+- **Status**: Completed & Verified.
+
+---
+
+## Iteration 13
+- **Timestamp**: 2026-09-27T16:28:40+05:30
+- **Observations & Diagnosis**:
+  - *Unpolished*: `MusicPlayerWidget.tsx` had a hardcoded single-track playlist (`/music.mp3`) despite `portfolioData.musicPlaylist` defining 3 tracks. No way to navigate to other tracks.
+  - *Missing*: Prev/Next track buttons, playlist view, track counter, graceful handling for tracks without audio files.
+- **Tasks Chosen for this Iteration**:
+  1. Wired widget to `portfolioData.musicPlaylist` (3 tracks) with a unified `PLAYLIST` constant.
+  2. Added **◀◀ Prev** and **▶▶ Next** transport buttons; auto-advance to next track on `ended` event.
+  3. Added a **playlist panel** (toggle via `≡` button) showing all tracks with yellow active-track highlight and left-border accent.
+  4. Track counter badge in LCD: `TRACK 1 / 3`.
+  5. Graceful **DEMO MODE** for tracks without a real `.mp3` — shows duration from data, plays procedural sound, disables seek bar.
+  6. Audio element rebuilt on track change via `useEffect([trackIdx])` dependency.
+- **Verification Outcome**: `npm run build` succeeded in 257ms with 0 errors.
+- **Status**: Completed & Verified.
 
 
 
