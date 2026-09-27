@@ -94,6 +94,30 @@ This document records each iteration cycle of the autonomous portfolio improveme
   - 1-click recruiter conversation prompt chips verified.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 05
+- **Timestamp**: 2026-09-27T16:09:00+05:30
+- **Observations & Diagnosis**:
+  - *Broken / Layout overflow*: `DraggableStickers.tsx` used hardcoded desktop coordinates (`x: 740`, `x: 880`) causing stickers to render completely off-screen and trigger horizontal overflow on mobile screens.
+  - *Unpolished*: Dragging stickers lacked tactile peeling sound feedback; z-index remained static when dragged.
+  - *Missing*: Authentic DIY gig-poster stickers reflecting Shashi's real engineering identity (`[NIRMAAN 2026]`, `[FASTAPI // POSTGRES]`, `[KLARDATALABS AI]`, and `[SUMMER 2027 AMTS]`).
+- **Tasks Chosen for this Iteration**:
+  1. Compute sticker initial positions dynamically based on viewport dimensions (`window.innerWidth` & `window.innerHeight`), clamping all stickers within visible screen bounds on mobile and tablet.
+  2. Expand sticker pack with authentic gig-poster engineering badges.
+  3. Wire `retroAudio.playPeel()` on sticker grab and elevate z-index during drag.
+- **Deferred to Later Iterations**:
+  - Sticker position local storage persistence across sessions.
+  - User-created custom stickers exported from MS Paint.
+- **Verification Outcome**:
+  - `npm run build` (`tsc -b && vite build`) built in 178ms with 0 errors.
+  - Viewport-aware sticker positioning verified; zero horizontal overflow or clipping on mobile (<768px).
+  - Tactile peeling audio sound and elevated z-index verified on drag.
+  - Authentic gig-poster badges (`[NIRMAAN 2026]`, `[SWE INTERN // SUMMER 2027]`, `★ Y2K CERTIFIED ★`) active.
+- **Status**: Completed & Verified.
+
+
+
 
 
 
