@@ -1,37 +1,45 @@
 import React, { useState, useRef, useEffect } from "react";
 import { retroAudio } from "../../utils/audioSystem";
+import { portfolioData } from "../../data/portfolioData";
 
-interface Track {
-  title: string;
-  artist: string;
-  album: string;
-  src: string;
-}
-
-const PLAYLIST: Track[] = [
-  {
-    title: "Can't Tell Me Nothing",
-    artist: "Kanye West",
-    album: "Graduation (Instrumental)",
-    src: "/music.mp3"
-  }
-];
+// Build unified playlist from portfolioData + actual playable src
+const PLAYLIST = portfolioData.musicPlaylist.map((track, i) => ({
+  ...track,
+  // Only the first track has a real mp3 — rest simulate with silence
+  src: i === 0 ? "/music.mp3" : null
+}));
 
 export const MusicPlayerWidget: React.FC = () => {
+  const [trackIdx, setTrackIdx] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.65);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [eqHeights, setEqHeights] = useState<number[]>([40, 65, 85, 50, 75, 90, 60, 45, 80, 70, 95, 55, 60, 40]);
+  const [showPlaylist, setShowPlaylist] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const track = PLAYLIST[0];
+  const track = PLAYLIST[trackIdx];
 
+  // Rebuild audio element when track changes
   useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
+    if (!track.src) {
+      // No real audio for this track — reset display
+      setIsPlaying(false);
+      setDuration(0);
+      setCurrentTime(0);
+      setProgress(0);
+      audioRef.current = null;
+      return;
+    }
     const audio = new Audio(track.src);
     audio.volume = volume;
-    audio.loop = true;
+    audio.loop = false;
     audioRef.current = audio;
 
     audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
@@ -39,12 +47,17 @@ export const MusicPlayerWidget: React.FC = () => {
       setCurrentTime(audio.currentTime);
       setProgress((audio.currentTime / (audio.duration || 1)) * 100);
     });
+    audio.addEventListener("ended", () => {
+      // Auto-advance to next track
+      setTrackIdx((prev) => (prev + 1) % PLAYLIST.length);
+      setIsPlaying(false);
+    });
 
     return () => {
       audio.pause();
       audio.src = "";
     };
-  }, [track.src]);
+  }, [trackIdx]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (audioRef.current) {
@@ -66,7 +79,12 @@ export const MusicPlayerWidget: React.FC = () => {
   const togglePlay = async () => {
     retroAudio.playClick(1.2);
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio) {
+      // Track has no real audio — play a procedural sound as demo
+      retroAudio.playWindowSwoosh(true);
+      setIsPlaying((p) => !p);
+      return;
+    }
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
@@ -83,12 +101,25 @@ export const MusicPlayerWidget: React.FC = () => {
   const handleStop = () => {
     retroAudio.playClick(0.9);
     const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    audio.currentTime = 0;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
     setIsPlaying(false);
     setProgress(0);
     setCurrentTime(0);
+  };
+
+  const handlePrev = () => {
+    retroAudio.playClick(1.0);
+    handleStop();
+    setTrackIdx((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
+  };
+
+  const handleNext = () => {
+    retroAudio.playClick(1.0);
+    handleStop();
+    setTrackIdx((prev) => (prev + 1) % PLAYLIST.length);
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,17 +163,24 @@ export const MusicPlayerWidget: React.FC = () => {
           boxShadow: "inset 0 0 10px rgba(0,0,0,0.8)"
         }}
       >
-        <div>
-          <div style={{ fontSize: "13px", fontWeight: "bold", letterSpacing: "1px", color: "#39ff14" }}>
+        <div style={{ flex: 1, overflow: "hidden" }}>
+          <div style={{
+            fontSize: "13px", fontWeight: "bold", letterSpacing: "1px", color: "#39ff14",
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap"
+          }}>
             {track.title}
           </div>
-          <div style={{ fontSize: "11px", color: "#ffe500", marginTop: "2px" }}>
+          <div style={{ fontSize: "11px", color: "#ffe500", marginTop: "2px", whiteSpace: "nowrap" }}>
             {track.artist} — {track.album}
+          </div>
+          <div style={{ fontSize: "10px", color: "#888", marginTop: "1px" }}>
+            TRACK {trackIdx + 1} / {PLAYLIST.length}
+            {!track.src && <span style={{ color: "#ff5c5c", marginLeft: "6px" }}>[ DEMO MODE ]</span>}
           </div>
         </div>
 
         {/* LED Graphic Equalizer Spectrum */}
-        <div style={{ display: "flex", alignItems: "flex-end", gap: "2px", height: "26px", padding: "0 6px" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "2px", height: "26px", padding: "0 6px", flexShrink: 0 }}>
           {eqHeights.map((h, i) => (
             <div
               key={i}
@@ -157,12 +195,12 @@ export const MusicPlayerWidget: React.FC = () => {
           ))}
         </div>
 
-        <div style={{ textAlign: "right" }}>
+        <div style={{ textAlign: "right", flexShrink: 0, marginLeft: "8px" }}>
           <div style={{ fontSize: "14px", color: isPlaying ? "#39ff14" : "#888", fontWeight: "bold" }}>
-            {isPlaying ? "▶ PLAY" : "⏸ PAUSE"}
+            {isPlaying ? "▶ PLAY" : "⏸ STOP"}
           </div>
           <div style={{ fontSize: "10px", color: "#aaa", marginTop: "2px" }}>
-            {formatTime(currentTime)} / {formatTime(duration)}
+            {track.src ? `${formatTime(currentTime)} / ${formatTime(duration)}` : track.duration}
           </div>
         </div>
       </div>
@@ -230,7 +268,8 @@ export const MusicPlayerWidget: React.FC = () => {
               step="0.1"
               value={progress}
               onChange={handleSeek}
-              style={{ width: "100%", accentColor: "#000080", cursor: "pointer" }}
+              disabled={!track.src}
+              style={{ width: "100%", accentColor: "#000080", cursor: track.src ? "pointer" : "default" }}
             />
           </div>
 
@@ -251,13 +290,22 @@ export const MusicPlayerWidget: React.FC = () => {
       </div>
 
       {/* Transport Controls */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "8px" }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: "6px" }}>
+        <button
+          type="button"
+          className="bevel-button"
+          onClick={handlePrev}
+          title="Previous Track"
+          style={{ width: "36px", height: "30px", fontWeight: "bold", fontSize: "12px" }}
+        >
+          ◀◀
+        </button>
         <button
           type="button"
           className="bevel-button"
           onClick={handleStop}
           title="Stop"
-          style={{ width: "42px", height: "30px", fontWeight: "bold" }}
+          style={{ width: "36px", height: "30px", fontWeight: "bold" }}
         >
           ■
         </button>
@@ -273,19 +321,64 @@ export const MusicPlayerWidget: React.FC = () => {
         <button
           type="button"
           className="bevel-button"
-          onClick={() => {
-            retroAudio.playClick(1.0);
-            if (audioRef.current) {
-              audioRef.current.currentTime = 0;
-              setProgress(0);
-            }
-          }}
-          title="Rewind"
-          style={{ width: "42px", height: "30px", fontWeight: "bold" }}
+          onClick={handleNext}
+          title="Next Track"
+          style={{ width: "36px", height: "30px", fontWeight: "bold", fontSize: "12px" }}
         >
-          ◀◀
+          ▶▶
+        </button>
+        <button
+          type="button"
+          className={`bevel-button ${showPlaylist ? "active" : ""}`}
+          onClick={() => { retroAudio.playClick(0.9); setShowPlaylist(p => !p); }}
+          title="Toggle Playlist"
+          style={{ width: "36px", height: "30px", fontWeight: "bold", fontSize: "11px" }}
+        >
+          ≡
         </button>
       </div>
+
+      {/* Playlist Panel */}
+      {showPlaylist && (
+        <div className="bevel-sunken" style={{
+          backgroundColor: "#05080c",
+          padding: "6px",
+          display: "flex",
+          flexDirection: "column",
+          gap: "3px"
+        }}>
+          {PLAYLIST.map((t, i) => (
+            <div
+              key={t.id}
+              onClick={() => {
+                retroAudio.playClick(1.0);
+                handleStop();
+                setTrackIdx(i);
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "3px 6px",
+                cursor: "pointer",
+                backgroundColor: i === trackIdx ? "rgba(255,229,0,0.15)" : "transparent",
+                borderLeft: i === trackIdx ? "2px solid #ffe500" : "2px solid transparent",
+                color: i === trackIdx ? "#ffe500" : "#888",
+                fontSize: "11px",
+                fontFamily: "var(--font-pixel)",
+                transition: "background 0.1s"
+              }}
+            >
+              <span style={{ fontSize: "9px", minWidth: "14px", color: "#555" }}>{i + 1}.</span>
+              <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                {t.title}
+              </span>
+              <span style={{ color: "#555", fontSize: "10px" }}>{t.duration}</span>
+              {!t.src && <span style={{ color: "#ff5c5c", fontSize: "9px" }}>DEMO</span>}
+            </div>
+          ))}
+        </div>
+      )}
 
       <style>{`
         @keyframes spin-cd {
