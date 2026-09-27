@@ -61,7 +61,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
           maxWidth: "100vw",
           maxHeight: "calc(100vh - 36px)"
         }}
-        className="bevel-raised shadow-2xl"
+        className="bevel-raised"
       >
         {/* Retro Titlebar */}
         <div
