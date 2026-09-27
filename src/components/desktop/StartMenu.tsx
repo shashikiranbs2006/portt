@@ -1,5 +1,6 @@
 import React from "react";
 import type { WindowId, WallpaperTheme } from "../../types/os";
+import { retroAudio } from "../../utils/audioSystem";
 
 interface StartMenuProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   if (!isOpen) return null;
 
   const handleLaunch = (id: WindowId) => {
+    retroAudio.playClick(1.1);
     onOpenWindow(id);
     onClose();
   };
@@ -203,7 +205,10 @@ export const StartMenu: React.FC<StartMenuProps> = ({
                     padding: "2px 5px",
                     textTransform: "uppercase"
                   }}
-                  onClick={() => onSelectTheme(t)}
+                  onClick={() => {
+                    retroAudio.playClick(1.0);
+                    onSelectTheme(t);
+                  }}
                 >
                   {t}
                 </button>
@@ -218,6 +223,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
             className="start-menu-item"
             style={{ color: "#800000" }}
             onClick={() => {
+              retroAudio.playErrorChord();
               onClose();
               onShutdown();
             }}

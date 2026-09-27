@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { retroAudio } from "../../utils/audioSystem";
 
 interface DesktopIconProps {
   id: string;
@@ -23,9 +24,11 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
   const handleClick = () => {
     setIsSelected(true);
     setClickCount((prev) => prev + 1);
+    retroAudio.playClick(1.05);
 
     // Support single click for touch / mobile, double click for desktop
     if (window.innerWidth < 768 || clickCount >= 1) {
+      retroAudio.playClick(1.25);
       onOpen();
       setClickCount(0);
     } else {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
+import { retroAudio } from "../../utils/audioSystem";
 
 export const IDBadgeWindow: React.FC = () => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -40,7 +41,10 @@ export const IDBadgeWindow: React.FC = () => {
         <button
           type="button"
           className="bevel-button"
-          onClick={() => setIsFlipped(!isFlipped)}
+          onClick={() => {
+            retroAudio.playClick(1.2);
+            setIsFlipped(!isFlipped);
+          }}
           style={{
             backgroundColor: "#ffe500",
             color: "#000",
@@ -133,6 +137,21 @@ export const IDBadgeWindow: React.FC = () => {
                 transform: "rotate(-15deg)"
               }}>★</div>
             </div>
+
+            {/* DYNAMIC HOLOGRAPHIC FOIL SHIMMER */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: `linear-gradient(${115 + rotateY * 2.5}deg, rgba(255,0,128,0.12) 0%, rgba(0,255,255,0.18) 25%, rgba(255,255,0,0.15) 50%, rgba(0,255,128,0.18) 75%, rgba(0,128,255,0.12) 100%)`,
+                mixBlendMode: "screen",
+                opacity: Math.min(0.65, 0.2 + Math.abs(rotateX + rotateY) * 0.04),
+                pointerEvents: "none",
+                zIndex: 8,
+                borderRadius: "18px",
+                transition: "opacity 0.2s ease"
+              }}
+            />
 
             {/* Lanyard punch hole at top */}
             <div style={{
@@ -367,6 +386,21 @@ export const IDBadgeWindow: React.FC = () => {
                 transform: "rotate(15deg)"
               }}>★</div>
             </div>
+
+            {/* DYNAMIC HOLOGRAPHIC FOIL SHIMMER - BACK */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                background: `linear-gradient(${115 - rotateY * 2.5}deg, rgba(255,0,128,0.12) 0%, rgba(0,255,255,0.18) 25%, rgba(255,255,0,0.15) 50%, rgba(0,255,128,0.18) 75%, rgba(0,128,255,0.12) 100%)`,
+                mixBlendMode: "screen",
+                opacity: Math.min(0.65, 0.2 + Math.abs(rotateX + rotateY) * 0.04),
+                pointerEvents: "none",
+                zIndex: 8,
+                borderRadius: "18px",
+                transition: "opacity 0.2s ease"
+              }}
+            />
 
             {/* Lanyard punch hole back */}
             <div style={{

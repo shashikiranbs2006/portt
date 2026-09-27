@@ -28,6 +28,7 @@ import { ErrorBoundary } from "../effects/ErrorBoundary";
 
 // Context menu
 import { DesktopContextMenu } from "./DesktopContextMenu";
+import { retroAudio } from "../../utils/audioSystem";
 
 const INITIAL_WINDOWS: WindowState[] = [
   {
@@ -151,6 +152,7 @@ export const Desktop: React.FC = () => {
 
   const focusWindow = (id: WindowId) => {
     setActiveWindowId(id);
+    retroAudio.playClick(1.0);
     setWindows((prev) =>
       prev.map((w) =>
         w.id === id
@@ -162,6 +164,7 @@ export const Desktop: React.FC = () => {
 
   const openWindow = (id: WindowId) => {
     setActiveWindowId(id);
+    retroAudio.playWindowSwoosh(true);
     setWindows((prev) =>
       prev.map((w) =>
         w.id === id
@@ -177,6 +180,7 @@ export const Desktop: React.FC = () => {
   };
 
   const closeWindow = (id: WindowId) => {
+    retroAudio.playWindowSwoosh(false);
     setWindows((prev) =>
       prev.map((w) => (w.id === id ? { ...w, isOpen: false } : w))
     );
@@ -187,6 +191,7 @@ export const Desktop: React.FC = () => {
   };
 
   const toggleMinimize = (id: WindowId) => {
+    retroAudio.playClick(0.85);
     setWindows((prev) =>
       prev.map((w) =>
         w.id === id ? { ...w, isMinimized: !w.isMinimized } : w
@@ -200,6 +205,7 @@ export const Desktop: React.FC = () => {
   };
 
   const toggleMaximize = (id: WindowId) => {
+    retroAudio.playClick(1.2);
     setWindows((prev) =>
       prev.map((w) =>
         w.id === id ? { ...w, isMaximized: !w.isMaximized } : w
@@ -208,7 +214,7 @@ export const Desktop: React.FC = () => {
   };
 
   const handleRecycleBin = () => {
-    // Instead of warning modal → trigger BSOD!
+    retroAudio.playErrorChord();
     setShowBSOD(true);
   };
 
@@ -237,7 +243,14 @@ export const Desktop: React.FC = () => {
     >
       {/* Boot Sequence */}
       <ErrorBoundary name="BootSequence">
-        {!booted && <BootSequence onComplete={() => setBooted(true)} />}
+        {!booted && (
+          <BootSequence
+            onComplete={() => {
+              setBooted(true);
+              retroAudio.playBootJingle();
+            }}
+          />
+        )}
       </ErrorBoundary>
 
       {/* Background Wallpaper */}
@@ -457,7 +470,10 @@ export const Desktop: React.FC = () => {
         isStartOpen={isStartOpen}
         onToggleStart={() => setIsStartOpen(!isStartOpen)}
         isMuted={isMuted}
-        onToggleMute={() => setIsMuted(!isMuted)}
+        onToggleMute={() => {
+          retroAudio.isMuted = !isMuted;
+          setIsMuted(!isMuted);
+        }}
       />
     </div>
   );

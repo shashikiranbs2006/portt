@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { retroAudio } from "../../utils/audioSystem";
 
 interface StickyNote {
   id: string;
@@ -54,6 +55,7 @@ export const StickyNotesDesktop: React.FC = () => {
   const dragOffset = useRef({ dx: 0, dy: 0 });
 
   const addNote = () => {
+    retroAudio.playClick(1.2);
     const newNote: StickyNote = {
       id: Date.now().toString(),
       text: "New note...",
@@ -68,6 +70,7 @@ export const StickyNotesDesktop: React.FC = () => {
   };
 
   const deleteNote = (id: string) => {
+    retroAudio.playClick(0.8);
     setNotes(prev => prev.filter(n => n.id !== id));
   };
 
@@ -77,6 +80,7 @@ export const StickyNotesDesktop: React.FC = () => {
 
   const handleMouseDown = (e: React.MouseEvent, id: string) => {
     if (e.button !== 0) return;
+    retroAudio.playPeel();
     const note = notes.find(n => n.id === id)!;
     dragOffset.current = { dx: e.clientX - note.x, dy: e.clientY - note.y };
     setDraggingId(id);
