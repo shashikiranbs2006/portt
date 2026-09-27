@@ -1,0 +1,203 @@
+/* Retro OS / Y2K Cyber Design System */
+:root {
+  --win-gray: #c0c0c0;
+  --win-light: #ffffff;
+  --win-dark: #808080;
+  --win-darker: #0a0a0a;
+  --win-mid: #dfdfdf;
+  --win-blue: #000080;
+  --win-blue-light: #1084d0;
+  --win-teal: #008080;
+  --win-inactive: #808080;
+  --win-inactive-light: #b5b5b5;
+
+  /* Y2K Accent Palette */
+  --y2k-yellow: #ffe500;
+  --y2k-red: #ff3b30;
+  --y2k-lime: #39ff14;
+  --y2k-pink: #ff2a85;
+  --sticky-bg: #fff9a6;
+  --sticky-shadow: rgba(0, 0, 0, 0.18);
+
+  /* Fonts */
+  --font-pixel: 'VT323', monospace;
+  --font-silkscreen: 'Silkscreen', cursive;
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-marker: 'Caveat', cursive;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-body);
+  background-color: #008080;
+}
+
+/* Custom Scrollbars in Win95 style */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+  background: var(--win-mid);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--win-gray);
+  box-shadow: inset 1px 1px 0px #fff, inset -1px -1px 0px var(--win-darker), inset 2px 2px 0px #dfdfdf, inset -2px -2px 0px var(--win-dark);
+}
+
+::-webkit-scrollbar-button {
+  background: var(--win-gray);
+  box-shadow: inset 1px 1px 0px #fff, inset -1px -1px 0px var(--win-darker), inset 2px 2px 0px #dfdfdf, inset -2px -2px 0px var(--win-dark);
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+/* 3D Bevel Utilities */
+.bevel-raised {
+  background: var(--win-gray);
+  box-shadow: inset 1px 1px 0px #ffffff,
+              inset -1px -1px 0px var(--win-darker),
+              inset 2px 2px 0px #dfdfdf,
+              inset -2px -2px 0px var(--win-dark);
+}
+
+.bevel-sunken {
+  background: #ffffff;
+  box-shadow: inset 1px 1px 0px var(--win-dark),
+              inset -1px -1px 0px #ffffff,
+              inset 2px 2px 0px var(--win-darker),
+              inset -2px -2px 0px var(--win-mid);
+}
+
+.bevel-button {
+  background: var(--win-gray);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0px #ffffff,
+              inset -1px -1px 0px var(--win-darker),
+              inset 2px 2px 0px #dfdfdf,
+              inset -2px -2px 0px var(--win-dark);
+  font-family: var(--font-pixel);
+  font-size: 16px;
+  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.bevel-button:active, .bevel-button.active {
+  box-shadow: inset 1px 1px 0px var(--win-darker),
+              inset -1px -1px 0px #ffffff,
+              inset 2px 2px 0px var(--win-dark),
+              inset -2px -2px 0px var(--win-mid);
+  padding: 4px 9px 2px 11px;
+}
+
+.bevel-button:focus-visible {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}
+
+/* Window Titlebar */
+.win-titlebar {
+  background: linear-gradient(90deg, var(--win-blue) 0%, var(--win-blue-light) 100%);
+  color: #ffffff;
+  padding: 3px 4px 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-silkscreen);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  cursor: grab;
+}
+
+.win-titlebar.inactive {
+  background: linear-gradient(90deg, var(--win-inactive) 0%, var(--win-inactive-light) 100%);
+  color: #dfdfdf;
+}
+
+.win-titlebar:active {
+  cursor: grabbing;
+}
+
+.win-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.win-btn {
+  width: 18px;
+  height: 16px;
+  background: var(--win-gray);
+  border: none;
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: inset 1px 1px 0px #ffffff,
+              inset -1px -1px 0px var(--win-darker),
+              inset 2px 2px 0px #dfdfdf,
+              inset -2px -2px 0px var(--win-dark);
+}
+
+.win-btn:active {
+  box-shadow: inset 1px 1px 0px var(--win-darker),
+              inset -1px -1px 0px #ffffff,
+              inset 2px 2px 0px var(--win-dark),
+              inset -2px -2px 0px var(--win-mid);
+}
+
+/* Retro CRT & Scanline effect overlay */
+.crt-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 99999;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.12) 50%);
+  background-size: 100% 4px;
+  opacity: 0.35;
+}
+
+/* Pixel Art cursors */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Animations */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 16s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
