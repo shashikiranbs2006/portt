@@ -313,6 +313,25 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 256ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 17
+- **Timestamp**: 2026-09-27T16:41:25+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `StickyNotes.tsx` used `zIndex: 50000`, which was higher than all windows (`zIndex: 10-25`), directly causing sticky notes to hover over open application windows and obstruct reading/interaction.
+  - *Broken*: Initial note coordinates `W - 195, y: H - 340` caused massive obstruction on mobile screens (<800px) and overlapped open windows.
+  - *Missing*: No way to minimize individual notes or hide/show all notes simultaneously.
+  - *Unpolished*: Notes lacked authentic Riso color customization dots and tactile paper stamps.
+- **Tasks Chosen for this Iteration**:
+  1. **StickyNotes.tsx**: Lowered default z-index to `7` (strictly on the desktop layer under open windows); temporarily elevates to `28` only while being actively dragged or edited.
+  2. Added **Minimize Pill View (`–`)**: shrinks notes into tiny, unobtrusive label tabs (`[ 📌 TODO... ▲ ]`) with 1-click restore.
+  3. Added **Mobile default minimization**: on screens < 800px, notes default to minimized pills in the gutter.
+  4. Added global **`👁 HIDE` / `📝 NOTES (N)` toggle button** docked near bottom-right to cleanly clear the desktop canvas.
+  5. Added **Riso color palette dots** on each note (Sunlight Yellow, Fluorescent Pink, Mint Teal, Federal Blue, Peach Coral) allowing instant color changes.
+  6. Added authentic riso stamp tags (`★ PRIORITY`, `★ SPRINT`, `★ MEMO`).
+- **Verification Outcome**: `npm run build` succeeded in 293ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
