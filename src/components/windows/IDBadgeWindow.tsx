@@ -1,6 +1,31 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
 import { retroAudio } from "../../utils/audioSystem";
+import { portfolioData } from "../../data/portfolioData";
+
+// ─── Deterministic QR-like pixel grid (encodes GitHub URL visually) ──────────
+// This is a stylized QR-art representation, not a scannable QR, but looks authentic
+const QR_MATRIX: number[][] = [
+  [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1],
+  [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
+  [1,0,1,1,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1],
+  [1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0,1],
+  [1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1],
+  [0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0],
+  [1,0,1,1,0,1,1,1,0,1,1,0,1,1,0,1,1,0,1],
+  [0,1,0,0,1,0,0,0,1,0,0,1,0,0,1,0,0,1,0],
+  [1,1,0,1,1,0,1,0,1,1,0,1,1,0,1,1,0,1,1],
+  [0,0,0,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0],
+  [1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1,1,1],
+  [1,0,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,1],
+  [1,0,1,1,1,0,1,0,1,1,0,0,1,1,0,1,1,0,1],
+  [1,0,1,1,1,0,1,0,0,1,1,0,0,1,1,0,1,1,1],
+  [1,0,1,1,1,0,1,0,1,0,0,1,1,0,0,1,0,0,1],
+  [1,0,0,0,0,0,1,0,0,1,0,1,0,1,0,0,1,1,0],
+  [1,1,1,1,1,1,1,0,1,0,1,0,1,1,1,0,0,1,1],
+];
 
 export const IDBadgeWindow: React.FC = () => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -364,7 +389,6 @@ export const IDBadgeWindow: React.FC = () => {
               overflow: "hidden",
               display: "flex",
               flexDirection: "column",
-              justifyContent: "space-between",
               border: "2px solid rgba(255,100,100,0.5)"
             }}
           >
@@ -379,8 +403,8 @@ export const IDBadgeWindow: React.FC = () => {
               zIndex: 0
             }}>
               <div style={{
-                fontSize: "320px",
-                color: "rgba(180, 10, 10, 0.45)",
+                fontSize: "280px",
+                color: "rgba(180, 10, 10, 0.4)",
                 lineHeight: 1,
                 userSelect: "none",
                 transform: "rotate(15deg)"
@@ -416,102 +440,135 @@ export const IDBadgeWindow: React.FC = () => {
               zIndex: 10
             }} />
 
-            {/* Back top branding */}
-            <div style={{ position: "relative", zIndex: 2, padding: "32px 18px 0" }}>
-              <div style={{
-                fontFamily: "var(--font-silkscreen)",
-                fontSize: "20px",
-                fontWeight: "bold",
-                color: "#fff",
-                textAlign: "center"
-              }}>
-                shashi★deck
-              </div>
-            </div>
-
-            {/* Magnetic Stripe */}
+            {/* Magnetic stripe at top */}
             <div style={{
               position: "relative",
               zIndex: 2,
-              height: "52px",
+              height: "44px",
+              marginTop: "28px",
               backgroundColor: "#0a0a0a",
               boxShadow: "inset 0 3px 8px rgba(0,0,0,0.9), inset 0 -3px 8px rgba(0,0,0,0.9)"
             }} />
 
-            {/* Signature Panel */}
-            <div style={{ position: "relative", zIndex: 2, padding: "0 18px" }}>
+            {/* Back content: QR + Contact + Skills */}
+            <div style={{ position: "relative", zIndex: 2, padding: "12px 16px", flex: 1, display: "flex", flexDirection: "column", gap: "10px" }}>
+
+              {/* Row: QR code + identity */}
+              <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                {/* QR Code art */}
+                <a
+                  href={portfolioData.contact.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Open GitHub Profile"
+                  style={{ flexShrink: 0, textDecoration: "none" }}
+                >
+                  <div style={{
+                    backgroundColor: "#fff",
+                    padding: "5px",
+                    borderRadius: "2px",
+                    boxShadow: "2px 2px 0 rgba(0,0,0,0.4)",
+                    display: "inline-block",
+                    cursor: "pointer"
+                  }}>
+                    <svg width="76" height="76" viewBox="0 0 19 19" style={{ imageRendering: "pixelated" }}>
+                      {QR_MATRIX.map((row, y) =>
+                        row.map((cell, x) =>
+                          cell ? <rect key={`${x}-${y}`} x={x} y={y} width={1} height={1} fill="#000" /> : null
+                        )
+                      )}
+                    </svg>
+                    <div style={{ fontSize: "7px", fontFamily: "var(--font-pixel)", textAlign: "center", color: "#333", marginTop: "2px" }}>GITHUB ↗</div>
+                  </div>
+                </a>
+
+                {/* Identity block */}
+                <div style={{ flex: 1 }}>
+                  <div style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 900,
+                    fontSize: "22px",
+                    color: "#ffe500",
+                    lineHeight: 0.9,
+                    letterSpacing: "-1px",
+                    textTransform: "uppercase",
+                    textShadow: "2px 2px 0 rgba(0,0,0,0.3)"
+                  }}>SHASHI<br/>KIRAN</div>
+                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "9px", color: "#fff", marginTop: "4px", letterSpacing: "1px" }}>BACKEND · AGENTIC AI</div>
+                  <div style={{ fontFamily: "var(--font-pixel)", fontSize: "8px", color: "rgba(255,255,255,0.7)", marginTop: "3px" }}>CGPA 8.7 / 10 · BMSIT CSE (AI/ML)</div>
+                </div>
+              </div>
+
+              {/* Contact info */}
+              <div style={{
+                backgroundColor: "rgba(0,0,0,0.35)",
+                borderRadius: "2px",
+                padding: "7px 9px",
+                fontFamily: "var(--font-pixel)",
+                fontSize: "9px",
+                color: "#fff",
+                display: "flex",
+                flexDirection: "column",
+                gap: "3px"
+              }}>
+                <div>✉ {portfolioData.contact.email}</div>
+                <div>🐙 github.com/shashikiranbs2006</div>
+                <div>💼 linkedin.com/in/shashikiranbs</div>
+                <div>📍 Bengaluru, Karnataka — Open to relocate</div>
+              </div>
+
+              {/* Skill chips */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                {["FastAPI", "PostgreSQL", "Docker", "AWS Bedrock", "Testcontainers", "React 19", "TypeScript", "LLM Routing", "RAG", "Multi-Tenant SaaS"].map((skill, i) => (
+                  <span
+                    key={skill}
+                    style={{
+                      backgroundColor: ["#ffe500", "#ff5c5c", "#3cf", "#39ff14", "#f472b6", "#a78bfa"][i % 6],
+                      color: i % 6 === 0 ? "#000" : i % 6 === 2 || i % 6 === 3 ? "#000" : "#fff",
+                      fontFamily: "var(--font-pixel)",
+                      fontSize: "8px",
+                      padding: "2px 5px",
+                      borderRadius: "1px",
+                      fontWeight: "bold",
+                      letterSpacing: "0.5px"
+                    }}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Signature + serial bottom */}
+            <div style={{ position: "relative", zIndex: 2, padding: "0 16px 12px" }}>
               <div style={{
                 backgroundColor: "#ffffff",
-                height: "64px",
+                height: "48px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 padding: "0 10px",
-                backgroundImage: "repeating-linear-gradient(transparent, transparent 13px, rgba(0,0,0,0.06) 13px, rgba(0,0,0,0.06) 14px)",
-                position: "relative",
+                backgroundImage: "repeating-linear-gradient(transparent, transparent 11px, rgba(0,0,0,0.05) 11px, rgba(0,0,0,0.05) 12px)",
                 overflow: "hidden"
               }}>
                 <img
                   src="/signature.jpg"
                   alt="Signature"
                   style={{
-                    height: "52px",
-                    maxWidth: "180px",
+                    height: "40px",
+                    maxWidth: "150px",
                     objectFit: "contain",
                     objectPosition: "left center",
                     mixBlendMode: "multiply",
                     filter: "contrast(1.5) brightness(0.8)",
-                    transform: "rotate(-2deg) translateY(2px)",
+                    transform: "rotate(-2deg)",
                     opacity: 0.9
                   }}
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
+                  onError={(e) => { (e.target as HTMLElement).style.display = "none"; }}
                 />
-                <span style={{
-                  fontFamily: "var(--font-pixel)",
-                  fontSize: "9px",
-                  color: "#888",
-                  flexShrink: 0,
-                  textAlign: "right",
-                  lineHeight: 1.3
-                }}>
-                  AUTHORIZED<br/>SIGNATURE
-                </span>
-              </div>
-            </div>
-
-            {/* Bottom Back: Serial + Big Star Name */}
-            <div style={{ position: "relative", zIndex: 2, padding: "12px 18px 18px" }}>
-              <div style={{
-                fontFamily: "var(--font-pixel)",
-                fontSize: "14px",
-                color: "rgba(255,255,255,0.7)",
-                letterSpacing: "2px",
-                marginBottom: "4px"
-              }}>
-                770776
-              </div>
-              <div style={{ position: "relative" }}>
-                <span style={{
-                  position: "absolute",
-                  top: "-22px",
-                  left: "4px",
-                  color: "#ffffff",
-                  fontSize: "32px",
-                  textShadow: "2px 2px 0 rgba(0,0,0,0.3)"
-                }}>★</span>
-                <div style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 900,
-                  fontSize: "64px",
-                  color: "#ffe500",
-                  lineHeight: 0.85,
-                  letterSpacing: "-3px",
-                  textTransform: "uppercase",
-                  textShadow: "3px 3px 0 rgba(0,0,0,0.3)"
-                }}>
-                  SHASHI
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontFamily: "var(--font-pixel)", fontSize: "7px", color: "#888" }}>AUTHORIZED<br/>SIGNATURE</div>
+                  <div style={{ fontFamily: "var(--font-pixel)", fontSize: "7px", color: "#bbb", marginTop: "2px" }}>ID: SHSH-2026-0001</div>
                 </div>
               </div>
             </div>
