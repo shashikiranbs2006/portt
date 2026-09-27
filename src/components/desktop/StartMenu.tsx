@@ -194,15 +194,15 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           {/* Wallpaper Switcher */}
           <div style={{ padding: "4px 8px", fontSize: "11px", fontFamily: "var(--font-pixel)", color: "#333" }}>
             <span>WALLPAPER THEME:</span>
-            <div style={{ display: "flex", gap: "4px", marginTop: "4px" }}>
-              {(["bliss", "cyber", "sunset", "matrix"] as WallpaperTheme[]).map((t) => (
+            <div style={{ display: "flex", gap: "4px", marginTop: "4px", flexWrap: "wrap" }}>
+              {(["bliss", "cyber", "sunset", "matrix", "riso"] as WallpaperTheme[]).map((t) => (
                 <button
                   key={t}
                   type="button"
                   className={`bevel-button ${currentTheme === t ? "active" : ""}`}
                   style={{
-                    fontSize: "11px",
-                    padding: "2px 5px",
+                    fontSize: "10px",
+                    padding: "2px 4px",
                     textTransform: "uppercase"
                   }}
                   onClick={() => {

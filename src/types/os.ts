@@ -23,4 +23,4 @@ export interface WindowState {
   size: { width: number | string; height: number | string };
 }
 
-export type WallpaperTheme = "bliss" | "cyber" | "sunset" | "matrix";
+export type WallpaperTheme = "bliss" | "cyber" | "sunset" | "matrix" | "riso";

@@ -396,7 +396,7 @@ export const Desktop: React.FC = () => {
           type="button"
           className="bevel-button"
           onClick={() => {
-            const themes: WallpaperTheme[] = ["bliss", "cyber", "sunset", "matrix"];
+            const themes: WallpaperTheme[] = ["bliss", "cyber", "sunset", "matrix", "riso"];
             const next = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
             setCurrentTheme(next);
           }}

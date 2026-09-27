@@ -6,6 +6,135 @@ interface WallpaperProps {
 }
 
 export const Wallpaper: React.FC<WallpaperProps> = ({ theme }) => {
+  // ─── RISO: Authentic Riso-Print Gig-Poster Wallpaper ───────────────────────
+  if (theme === "riso") {
+    return (
+      <div style={{
+        position: "absolute", inset: 0,
+        pointerEvents: "none", overflow: "hidden",
+        backgroundColor: "#f4eedb"
+      }}>
+        {/* Halftone Dot Pattern */}
+        <div style={{
+          position: "absolute", inset: 0, opacity: 0.12,
+          backgroundImage: "radial-gradient(#ff3b30 1.2px, transparent 1.2px), radial-gradient(#00a0e9 1.2px, transparent 1.2px)",
+          backgroundSize: "24px 24px",
+          backgroundPosition: "0 0, 12px 12px"
+        }} />
+
+        {/* Diagonal Poster Framing Lines */}
+        <div style={{
+          position: "absolute", inset: "24px",
+          border: "2px dashed rgba(26,26,26,0.18)",
+          boxSizing: "border-box"
+        }} />
+
+        {/* Big Risograph Misregistered Typography Watermark */}
+        <div style={{
+          position: "absolute",
+          top: "42%",
+          left: "50%",
+          transform: "translate(-50%, -50%) rotate(-6deg)",
+          textAlign: "center",
+          userSelect: "none",
+          width: "100%",
+          maxWidth: "1000px"
+        }}>
+          {/* Cyan/Blue misregistered layer */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            transform: "translate(-4px, -3px)",
+            fontFamily: "var(--font-display, 'Outfit', sans-serif)",
+            fontSize: "clamp(60px, 14vw, 150px)",
+            fontWeight: 900,
+            color: "#00a0e9",
+            opacity: 0.35,
+            lineHeight: 0.85,
+            letterSpacing: "-4px"
+          }}>
+            SHASHI★
+          </div>
+          {/* Yellow misregistered layer */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            transform: "translate(4px, 3px)",
+            fontFamily: "var(--font-display, 'Outfit', sans-serif)",
+            fontSize: "clamp(60px, 14vw, 150px)",
+            fontWeight: 900,
+            color: "#ffd700",
+            opacity: 0.45,
+            lineHeight: 0.85,
+            letterSpacing: "-4px"
+          }}>
+            SHASHI★
+          </div>
+          {/* Fluorescent Red main layer */}
+          <div style={{
+            position: "relative",
+            fontFamily: "var(--font-display, 'Outfit', sans-serif)",
+            fontSize: "clamp(60px, 14vw, 150px)",
+            fontWeight: 900,
+            color: "#ff3b30",
+            opacity: 0.35,
+            lineHeight: 0.85,
+            letterSpacing: "-4px"
+          }}>
+            SHASHI★
+          </div>
+
+          <div style={{
+            fontFamily: "var(--font-silkscreen, monospace)",
+            fontSize: "clamp(12px, 2vw, 18px)",
+            color: "#1a1a1a",
+            opacity: 0.3,
+            letterSpacing: "8px",
+            marginTop: "16px"
+          }}>
+            RISOGRAPH ARCHIVE · EDITION 2027
+          </div>
+        </div>
+
+        {/* Four-Corner Registration Crosshairs (⊕) */}
+        <div style={{ position: "absolute", top: "12px", left: "12px", fontFamily: "monospace", fontSize: "16px", color: "#00a0e9", opacity: 0.7 }}>⨁ C</div>
+        <div style={{ position: "absolute", top: "12px", right: "12px", fontFamily: "monospace", fontSize: "16px", color: "#ff3b30", opacity: 0.7 }}>⨁ M</div>
+        <div style={{ position: "absolute", bottom: "48px", left: "12px", fontFamily: "monospace", fontSize: "16px", color: "#ffd700", opacity: 0.7 }}>⨁ Y</div>
+        <div style={{ position: "absolute", bottom: "48px", right: "12px", fontFamily: "monospace", fontSize: "16px", color: "#111111", opacity: 0.7 }}>⨁ K</div>
+
+        {/* Side Color Calibration Strip */}
+        <div style={{
+          position: "absolute",
+          top: "50%",
+          right: "12px",
+          transform: "translateY(-50%)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+          opacity: 0.45
+        }}>
+          {["#ff3b30", "#ffd700", "#00a0e9", "#00a86b", "#1a1a1a"].map((col, idx) => (
+            <div key={idx} style={{
+              width: "10px",
+              height: "10px",
+              backgroundColor: col,
+              border: "1px solid rgba(0,0,0,0.3)"
+            }} />
+          ))}
+        </div>
+
+        {/* Authentic Risograph Paper Noise / Grain Overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.14'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat",
+          opacity: 0.8,
+          mixBlendMode: "multiply"
+        }} />
+      </div>
+    );
+  }
+
   // ─── CYBER: neon grid perspective ────────────────────────────────────────
   if (theme === "cyber") {
     return (

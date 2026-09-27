@@ -99,7 +99,7 @@ export const DesktopContextMenu: React.FC<Props> = ({
     </div>
   );
 
-  const themes: WallpaperTheme[] = ["bliss", "cyber", "sunset", "matrix"];
+  const themes: WallpaperTheme[] = ["bliss", "cyber", "sunset", "matrix", "riso"];
 
   return (
     <div
@@ -143,7 +143,7 @@ export const DesktopContextMenu: React.FC<Props> = ({
       {themes.map((t) =>
         item(
           `${t === currentTheme ? "✓ " : "  "}${t.charAt(0).toUpperCase() + t.slice(1)}`,
-          t === "bliss" ? "🌄" : t === "cyber" ? "🌐" : t === "sunset" ? "🌇" : "💚",
+          t === "bliss" ? "🌄" : t === "cyber" ? "🌐" : t === "sunset" ? "🌇" : t === "matrix" ? "💚" : "🖨️",
           () => onSelectTheme(t)
         )
       )}
