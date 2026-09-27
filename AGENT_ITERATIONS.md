@@ -389,6 +389,19 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 369ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 21
+- **Timestamp**: 2026-09-27T16:49:15+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: Desktop icons were hardcoded in a single static vertical column up to `y: 688px`. On standard laptops and tablet screens (height <= 768px), lower icons (Resume, Recycle Bin) collided with or disappeared beneath the Taskbar.
+  - *Missing*: MSN Messenger and Minesweeper were accessible via Start Menu and easter eggs, but lacked desktop icons.
+- **Tasks Chosen for this Iteration**:
+  1. **Desktop.tsx**: Replaced hardcoded vertical column with responsive **multi-column wrapping algorithm** that computes `maxRows` from `window.innerHeight`, wrapping overflow icons into Column 2 (`col * 92px`) so every icon stays fully visible regardless of screen height.
+  2. Added dedicated desktop icons for **MSN Messenger** (`icon-messenger`, `💬`, `.chat`) and **Minesweeper** (`icon-minesweeper`, `💣`, `.game`).
+- **Verification Outcome**: `npm run build` succeeded in 284ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
