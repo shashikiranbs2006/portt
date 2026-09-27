@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { portfolioData } from "../../data/portfolioData";
 import { retroAudio } from "../../utils/audioSystem";
 
 export const AboutWindow: React.FC = () => {
-  const { user, stickyNote, likesAndDislikes, whatsInMyBag } = portfolioData;
+  const { user, stickyNote, likesAndDislikes, whatsInMyBag, contact } = portfolioData;
+
+  const [activeMenu, setActiveMenu] = useState<"file" | "edit" | "view" | "help" | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const menuBarRef = useRef<HTMLDivElement>(null);
+
+  // Close menus on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (menuBarRef.current && !menuBarRef.current.contains(e.target as Node)) {
+        setActiveMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
+  const showToast = (msg: string) => {
+    retroAudio.playClick(1.2);
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      showToast(`COPIED: ${label}`);
+    } else {
+      showToast(`${label}: ${text}`);
+    }
+    setActiveMenu(null);
+  };
+
+  const scrollToSection = (id: string) => {
+    retroAudio.playClick(1.05);
+    setActiveMenu(null);
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const TOUR_DATES = [
     {
@@ -37,6 +78,7 @@ export const AboutWindow: React.FC = () => {
 
   return (
     <div
+      ref={scrollContainerRef}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -44,30 +86,297 @@ export const AboutWindow: React.FC = () => {
         backgroundColor: "#ffffff",
         height: "100%",
         overflowY: "auto",
-        fontFamily: "var(--font-body)"
+        fontFamily: "var(--font-body)",
+        position: "relative"
       }}
       className="bevel-sunken"
     >
-      {/* Retro Menu Bar */}
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div
+          style={{
+            position: "sticky",
+            top: "28px",
+            left: 0,
+            right: 0,
+            zIndex: 1000,
+            backgroundColor: "#000080",
+            color: "#ffe500",
+            fontFamily: "var(--font-pixel)",
+            fontSize: "11px",
+            padding: "6px 12px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+            borderBottom: "1px solid #ffe500"
+          }}
+        >
+          <span>★ {toastMessage}</span>
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#fff",
+              cursor: "pointer",
+              fontSize: "12px"
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      {/* Interactive Retro Menu Bar */}
       <div
+        ref={menuBarRef}
         style={{
           display: "flex",
-          gap: "14px",
+          gap: "2px",
           borderBottom: "1px solid #c0c0c0",
-          padding: "4px 8px",
+          padding: "2px 4px",
           fontSize: "12px",
           color: "#000",
           fontFamily: "var(--font-pixel)",
-          background: "#f0f0f0",
-          flexShrink: 0
+          background: "#ece9d8",
+          flexShrink: 0,
+          position: "sticky",
+          top: 0,
+          zIndex: 500,
+          userSelect: "none"
         }}
       >
-        <span><u>F</u>ile</span>
-        <span><u>E</u>dit</span>
-        <span><u>V</u>iew</span>
-        <span><u>I</u>nsert</span>
-        <span><u>F</u>ormat</span>
-        <span><u>H</u>elp</span>
+        {/* File Menu */}
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            onClick={() => {
+              retroAudio.playClick(1.0);
+              setActiveMenu(activeMenu === "file" ? null : "file");
+            }}
+            style={{
+              padding: "2px 8px",
+              background: activeMenu === "file" ? "#000080" : "transparent",
+              color: activeMenu === "file" ? "#fff" : "#000",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "12px"
+            }}
+          >
+            <u>F</u>ile
+          </button>
+          {activeMenu === "file" && (
+            <div
+              className="bevel-raised"
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                width: "210px",
+                backgroundColor: "#ece9d8",
+                padding: "2px 0",
+                boxShadow: "2px 2px 6px rgba(0,0,0,0.4)",
+                zIndex: 600
+              }}
+            >
+              <div
+                className="retro-dropdown-item"
+                onClick={() => {
+                  retroAudio.playClick(1.2);
+                  setActiveMenu(null);
+                  window.open(contact.resumeUrl, "_blank");
+                }}
+              >
+                <span>📄 Download Resume (PDF)</span>
+              </div>
+              <div
+                className="retro-dropdown-item"
+                onClick={() => {
+                  retroAudio.playClick(1.0);
+                  setActiveMenu(null);
+                  window.print();
+                }}
+              >
+                <span>🖨️ Print / Save Document</span>
+              </div>
+              <hr style={{ margin: "2px 0", borderColor: "#808080" }} />
+              <div
+                className="retro-dropdown-item"
+                onClick={() => {
+                  showToast("Use Titlebar ✕ to close window");
+                  setActiveMenu(null);
+                }}
+              >
+                <span>🚪 Exit Notepad</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Edit Menu */}
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            onClick={() => {
+              retroAudio.playClick(1.0);
+              setActiveMenu(activeMenu === "edit" ? null : "edit");
+            }}
+            style={{
+              padding: "2px 8px",
+              background: activeMenu === "edit" ? "#000080" : "transparent",
+              color: activeMenu === "edit" ? "#fff" : "#000",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "12px"
+            }}
+          >
+            <u>E</u>dit
+          </button>
+          {activeMenu === "edit" && (
+            <div
+              className="bevel-raised"
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                width: "230px",
+                backgroundColor: "#ece9d8",
+                padding: "2px 0",
+                boxShadow: "2px 2px 6px rgba(0,0,0,0.4)",
+                zIndex: 600
+              }}
+            >
+              <div
+                className="retro-dropdown-item"
+                onClick={() => copyToClipboard(contact.email, "Email Address")}
+              >
+                <span>✉️ Copy Email Address</span>
+              </div>
+              <div
+                className="retro-dropdown-item"
+                onClick={() => copyToClipboard(contact.github, "GitHub URL")}
+              >
+                <span>🐙 Copy GitHub Link</span>
+              </div>
+              <div
+                className="retro-dropdown-item"
+                onClick={() => copyToClipboard(contact.linkedin, "LinkedIn URL")}
+              >
+                <span>💼 Copy LinkedIn Link</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* View Menu */}
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            onClick={() => {
+              retroAudio.playClick(1.0);
+              setActiveMenu(activeMenu === "view" ? null : "view");
+            }}
+            style={{
+              padding: "2px 8px",
+              background: activeMenu === "view" ? "#000080" : "transparent",
+              color: activeMenu === "view" ? "#fff" : "#000",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "12px"
+            }}
+          >
+            <u>V</u>iew
+          </button>
+          {activeMenu === "view" && (
+            <div
+              className="bevel-raised"
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                width: "210px",
+                backgroundColor: "#ece9d8",
+                padding: "2px 0",
+                boxShadow: "2px 2px 6px rgba(0,0,0,0.4)",
+                zIndex: 600
+              }}
+            >
+              <div className="retro-dropdown-item" onClick={() => scrollToSection("tour-dates")}>
+                <span>🎪 Jump to Tour Dates</span>
+              </div>
+              <div className="retro-dropdown-item" onClick={() => scrollToSection("experience-section")}>
+                <span>💼 Jump to Experience</span>
+              </div>
+              <div className="retro-dropdown-item" onClick={() => scrollToSection("prefs-section")}>
+                <span>⚡ Jump to Preferences</span>
+              </div>
+              <div className="retro-dropdown-item" onClick={() => scrollToSection("bag-section")}>
+                <span>🎒 Jump to What's in Bag</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Help Menu */}
+        <div style={{ position: "relative" }}>
+          <button
+            type="button"
+            onClick={() => {
+              retroAudio.playClick(1.0);
+              setActiveMenu(activeMenu === "help" ? null : "help");
+            }}
+            style={{
+              padding: "2px 8px",
+              background: activeMenu === "help" ? "#000080" : "transparent",
+              color: activeMenu === "help" ? "#fff" : "#000",
+              border: "none",
+              cursor: "pointer",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "12px"
+            }}
+          >
+            <u>H</u>elp
+          </button>
+          {activeMenu === "help" && (
+            <div
+              className="bevel-raised"
+              style={{
+                position: "absolute",
+                top: "100%",
+                left: 0,
+                width: "240px",
+                backgroundColor: "#ece9d8",
+                padding: "2px 0",
+                boxShadow: "2px 2px 6px rgba(0,0,0,0.4)",
+                zIndex: 600
+              }}
+            >
+              <div
+                className="retro-dropdown-item"
+                onClick={() => {
+                  showToast("Targeting: Summer 2027 SWE Intern (AMTS)");
+                  setActiveMenu(null);
+                }}
+              >
+                <span>★ Target: AMTS Summer 2027</span>
+              </div>
+              <div
+                className="retro-dropdown-item"
+                onClick={() => {
+                  showToast("Shashi OS v3.0 · Built with React & Vite");
+                  setActiveMenu(null);
+                }}
+              >
+                <span>ℹ️ About Shashi OS v3.0</span>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ===== HERO SECTION: Full-width dramatic gig-poster banner ===== */}
@@ -281,7 +590,7 @@ export const AboutWindow: React.FC = () => {
           <div>📍 <b>Base:</b> {user.location}</div>
         </div>
 
-        {/* Right: quote + download */}
+        {/* Right: quote + quick action buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", justifyContent: "space-between" }}>
           <div
             style={{
@@ -298,23 +607,36 @@ export const AboutWindow: React.FC = () => {
           >
             "{stickyNote.quote}"
           </div>
-          <a
-            href={portfolioData.contact.resumeUrl}
-            download="Shashikiran_BS_Resume.pdf"
-            onClick={() => retroAudio.playClick(1.2)}
-            className="bevel-button"
-            style={{
-              textDecoration: "none",
-              color: "#000",
-              fontWeight: "bold",
-              fontSize: "12px",
-              backgroundColor: "#ffe500",
-              alignSelf: "flex-start",
-              padding: "4px 12px"
-            }}
-          >
-            📄 Download Resume (PDF)
-          </a>
+          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+            <a
+              href={portfolioData.contact.resumeUrl}
+              download="Shashikiran_BS_Resume.pdf"
+              onClick={() => retroAudio.playClick(1.2)}
+              className="bevel-button"
+              style={{
+                textDecoration: "none",
+                color: "#000",
+                fontWeight: "bold",
+                fontSize: "12px",
+                backgroundColor: "#ffe500",
+                padding: "4px 12px"
+              }}
+            >
+              📄 Download Resume (PDF)
+            </a>
+            <button
+              type="button"
+              className="bevel-button"
+              onClick={() => copyToClipboard(contact.email, "Email")}
+              style={{
+                fontSize: "11px",
+                padding: "4px 8px",
+                cursor: "pointer"
+              }}
+            >
+              ✉️ Copy Email
+            </button>
+          </div>
         </div>
       </div>
 
@@ -348,11 +670,13 @@ export const AboutWindow: React.FC = () => {
 
       {/* ===== DIY GIG POSTER: TOUR DATES // CAREER GIGS ===== */}
       <div
+        id="tour-dates"
         style={{
-          padding: "12px 14px",
-          backgroundColor: "#161b26",
-          borderBottom: "3px solid #000",
-          color: "#fff"
+          padding: "14px",
+          background: "#0d0d0d",
+          color: "#fff",
+          borderBottom: "3px solid #ff3b30",
+          flexShrink: 0
         }}
       >
         <div
@@ -360,43 +684,60 @@ export const AboutWindow: React.FC = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            borderBottom: "1px dashed rgba(255,255,255,0.3)",
-            paddingBottom: "6px",
-            marginBottom: "10px"
+            flexWrap: "wrap",
+            gap: "8px",
+            marginBottom: "12px",
+            borderBottom: "1px dashed rgba(255,255,255,0.2)",
+            paddingBottom: "8px"
           }}
         >
-          <div style={{ fontFamily: "var(--font-silkscreen)", fontSize: "14px", color: "#ffe500" }}>
-            TOUR DATES // 2024–2027 CAREER GIGS 🎸
+          <div>
+            <div
+              style={{
+                fontFamily: "var(--font-display)",
+                fontWeight: 900,
+                fontSize: "20px",
+                color: "#ffe500",
+                letterSpacing: "-0.5px"
+              }}
+            >
+              ★ TOUR DATES & CAREER GIGS ★
+            </div>
+            <div style={{ fontFamily: "var(--font-silkscreen)", fontSize: "10px", color: "rgba(255,255,255,0.6)" }}>
+              SHASHIKIRAN B S // LIVE WORLD TOUR 2024–2027
+            </div>
           </div>
-          <span style={{ fontFamily: "var(--font-pixel)", fontSize: "10px", color: "#39ff14" }}>
-            ALL AGES // LIVE IN PROD
-          </span>
+          <div
+            style={{
+              fontFamily: "var(--font-pixel)",
+              fontSize: "11px",
+              color: "#39ff14",
+              border: "1px solid #39ff14",
+              padding: "2px 8px"
+            }}
+          >
+            TICKETS AVAILABLE NOW
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-          {TOUR_DATES.map((tour, idx) => (
+          {TOUR_DATES.map((tour, i) => (
             <div
-              key={idx}
+              key={i}
               style={{
                 display: "flex",
-                flexWrap: "wrap",
-                alignItems: "center",
                 justifyContent: "space-between",
-                padding: "8px 10px",
-                backgroundColor: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                gap: "8px"
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "8px",
+                padding: "8px 12px",
+                background: "rgba(255,255,255,0.05)",
+                borderLeft: `4px solid ${tour.statusColor}`,
+                borderBottom: "1px solid rgba(255,255,255,0.08)"
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                <span
-                  style={{
-                    fontFamily: "var(--font-pixel)",
-                    fontSize: "11px",
-                    color: "#ffe500",
-                    fontWeight: "bold"
-                  }}
-                >
+                <span style={{ fontFamily: "var(--font-silkscreen)", fontSize: "11px", color: tour.statusColor }}>
                   {tour.date} · {tour.city}
                 </span>
                 <span style={{ fontFamily: "var(--font-display)", fontSize: "13px", fontWeight: 700, color: "#fff" }}>
@@ -426,7 +767,7 @@ export const AboutWindow: React.FC = () => {
       </div>
 
       {/* ===== EXPERIENCE & LEADERSHIP ===== */}
-      <div style={{ padding: "12px 14px", borderBottom: "1px solid #ddd", flexShrink: 0 }}>
+      <div id="experience-section" style={{ padding: "12px 14px", borderBottom: "1px solid #ddd", flexShrink: 0 }}>
         <div
           style={{
             fontFamily: "var(--font-silkscreen)",
@@ -477,7 +818,7 @@ export const AboutWindow: React.FC = () => {
       </div>
 
       {/* ===== LIKES & DISLIKES ===== */}
-      <div style={{ padding: "12px 14px", borderBottom: "1px solid #ddd", flexShrink: 0 }}>
+      <div id="prefs-section" style={{ padding: "12px 14px", borderBottom: "1px solid #ddd", flexShrink: 0 }}>
         <div className="bevel-raised" style={{ padding: "10px", backgroundColor: "#c0c0c0" }}>
           <div
             style={{
@@ -566,7 +907,7 @@ export const AboutWindow: React.FC = () => {
       </div>
 
       {/* ===== WHAT'S IN MY BAG ===== */}
-      <div style={{ padding: "12px 14px 18px" }}>
+      <div id="bag-section" style={{ padding: "12px 14px 18px" }}>
         <div
           style={{
             fontFamily: "var(--font-silkscreen)",
@@ -608,6 +949,23 @@ export const AboutWindow: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <style>{`
+        .retro-dropdown-item {
+          padding: 4px 14px;
+          cursor: pointer;
+          font-family: var(--font-pixel);
+          font-size: 11px;
+          color: #000;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .retro-dropdown-item:hover {
+          background-color: #000080;
+          color: #ffffff;
+        }
+      `}</style>
     </div>
   );
 };
