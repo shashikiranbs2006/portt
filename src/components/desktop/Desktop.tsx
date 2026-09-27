@@ -282,88 +282,38 @@ export const Desktop: React.FC = () => {
         {booted && <Clippy onOpenWindow={openWindow} />}
       </ErrorBoundary>
 
-      {/* Desktop Icons Column */}
+      {/* Desktop Icons Multi-Column Responsive Grid */}
       <div style={{ position: "relative", zIndex: 10 }}>
-        <DesktopIcon
-          id="icon-about"
-          title="Meet The Artist"
-          sublabel=".txt"
-          icon="📝"
-          defaultPosition={{ x: 18, y: 16 }}
-          onOpen={() => openWindow("about")}
-        />
-
-        <DesktopIcon
-          id="icon-projects"
-          title="Projects"
-          sublabel=".folder"
-          icon="📁"
-          defaultPosition={{ x: 18, y: 100 }}
-          onOpen={() => openWindow("projects")}
-        />
-
-        <DesktopIcon
-          id="icon-idbadge"
-          title="3D ID Badge"
-          sublabel=".pass"
-          icon="🪪"
-          defaultPosition={{ x: 18, y: 184 }}
-          onOpen={() => openWindow("idbadge")}
-        />
-
-        <DesktopIcon
-          id="icon-paint"
-          title="MS Paint"
-          sublabel=".exe"
-          icon="🎨"
-          defaultPosition={{ x: 18, y: 268 }}
-          onOpen={() => openWindow("paint")}
-        />
-
-        <DesktopIcon
-          id="icon-phone"
-          title="Motorola Razr"
-          sublabel="SMS"
-          icon="📱"
-          defaultPosition={{ x: 18, y: 352 }}
-          onOpen={() => openWindow("phone")}
-        />
-
-        <DesktopIcon
-          id="icon-terminal"
-          title="Terminal CLI"
-          sublabel=".bat"
-          icon="📟"
-          defaultPosition={{ x: 18, y: 436 }}
-          onOpen={() => openWindow("terminal")}
-        />
-
-        <DesktopIcon
-          id="icon-music"
-          title="CD Player"
-          sublabel=".mp3"
-          icon="💿"
-          defaultPosition={{ x: 18, y: 520 }}
-          onOpen={() => openWindow("music")}
-        />
-
-        <DesktopIcon
-          id="icon-resume"
-          title="Resume"
-          sublabel=".pdf"
-          icon="📄"
-          defaultPosition={{ x: 18, y: 604 }}
-          onOpen={() => window.open("/resume.pdf", "_blank")}
-        />
-
-        <DesktopIcon
-          id="icon-recycle"
-          title="Recycle Bin"
-          sublabel="empty"
-          icon="🗑️"
-          defaultPosition={{ x: 18, y: 688 }}
-          onOpen={handleRecycleBin}
-        />
+        {[
+          { id: "icon-about", title: "Meet The Artist", sublabel: ".txt", icon: "📝", onOpen: () => openWindow("about") },
+          { id: "icon-projects", title: "Projects", sublabel: ".folder", icon: "📁", onOpen: () => openWindow("projects") },
+          { id: "icon-idbadge", title: "3D ID Badge", sublabel: ".pass", icon: "🪪", onOpen: () => openWindow("idbadge") },
+          { id: "icon-paint", title: "MS Paint", sublabel: ".exe", icon: "🎨", onOpen: () => openWindow("paint") },
+          { id: "icon-phone", title: "Motorola Razr", sublabel: "SMS", icon: "📱", onOpen: () => openWindow("phone") },
+          { id: "icon-terminal", title: "Terminal CLI", sublabel: ".bat", icon: "📟", onOpen: () => openWindow("terminal") },
+          { id: "icon-music", title: "CD Player", sublabel: ".mp3", icon: "💿", onOpen: () => openWindow("music") },
+          { id: "icon-messenger", title: "MSN Messenger", sublabel: ".chat", icon: "💬", onOpen: () => openWindow("messenger") },
+          { id: "icon-minesweeper", title: "Minesweeper", sublabel: ".game", icon: "💣", onOpen: () => openWindow("minesweeper") },
+          { id: "icon-resume", title: "Resume", sublabel: ".pdf", icon: "📄", onOpen: () => window.open("/resume.pdf", "_blank") },
+          { id: "icon-recycle", title: "Recycle Bin", sublabel: "empty", icon: "🗑️", onOpen: handleRecycleBin }
+        ].map((item, idx) => {
+          const H = typeof window !== "undefined" ? window.innerHeight : 800;
+          const itemHeight = 84;
+          const maxRows = Math.max(4, Math.floor((H - 80) / itemHeight));
+          const col = Math.floor(idx / maxRows);
+          const row = idx % maxRows;
+          return (
+            <DesktopIcon
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              sublabel={item.sublabel}
+              icon={item.icon}
+              defaultPosition={{ x: 16 + col * 92, y: 16 + row * itemHeight }}
+              onOpen={item.onOpen}
+            />
+          );
+        })}
       </div>
 
       {/* Top Controls Quick Pill (CRT & Wallpaper) */}
