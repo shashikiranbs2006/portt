@@ -269,6 +269,50 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 257ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 14
+- **Timestamp**: 2026-09-27T16:36:15+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `DesktopIcon.tsx` double-click detection had a stale closure race condition with `clickCount` state and arbitrary 400ms setTimeout.
+  - *Missing*: `BootSequence.tsx` had no skip button or keyboard skip listener, forcing visitors to wait 4.5+ seconds on every reload. The "press any key to enter..." prompt had no keydown listener.
+  - *Unpolished*: `BootSequence.tsx` logo splash lacked authentic riso-print registration marks and color chips.
+- **Tasks Chosen for this Iteration**:
+  1. **BootSequence.tsx**: Added `ESC ⏭ SKIP` button in top right, keyboard event listener for ESC or any key in logo phase, drive read sound `retroAudio.playDriveRead()`, CMYK/Riso registration marks (`⨁ C`, `⨁ M`, `⨁ Y`, `⨁ K`), color calibration chips, and click-anywhere to enter.
+  2. **DesktopIcon.tsx**: Replaced stale state closure with `useRef<number>` timestamp tracking for robust double-click detection (450ms threshold), added keyboard `Enter`/`Space` execution support, accessible `role="button"`, and descriptive tooltip.
+- **Verification Outcome**: `npm run build` succeeded in 279ms with 0 errors.
+- **Status**: Completed & Verified.
+
+---
+
+## Iteration 15
+- **Timestamp**: 2026-09-27T16:37:45+05:30
+- **Observations & Diagnosis**:
+  - *Missing*: The desktop theme switcher only had 4 themes (`bliss`, `cyber`, `sunset`, `matrix`), but lacked a dedicated bespoke theme for the portfolio's core DIY gig-poster / riso-print aesthetic.
+- **Tasks Chosen for this Iteration**:
+  1. **src/types/os.ts**: Extended `WallpaperTheme` union type with `"riso"`.
+  2. **Wallpaper.tsx**: Built authentic `"riso"` wallpaper theme featuring warm antique art-paper base (`#f4eedb`), halftone dot pattern overlay, misregistered CMYK color layers (Cyan, Fluorescent Red, Yellow) of giant "SHASHI★" typography watermark, registration crosshairs (`⨁`), side color calibration test strip, and heavy fractalNoise paper grain overlay.
+  3. **StartMenu.tsx & DesktopContextMenu.tsx & Desktop.tsx**: Integrated `"riso"` into the wallpaper switcher buttons and right-click context menu (with icon `🖨️`).
+- **Verification Outcome**: `npm run build` succeeded in 259ms with 0 errors.
+- **Status**: Completed & Verified.
+
+---
+
+## Iteration 16
+- **Timestamp**: 2026-09-27T16:39:35+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `ProjectsWindow.tsx` contained orphaned Tailwind classes `font-bold` (line 150) and `shadow-2xl` (line 355).
+  - *Missing*: No search/filtering input in Projects Explorer to quickly find projects by keyword, tech, or title.
+  - *Missing*: The 4th project `proj-nirmaan` (NIRMAAN 2026 Hackathon Hub) lacked an interactive simulation playground in its system spec modal (unlike the other 3 projects).
+  - *Unpolished*: Featured projects lacked visual indicator/badges in the grid.
+- **Tasks Chosen for this Iteration**:
+  1. **ProjectsWindow.tsx**: Added real-time text filter / search input next to Address bar supporting instant search by tech, title, or description.
+  2. Replaced orphaned Tailwind classes (`font-bold` -> inline `fontWeight`, `shadow-2xl` -> retro `boxShadow: "8px 8px 0px rgba(0,0,0,0.6)"`).
+  3. Added red `★ FEATURED` corner badge for flagship systems.
+  4. Added **NIRMAAN 2026 Live Evaluation Rubric Simulator** for `proj-nirmaan`: interactive sliders for Technical Architecture (40%), Originality & Innovation (30%), Real-World Impact (30%), dynamically computing weighted score out of 10.00 and judges' tier classification.
+- **Verification Outcome**: `npm run build` succeeded in 256ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
