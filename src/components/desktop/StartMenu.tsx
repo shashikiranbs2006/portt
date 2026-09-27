@@ -41,7 +41,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
 
       {/* Start Menu Box */}
       <div
-        className="bevel-raised shadow-2xl"
+        className="bevel-raised"
         style={{
           position: "fixed",
           bottom: "34px",
@@ -95,8 +95,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>📝</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">Meet The Artist</span>
-              <span className="text-xs text-gray-600">Bio, Lore & Bags</span>
+              <span style={{ fontWeight: 700 }}>Meet The Artist</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Bio, Lore & Bags</span>
             </div>
           </div>
 
@@ -106,8 +106,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>📁</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">Projects Explorer</span>
-              <span className="text-xs text-gray-600">Code & Apps</span>
+              <span style={{ fontWeight: 700 }}>Projects Explorer</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Code & Apps</span>
             </div>
           </div>
 
@@ -117,8 +117,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>🪪</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">Staff ID Badge</span>
-              <span className="text-xs text-gray-600">3D Tilt & Flip Pass</span>
+              <span style={{ fontWeight: 700 }}>Staff ID Badge</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>3D Tilt & Flip Pass</span>
             </div>
           </div>
 
@@ -128,8 +128,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>🎨</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">MS Paint Canvas</span>
-              <span className="text-xs text-gray-600">Draw & Doodle</span>
+              <span style={{ fontWeight: 700 }}>MS Paint Canvas</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Draw & Doodle</span>
             </div>
           </div>
 
@@ -139,8 +139,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>📱</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">Motorola Razr</span>
-              <span className="text-xs text-gray-600">SMS Contact Widget</span>
+              <span style={{ fontWeight: 700 }}>Motorola Razr</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>SMS Contact Widget</span>
             </div>
           </div>
 
@@ -150,8 +150,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>📟</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">MS-DOS Terminal</span>
-              <span className="text-xs text-gray-600">CLI & Tech Specs</span>
+              <span style={{ fontWeight: 700 }}>MS-DOS Terminal</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>CLI & Tech Specs</span>
             </div>
           </div>
 
@@ -161,8 +161,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>💿</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">CD-ROM Player</span>
-              <span className="text-xs text-gray-600">Kanye — Can't Tell Me Nothing</span>
+              <span style={{ fontWeight: 700 }}>CD-ROM Player</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Kanye — Can't Tell Me Nothing</span>
             </div>
           </div>
 
@@ -172,8 +172,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>💬</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">MSN Messenger</span>
-              <span className="text-xs text-gray-600">Chat with AI-Shashi</span>
+              <span style={{ fontWeight: 700 }}>MSN Messenger</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Chat with AI-Shashi</span>
             </div>
           </div>
 
@@ -183,8 +183,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
           >
             <span style={{ fontSize: "18px" }}>💣</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <span className="font-bold">Minesweeper</span>
-              <span className="text-xs text-gray-600">Easter Egg — Games</span>
+              <span style={{ fontWeight: 700 }}>Minesweeper</span>
+              <span style={{ fontSize: "11px", color: "#555" }}>Easter Egg — Games</span>
             </div>
           </div>
 
@@ -229,7 +229,7 @@ export const StartMenu: React.FC<StartMenuProps> = ({
             }}
           >
             <span style={{ fontSize: "18px" }}>🚪</span>
-            <span className="font-bold">Shut Down...</span>
+            <span style={{ fontWeight: 700 }}>Shut Down...</span>
           </div>
         </div>
       </div>

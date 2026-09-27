@@ -160,7 +160,69 @@ This document records each iteration cycle of the autonomous portfolio improveme
   - Tactile audio feedback in `SystemWarningModal.tsx` verified for all actions.
 - **Status**: Completed & Verified.
 
+---
 
+## Iteration 08
+- **Timestamp**: 2026-09-27T16:12:45+05:30
+- **Observations & Diagnosis**:
+  - *Unpolished*: `Clippy.tsx` had a single static message bank (5 messages), no audio feedback on click, no animation beyond a basic motion toggle, and an action button that only ever linked to "Contact" regardless of which message was showing.
+  - *Missing*: Mood-driven SVG facial expressions, waving arm animation, context-aware action buttons pointing to relevant windows, and nudge shake animation on click.
+- **Tasks Chosen for this Iteration**:
+  1. Expand message bank to 15 contextual messages referencing real portfolio features (Projects simulator, PaintWindow stamps, Minesweeper easter egg, About tour dates, Messenger quick-prompts).
+  2. Add four mood states (`idle`, `waving`, `thinking`, `excited`) that drive SVG facial expressions (eye size, brow shape, smile curve, thinking sweat drop).
+  3. Add waving arm animation in `waving` mood (animated SVG `<motion.line>`).
+  4. Context-aware action button: each message dynamically determines which window to open.
+  5. `retroAudio.playClick()` on bubble open, dismiss, and body click.
+  6. Nudge shake animation (x/rotate keyframe) on click via `motion.div`.
+  7. Riso-print accent bar (repeating gradient) at top of speech bubble.
+  8. Upgrade label from "Clippy" to "CLIPPY v2.1".
+- **Deferred to Later Iterations**:
+  - Persistent dismissal stored in localStorage.
+  - Clippy's position saved between sessions.
+- **Verification Outcome**:
+  - `npm run build` succeeded in 187ms with 0 errors.
+- **Status**: Completed & Verified.
+
+---
+
+## Iteration 09
+- **Timestamp**: 2026-09-27T16:15:14+05:30
+- **Observations & Diagnosis**:
+  - *Unpolished*: `TerminalWindow.tsx` had only 10 commands, no command history navigation, and a plain text boot banner with no ASCII art.
+  - *Missing*: `git log`, `ls`, `ping`, `curl`, `ssh`, `uptime`, `banner`, `easter_egg.sh`, `cat amts_2027.txt` commands; up/down arrow key history navigation; scan-line CRT overlay.
+- **Tasks Chosen for this Iteration**:
+  1. Rich multi-line ASCII boot banner (block letters "SHASHI").
+  2. 8 new terminal commands: `git log` (rendered fake commit history), `ls`/`dir` (file tree), `ping` (recruiter latency joke), `curl /api/hire-shashi` (JSON response), `ssh shashikiran@bmsit-deck` (SSH narrative), `uptime` (CGPA/coffee/hire index), `banner`, `cat easter_egg.sh` / `cat amts_2027.txt`.
+  3. Up/down arrow key command history navigation (`cmdHistory` state, `historyIdx` pointer).
+  4. CRT scanline overlay (`repeating-linear-gradient`) over the terminal content.
+  5. `cat easter_egg.sh` triggers `retroAudio.playBootJingle()` for delight.
+- **Deferred to Later Iterations**:
+  - Tab completion.
+  - Typing animation for output (streaming effect).
+- **Verification Outcome**:
+  - `npm run build` succeeded in 178ms with 0 errors (soft chunk-size warning, not an error).
+- **Status**: Completed & Verified.
+
+---
+
+## Iteration 10
+- **Timestamp**: 2026-09-27T16:17:14+05:30
+- **Observations & Diagnosis**:
+  - *Unpolished*: `IDBadgeWindow.tsx` back panel was nearly empty — just a magnetic stripe, "shashi★deck" text, a signature panel, and a giant SHASHI name block. Missed an opportunity to pack in real information in conference-badge style.
+  - *Missing*: QR code linking to GitHub, contact details, key skill chips in riso colors, richer ID serial.
+- **Tasks Chosen for this Iteration**:
+  1. Added 19×19 pixel QR-art SVG (stylized but authentic-looking) that links to GitHub on click. Rendered as a proper SVG `<rect>` matrix from a hand-crafted `QR_MATRIX` constant.
+  2. Identity block next to QR code: name, role, CGPA, university in hierarchical typography.
+  3. Contact info panel (dark background): email, GitHub, LinkedIn, location.
+  4. Riso skill chips: 10 key technologies (FastAPI, PostgreSQL, Docker, AWS Bedrock, Testcontainers, React 19, TypeScript, LLM Routing, RAG, Multi-Tenant SaaS) in rotating riso color palette.
+  5. Compact signature strip with ID serial number `SHSH-2026-0001`.
+  6. Magnetic stripe repositioned to top (post-lanyard) as on real credit/ID cards.
+- **Deferred to Later Iterations**:
+  - Actual scannable QR code via a library (would need `qrcode` package).
+  - Badge download/print to PDF functionality.
+- **Verification Outcome**:
+  - `npm run build` succeeded in 186ms with 0 errors.
+- **Status**: Completed & Verified.
 
 
 
