@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "motion/react";
 import { retroAudio } from "../../utils/audioSystem";
 
@@ -19,22 +19,33 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
   sublabel
 }) => {
   const [isSelected, setIsSelected] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
+  const lastClickTimeRef = useRef<number>(0);
 
-  const handleClick = () => {
+  const handleInteraction = () => {
     setIsSelected(true);
-    setClickCount((prev) => prev + 1);
+    const now = Date.now();
+    const isDoubleClick = now - lastClickTimeRef.current < 450;
+    lastClickTimeRef.current = now;
+
     retroAudio.playClick(1.05);
 
-    // Support single click for touch / mobile, double click for desktop
-    if (window.innerWidth < 768 || clickCount >= 1) {
+    // Support single click for touch / mobile screens (<768px), double click for desktop
+    if (window.innerWidth < 768 || isDoubleClick) {
       retroAudio.playClick(1.25);
       onOpen();
-      setClickCount(0);
-    } else {
-      setTimeout(() => setClickCount(0), 400);
+      lastClickTimeRef.current = 0;
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      retroAudio.playClick(1.25);
+      onOpen();
+    }
+  };
+
+  const tooltipText = `${title}${sublabel ? ` [${sublabel}]` : ""} — Double-click or Press Enter to open`;
 
   return (
     <motion.div
@@ -43,9 +54,18 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
       initial={{ x: defaultPosition.x, y: defaultPosition.y }}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.96 }}
-      onClick={handleClick}
+      onClick={handleInteraction}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        retroAudio.playClick(1.25);
+        onOpen();
+      }}
+      onKeyDown={handleKeyDown}
       onBlur={() => setIsSelected(false)}
       tabIndex={0}
+      role="button"
+      aria-label={title}
+      title={tooltipText}
       style={{
         position: "absolute",
         top: 0,
@@ -57,7 +77,8 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
         justifyContent: "center",
         cursor: "pointer",
         padding: "6px 4px",
-        zIndex: 10
+        zIndex: 10,
+        outline: "none"
       }}
     >
       {/* Icon frame */}
@@ -70,7 +91,8 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
           justifyContent: "center",
           fontSize: "30px",
           filter: isSelected ? "drop-shadow(0 0 6px rgba(0, 0, 128, 0.6))" : "drop-shadow(2px 2px 2px rgba(0,0,0,0.35))",
-          marginBottom: "4px"
+          marginBottom: "4px",
+          userSelect: "none"
         }}
       >
         {typeof icon === "string" ? <span>{icon}</span> : icon}
@@ -79,7 +101,7 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
       {/* Label */}
       <div
         style={{
-          backgroundColor: isSelected ? "#000080" : "rgba(0, 0, 0, 0.45)",
+          backgroundColor: isSelected ? "#000080" : "rgba(0, 0, 0, 0.55)",
           color: "#ffffff",
           padding: "1px 5px",
           borderRadius: "2px",
@@ -90,7 +112,8 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
           wordBreak: "break-word",
           lineHeight: "1.1",
           border: isSelected ? "1px dotted #ffffff" : "1px solid transparent",
-          textShadow: "1px 1px 2px rgba(0,0,0,0.8)"
+          textShadow: "1px 1px 2px rgba(0,0,0,0.9)",
+          userSelect: "none"
         }}
       >
         {title}
@@ -103,7 +126,8 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
             color: "#ffff00",
             fontFamily: "var(--font-pixel)",
             marginTop: "2px",
-            textShadow: "1px 1px 1px #000"
+            textShadow: "1px 1px 1px #000",
+            userSelect: "none"
           }}
         >
           {sublabel}

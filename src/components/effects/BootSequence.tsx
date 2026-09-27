@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { retroAudio } from "../../utils/audioSystem";
 
 interface BootSequenceProps {
   onComplete: () => void;
@@ -9,6 +10,14 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   const [phase, setPhase] = useState<"bios" | "loading" | "logo" | "done">("bios");
   const [progress, setProgress] = useState(0);
   const [biosLines, setBiosLines] = useState<string[]>([]);
+  const hasFinishedRef = useRef(false);
+
+  const finish = useCallback(() => {
+    if (hasFinishedRef.current) return;
+    hasFinishedRef.current = true;
+    setPhase("done");
+    setTimeout(onComplete, 200);
+  }, [onComplete]);
 
   const BIOS_LINES = [
     "SHASHI-DECK BIOS v2.0  ★  Sep 27 2026",
@@ -22,6 +31,22 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     "Loading creative engine ..... OK",
     "Initializing portfolio OS ...",
   ];
+
+  // Drive sound on mount
+  useEffect(() => {
+    retroAudio.playDriveRead();
+  }, []);
+
+  // Keyboard skip listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || phase === "logo") {
+        finish();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [phase, finish]);
 
   useEffect(() => {
     let lineIdx = 0;
@@ -55,12 +80,11 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   useEffect(() => {
     if (phase === "logo") {
       const t = setTimeout(() => {
-        setPhase("done");
-        setTimeout(onComplete, 600);
-      }, 2200);
+        finish();
+      }, 2400);
       return () => clearTimeout(t);
     }
-  }, [phase, onComplete]);
+  }, [phase, finish]);
 
   return (
     <AnimatePresence>
@@ -68,20 +92,66 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
         <motion.div
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.5 }}
+          onClick={() => {
+            if (phase === "logo") finish();
+          }}
           style={{
             position: "fixed",
             inset: 0,
             zIndex: 999999,
-            background: phase === "logo" ? "#0d0d0d" : "#000000",
+            background: phase === "logo" ? "#0a0a0c" : "#000000",
             display: "flex",
             flexDirection: "column",
             alignItems: phase === "logo" ? "center" : "flex-start",
             justifyContent: phase === "logo" ? "center" : "flex-start",
             padding: phase === "logo" ? "0" : "20px 24px",
-            transition: "background 0.3s"
+            transition: "background 0.3s",
+            cursor: phase === "logo" ? "pointer" : "default",
+            userSelect: "none"
           }}
         >
+          {/* Quick Skip Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              finish();
+            }}
+            title="Skip boot sequence (ESC)"
+            style={{
+              position: "fixed",
+              top: "16px",
+              right: "16px",
+              padding: "6px 12px",
+              background: "rgba(20, 20, 24, 0.85)",
+              border: "1px solid rgba(255, 229, 0, 0.4)",
+              color: "#ffe500",
+              fontFamily: "var(--font-silkscreen, monospace)",
+              fontSize: "11px",
+              cursor: "pointer",
+              letterSpacing: "1px",
+              zIndex: 1000000,
+              boxShadow: "2px 2px 0px rgba(0,0,0,0.8)",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              transition: "all 0.15s"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "#ffe500";
+              e.currentTarget.style.color = "#000000";
+              e.currentTarget.style.borderColor = "#ffffff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(20, 20, 24, 0.85)";
+              e.currentTarget.style.color = "#ffe500";
+              e.currentTarget.style.borderColor = "rgba(255, 229, 0, 0.4)";
+            }}
+          >
+            <span>ESC</span>
+            <span style={{ fontSize: "9px", opacity: 0.8 }}>SKIP ⏭</span>
+          </button>
+
           {/* BIOS Phase */}
           {phase === "bios" && (
             <div style={{ fontFamily: "monospace", fontSize: "13px", color: "#c0c0c0", lineHeight: "1.5" }}>
@@ -173,26 +243,58 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             </div>
           )}
 
-          {/* Logo Splash — Shashi-themed */}
+          {/* Logo Splash — Shashi-themed with Riso Touches */}
           {phase === "logo" && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              style={{ textAlign: "center", color: "#fff", padding: "20px" }}
+              style={{
+                position: "relative",
+                textAlign: "center",
+                color: "#fff",
+                padding: "36px 48px",
+                border: "2px solid rgba(255,229,0,0.25)",
+                background: "rgba(18, 18, 22, 0.7)",
+                backdropFilter: "blur(8px)",
+                maxWidth: "460px",
+                width: "90%"
+              }}
             >
-              {/* Big avatar photo */}
+              {/* Riso registration targets */}
+              <span style={{ position: "absolute", top: "8px", left: "10px", color: "#00a0e9", fontSize: "14px", opacity: 0.6 }}>⨁</span>
+              <span style={{ position: "absolute", top: "8px", right: "10px", color: "#ff3b30", fontSize: "14px", opacity: 0.6 }}>⨁</span>
+              <span style={{ position: "absolute", bottom: "8px", left: "10px", color: "#ffe500", fontSize: "14px", opacity: 0.6 }}>⨁</span>
+              <span style={{ position: "absolute", bottom: "8px", right: "10px", color: "#00a0e9", fontSize: "14px", opacity: 0.6 }}>⨁</span>
+
+              {/* Riso Color Swatches */}
+              <div style={{ display: "flex", justifyContent: "center", gap: "6px", marginBottom: "16px" }}>
+                {["#ffe500", "#ff3b30", "#00a0e9", "#111111"].map((c, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      width: "14px",
+                      height: "6px",
+                      backgroundColor: c,
+                      display: "inline-block",
+                      border: "1px solid rgba(255,255,255,0.3)"
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Avatar photo */}
               <motion.div
-                initial={{ y: -30, opacity: 0 }}
+                initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
                 style={{
-                  width: "90px",
-                  height: "90px",
+                  width: "88px",
+                  height: "88px",
                   borderRadius: "50%",
                   overflow: "hidden",
-                  margin: "0 auto 16px",
+                  margin: "0 auto 14px",
                   border: "3px solid #ffe500",
-                  boxShadow: "0 0 30px rgba(255,229,0,0.5)"
+                  boxShadow: "0 0 25px rgba(255,229,0,0.4)"
                 }}
               >
                 <img
@@ -203,16 +305,16 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
               </motion.div>
 
               <motion.div
-                initial={{ y: -20, opacity: 0 }}
+                initial={{ y: -15, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.15 }}
                 style={{
-                  fontSize: "64px",
+                  fontSize: "56px",
                   fontFamily: "var(--font-display, 'Outfit', sans-serif)",
                   fontWeight: 900,
                   color: "#ffe500",
-                  textShadow: "0 0 40px rgba(255,229,0,0.5), 4px 4px 0 rgba(217,30,24,0.8)",
-                  letterSpacing: "-3px",
+                  textShadow: "0 0 35px rgba(255,229,0,0.5), 3px 3px 0 rgba(217,30,24,0.8)",
+                  letterSpacing: "-2px",
                   lineHeight: 1
                 }}
               >
@@ -220,12 +322,12 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
               </motion.div>
 
               <motion.div
-                initial={{ y: 10, opacity: 0 }}
+                initial={{ y: 8, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.3 }}
                 style={{
-                  color: "rgba(255,255,255,0.7)",
-                  fontSize: "16px",
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: "15px",
                   fontFamily: "var(--font-silkscreen, monospace)",
                   marginTop: "8px",
                   letterSpacing: "2px"
@@ -236,11 +338,35 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
 
               <motion.div
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ delay: 1, duration: 1, repeat: Infinity }}
-                style={{ marginTop: "28px", color: "rgba(255,229,0,0.5)", fontSize: "12px", fontFamily: "monospace" }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                style={{
+                  fontSize: "11px",
+                  fontFamily: "var(--font-mono, monospace)",
+                  color: "#00a0e9",
+                  marginTop: "6px",
+                  letterSpacing: "1px"
+                }}
               >
-                press any key to enter...
+                SWE INTERN APPLICANT 2027 ★ KLARDATALABS
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ delay: 0.6, duration: 1.2, repeat: Infinity }}
+                style={{
+                  marginTop: "22px",
+                  color: "#ffe500",
+                  fontSize: "12px",
+                  fontFamily: "monospace",
+                  padding: "4px 8px",
+                  background: "rgba(255,229,0,0.1)",
+                  borderRadius: "2px",
+                  display: "inline-block"
+                }}
+              >
+                ▶ press any key or click to enter ◀
               </motion.div>
             </motion.div>
           )}
