@@ -4,6 +4,7 @@ import { retroAudio } from "../../utils/audioSystem";
 
 export const ProjectsWindow: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
   // Interactive Multi-Tenant Simulation State
@@ -20,6 +21,9 @@ export const ProjectsWindow: React.FC = () => {
   const [ragQuery, setRagQuery] = useState<string>("Cascading foreign keys");
   const [ragResult, setRagResult] = useState<{ latency: string; score: number; snippet: string } | null>(null);
 
+  // Interactive NIRMAAN 2026 Evaluation State
+  const [nirmaanScores, setNirmaanScores] = useState({ architecture: 9.0, innovation: 8.5, impact: 9.0 });
+
   const categories = [
     "All",
     "Backend & Systems",
@@ -28,10 +32,17 @@ export const ProjectsWindow: React.FC = () => {
     "Tooling"
   ];
 
-  const filteredProjects =
-    selectedCategory === "All"
-      ? portfolioData.projects
-      : portfolioData.projects.filter((p) => p.category === selectedCategory);
+  const filteredProjects = portfolioData.projects.filter((p) => {
+    const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      p.subtitle.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.tech.some((t) => t.toLowerCase().includes(q));
+    return matchesCategory && matchesSearch;
+  });
 
   const runTenantSimulation = () => {
     retroAudio.playDriveRead();
@@ -90,7 +101,7 @@ export const ProjectsWindow: React.FC = () => {
         userSelect: "none"
       }}
     >
-      {/* Explorer Address Bar */}
+      {/* Explorer Address Bar with Live Search */}
       <div
         className="bevel-sunken"
         style={{
@@ -100,7 +111,8 @@ export const ProjectsWindow: React.FC = () => {
           padding: "4px 8px",
           backgroundColor: "#fff",
           fontSize: "12px",
-          borderBottom: "1px solid #c0c0c0"
+          borderBottom: "1px solid #c0c0c0",
+          flexWrap: "wrap"
         }}
       >
         <span style={{ color: "#666", fontWeight: "bold" }}>Address</span>
@@ -108,6 +120,7 @@ export const ProjectsWindow: React.FC = () => {
           className="bevel-sunken"
           style={{
             flex: 1,
+            minWidth: "200px",
             padding: "2px 6px",
             backgroundColor: "#fff",
             fontFamily: "var(--font-pixel)",
@@ -119,12 +132,47 @@ export const ProjectsWindow: React.FC = () => {
           <span>📁</span>
           <span style={{ color: "#000080", fontWeight: "bold" }}>C:\PORTFOLIO\AUTHENTIC_PROJECTS_ARCHIVE\</span>
         </div>
+
+        {/* Live Filter / Search input */}
+        <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+          <span style={{ fontSize: "11px", color: "#555" }}>🔍 Filter:</span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search tech or title..."
+            style={{
+              padding: "2px 6px",
+              fontSize: "11px",
+              border: "1px solid #808080",
+              borderRadius: "0",
+              outline: "none",
+              width: "140px",
+              fontFamily: "var(--font-pixel)"
+            }}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="bevel-button"
+              onClick={() => {
+                retroAudio.playClick(0.9);
+                setSearchQuery("");
+              }}
+              style={{ fontSize: "10px", padding: "1px 5px" }}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
         <button
           type="button"
           className="bevel-button"
           onClick={() => {
             retroAudio.playClick(1.0);
             setSelectedCategory("All");
+            setSearchQuery("");
           }}
           style={{ fontSize: "11px", padding: "1px 6px" }}
         >
@@ -147,11 +195,12 @@ export const ProjectsWindow: React.FC = () => {
           <button
             key={cat}
             type="button"
-            className={`bevel-button ${selectedCategory === cat ? "active font-bold" : ""}`}
+            className={`bevel-button ${selectedCategory === cat ? "active" : ""}`}
             style={{
               fontSize: "11px",
               padding: "2px 8px",
-              backgroundColor: selectedCategory === cat ? "#fff" : "#e0e0e0"
+              backgroundColor: selectedCategory === cat ? "#fff" : "#e0e0e0",
+              fontWeight: selectedCategory === cat ? 700 : 400
             }}
             onClick={() => {
               retroAudio.playClick(1.0);
@@ -175,164 +224,212 @@ export const ProjectsWindow: React.FC = () => {
           backgroundColor: "#dfdfdf"
         }}
       >
-        {filteredProjects.map((p) => (
+        {filteredProjects.length === 0 ? (
           <div
-            key={p.id}
-            className="bevel-raised"
             style={{
-              padding: "10px",
-              backgroundColor: "#f9f9f9",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              gap: "8px",
-              border: "1px solid #fff"
+              gridColumn: "1 / -1",
+              textAlign: "center",
+              padding: "36px",
+              color: "#666",
+              fontFamily: "var(--font-pixel)",
+              fontSize: "12px"
             }}
           >
-            <div>
-              {/* Header: Icon + Category tag */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  borderBottom: "1px dotted #888",
-                  paddingBottom: "5px"
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                  <span style={{ fontSize: "18px" }}>
-                    {p.id === "proj-multi-tenant" ? "🏢" : p.id === "proj-relay-ai" ? "🤖" : p.id === "proj-edurag" ? "📚" : "🏷️"}
-                  </span>
-                  <span
-                    style={{
-                      fontFamily: "var(--font-silkscreen)",
-                      fontSize: "12px",
-                      color: "#000080",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {p.title}
-                  </span>
-                </div>
-                <span
-                  style={{
-                    backgroundColor: "#ffe500",
-                    color: "#000",
-                    fontFamily: "var(--font-pixel)",
-                    fontSize: "9px",
-                    padding: "2px 6px",
-                    fontWeight: "bold",
-                    border: "1px solid #000"
-                  }}
-                >
-                  {p.category}
-                </span>
-              </div>
-
-              {/* Subtitle */}
-              <div
-                style={{
-                  fontSize: "11px",
-                  color: "#d91e18",
-                  fontWeight: 700,
-                  marginTop: "6px",
-                  fontFamily: "var(--font-display)"
-                }}
-              >
-                {p.subtitle}
-              </div>
-
-              {/* Description */}
-              <p
-                style={{
-                  fontSize: "12px",
-                  lineHeight: "1.45",
-                  color: "#222",
-                  marginTop: "6px"
-                }}
-              >
-                {p.description}
-              </p>
-
-              {/* Tech Badges */}
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: "4px",
-                  marginTop: "8px"
-                }}
-              >
-                {p.tech.map((t) => (
-                  <span
-                    key={t}
-                    className="bevel-sunken"
-                    style={{
-                      fontSize: "10px",
-                      padding: "1px 6px",
-                      backgroundColor: "#fff",
-                      fontFamily: "var(--font-pixel)",
-                      color: "#000080",
-                      fontWeight: 600
-                    }}
-                  >
-                    #{t}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div
-              style={{
-                display: "flex",
-                gap: "6px",
-                paddingTop: "8px",
-                borderTop: "1px solid #dfdfdf"
-              }}
-            >
+            No projects found matching "{searchQuery}".
+            <div style={{ marginTop: "8px" }}>
               <button
                 type="button"
                 className="bevel-button"
                 onClick={() => {
-                  retroAudio.playClick(1.2);
-                  setActiveProject(p);
+                  setSearchQuery("");
+                  setSelectedCategory("All");
                 }}
-                style={{
-                  flex: 1,
-                  fontSize: "11px",
-                  fontWeight: "bold",
-                  backgroundColor: "#ffe500",
-                  color: "#000",
-                  padding: "4px 8px"
-                }}
+                style={{ padding: "3px 10px" }}
               >
-                ⚡ Live Architecture & Playground
+                Clear Filters
               </button>
-              {p.githubUrl && (
-                <a
-                  href={p.githubUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bevel-button"
-                  onClick={() => retroAudio.playClick(1.0)}
-                  style={{
-                    textDecoration: "none",
-                    color: "#000",
-                    fontSize: "11px",
-                    padding: "4px 8px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px"
-                  }}
-                >
-                  🐙 Repo
-                </a>
-              )}
             </div>
           </div>
-        ))}
+        ) : (
+          filteredProjects.map((p) => (
+            <div
+              key={p.id}
+              className="bevel-raised"
+              style={{
+                padding: "10px",
+                backgroundColor: "#f9f9f9",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                gap: "8px",
+                border: "1px solid #fff",
+                position: "relative"
+              }}
+            >
+              {p.featured && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-1px",
+                    right: "-1px",
+                    backgroundColor: "#ff3b30",
+                    color: "#fff",
+                    fontFamily: "var(--font-silkscreen)",
+                    fontSize: "8px",
+                    padding: "1px 5px",
+                    letterSpacing: "0.5px"
+                  }}
+                >
+                  ★ FEATURED
+                </div>
+              )}
+
+              <div>
+                {/* Header: Icon + Category tag */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderBottom: "1px dotted #888",
+                    paddingBottom: "5px",
+                    paddingRight: p.featured ? "60px" : "0"
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    <span style={{ fontSize: "18px" }}>
+                      {p.id === "proj-multi-tenant" ? "🏢" : p.id === "proj-relay-ai" ? "🤖" : p.id === "proj-edurag" ? "📚" : "🏆"}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-silkscreen)",
+                        fontSize: "12px",
+                        color: "#000080",
+                        fontWeight: "bold"
+                      }}
+                    >
+                      {p.title}
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      backgroundColor: "#ffe500",
+                      color: "#000",
+                      fontFamily: "var(--font-pixel)",
+                      fontSize: "9px",
+                      padding: "2px 6px",
+                      fontWeight: "bold",
+                      border: "1px solid #000"
+                    }}
+                  >
+                    {p.category}
+                  </span>
+                </div>
+
+                {/* Subtitle */}
+                <div
+                  style={{
+                    fontSize: "11px",
+                    color: "#d91e18",
+                    fontWeight: 700,
+                    marginTop: "6px",
+                    fontFamily: "var(--font-display)"
+                  }}
+                >
+                  {p.subtitle}
+                </div>
+
+                {/* Description */}
+                <p
+                  style={{
+                    fontSize: "12px",
+                    lineHeight: "1.45",
+                    color: "#222",
+                    marginTop: "6px"
+                  }}
+                >
+                  {p.description}
+                </p>
+
+                {/* Tech Badges */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "4px",
+                    marginTop: "8px"
+                  }}
+                >
+                  {p.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="bevel-sunken"
+                      style={{
+                        fontSize: "10px",
+                        padding: "1px 6px",
+                        backgroundColor: "#fff",
+                        fontFamily: "var(--font-pixel)",
+                        color: "#000080",
+                        fontWeight: 600
+                      }}
+                    >
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "6px",
+                  paddingTop: "8px",
+                  borderTop: "1px solid #dfdfdf"
+                }}
+              >
+                <button
+                  type="button"
+                  className="bevel-button"
+                  onClick={() => {
+                    retroAudio.playClick(1.2);
+                    setActiveProject(p);
+                  }}
+                  style={{
+                    flex: 1,
+                    fontSize: "11px",
+                    fontWeight: "bold",
+                    backgroundColor: "#ffe500",
+                    color: "#000",
+                    padding: "4px 8px"
+                  }}
+                >
+                  ⚡ Live Architecture & Playground
+                </button>
+                {p.githubUrl && (
+                  <a
+                    href={p.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bevel-button"
+                    onClick={() => retroAudio.playClick(1.0)}
+                    style={{
+                      textDecoration: "none",
+                      color: "#000",
+                      fontSize: "11px",
+                      padding: "4px 8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px"
+                    }}
+                  >
+                    🐙 Repo
+                  </a>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Case Study & Interactive Playground Dialog */}
@@ -352,15 +449,16 @@ export const ProjectsWindow: React.FC = () => {
           onClick={() => setActiveProject(null)}
         >
           <div
-            className="bevel-raised shadow-2xl"
+            className="bevel-raised"
             style={{
-              width: "620px",
+              width: "640px",
               maxWidth: "100%",
               maxHeight: "90vh",
               display: "flex",
               flexDirection: "column",
               backgroundColor: "#c0c0c0",
-              padding: "3px"
+              padding: "3px",
+              boxShadow: "8px 8px 0px rgba(0,0,0,0.6)"
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -470,7 +568,7 @@ export const ProjectsWindow: React.FC = () => {
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "4px", color: simulatedAttack ? "#ff4444" : "#ccc" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "4px", color: simulatedAttack ? "#ff4444" : "#ccc", cursor: "pointer" }}>
                       <input
                         type="checkbox"
                         checked={simulatedAttack}
@@ -613,6 +711,82 @@ export const ProjectsWindow: React.FC = () => {
                       <div style={{ marginTop: "4px", color: "#fff" }}>{ragResult.snippet}</div>
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeProject.id === "proj-nirmaan" && (
+                <div
+                  className="bevel-sunken"
+                  style={{
+                    backgroundColor: "#111",
+                    color: "#39ff14",
+                    padding: "10px",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: "11px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px"
+                  }}
+                >
+                  <div style={{ color: "#ffe500", fontWeight: "bold" }}>
+                    ★ NIRMAAN 2026 LIVE EVALUATION RUBRIC SIMULATOR:
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", color: "#ccc", fontSize: "10px" }}>
+                    <div>Participants: <b style={{ color: "#fff" }}>200+ Developers</b></div>
+                    <div>Prize Pool: <b style={{ color: "#ffe500" }}>₹1,00,000</b></div>
+                    <div>Sponsor Orgs: <b style={{ color: "#00a0e9" }}>52 Tech Partners</b></div>
+                    <div>Hackathon Budget: <b style={{ color: "#39ff14" }}>₹3,00,000</b></div>
+                  </div>
+
+                  {/* Rubric Sliders */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "4px" }}>
+                    {[
+                      { label: "Technical Architecture (40%)", key: "architecture" as const, val: nirmaanScores.architecture },
+                      { label: "Originality & Innovation (30%)", key: "innovation" as const, val: nirmaanScores.innovation },
+                      { label: "Real-World Impact (30%)", key: "impact" as const, val: nirmaanScores.impact }
+                    ].map((item) => (
+                      <div key={item.key} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "10px" }}>
+                        <span style={{ width: "170px", color: "#fff" }}>{item.label}:</span>
+                        <input
+                          type="range"
+                          min="1"
+                          max="10"
+                          step="0.5"
+                          value={item.val}
+                          onChange={(e) => {
+                            retroAudio.playClick(1.1);
+                            setNirmaanScores((prev) => ({ ...prev, [item.key]: parseFloat(e.target.value) }));
+                          }}
+                          style={{ flex: 1, accentColor: "#ffe500" }}
+                        />
+                        <span style={{ width: "36px", textAlign: "right", color: "#ffe500", fontWeight: "bold" }}>
+                          {item.val.toFixed(1)}/10
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calculated Score */}
+                  {(() => {
+                    const weighted = (nirmaanScores.architecture * 0.4 + nirmaanScores.innovation * 0.3 + nirmaanScores.impact * 0.3).toFixed(2);
+                    const tier =
+                      parseFloat(weighted) >= 8.5
+                        ? "🥇 Tier 1: Grand Finalist / Podium Candidate"
+                        : parseFloat(weighted) >= 7.0
+                        ? "🥈 Tier 2: Honorable Mention Track"
+                        : "🥉 Tier 3: Participant Certificate";
+                    return (
+                      <div style={{ backgroundColor: "#000", padding: "8px", border: "1px dashed #39ff14", marginTop: "4px" }}>
+                        <div style={{ color: "#ffe500", fontWeight: "bold" }}>
+                          Computed Rubric Score: {weighted} / 10.00
+                        </div>
+                        <div style={{ color: "#fff", fontSize: "10px", marginTop: "2px" }}>
+                          Judges' Classification: {tier}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
 
