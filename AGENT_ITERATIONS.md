@@ -352,6 +352,25 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 305ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 19
+- **Timestamp**: 2026-09-27T16:46:15+05:30
+- **Observations & Diagnosis**:
+  - *Broken*: `ContactPhoneWindow.tsx` required mouse clicks on the simulated phone keypad; physical computer keyboard numpad / numeric keys were completely ignored.
+  - *Missing*: No secret dialer easter eggs for recruiters / visitors testing phone codes.
+  - *Missing*: Phonebook entries lacked 1-click clipboard copy functionality.
+- **Tasks Chosen for this Iteration**:
+  1. **ContactPhoneWindow.tsx**: Added global `keydown` event listener for physical keyboard keys `0-9`, `*`, `#`, `Backspace`, `Enter`, and `Escape` (auto-disabled when typing in text fields) that illuminates keypad buttons and synthesizes authentic DTMF tones.
+  2. **Dialer Easter Eggs**: Added secret number detection:
+     - `2027`: Triggers SHASHI OS boot jingle & displays `★ AMTS 2027 PASS UNLOCKED ★`
+     - `911`: Triggers error chord alert & displays `🚨 EMERGENCY: HIRE SHASHI NOW!`
+     - `87`: Triggers tactile click & displays `⚡ BMSIT CGPA 8.7/10.0 ENGINE`
+     - `42`: Displays `🌌 THE ANSWER TO EVERYTHING`
+  3. **Phonebook Quick Copy**: Added direct `COPY` buttons for GitHub, LinkedIn, Email, and Phone with live `COPIED!` status indicators.
+- **Verification Outcome**: `npm run build` succeeded in 330ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
