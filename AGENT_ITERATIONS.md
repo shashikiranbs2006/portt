@@ -371,6 +371,24 @@ This document records each iteration cycle of the autonomous portfolio improveme
 - **Verification Outcome**: `npm run build` succeeded in 330ms with 0 errors.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 20
+- **Timestamp**: 2026-09-27T16:47:40+05:30
+- **Observations & Diagnosis**:
+  - *Unpolished*: `MessengerWindow.tsx` used a generic emoji `⚡` instead of Shashi's real photo avatar.
+  - *Missing*: No audio incoming message chime on reply (only a plain click).
+  - *Missing*: User status was hardcoded static text; no way to cycle status (`Online` / `Away` / `Busy`).
+  - *Missing*: Knowledge base lacked answers for BMSIT college details, CGPA, KlarDataLabs specifics, and direct resume requests.
+- **Tasks Chosen for this Iteration**:
+  1. **Real Photo Avatar**: Embedded circular `/avatar.jpg` in both header and chat message bubbles with gold borders.
+  2. **Dual-Tone Incoming Chime**: Programmed authentic two-tone frequency chime on incoming messages (`1.4` -> `1.7` harmonic interval).
+  3. **Status Cycle Switcher**: Made status interactive (clicking cycles `● ONLINE`, `● AWAY`, `● BUSY` with color changes).
+  4. **Clear History**: Added `🗑️` button to purge chat history and reset conversation.
+  5. **Expanded Knowledge Base**: Added detailed handlers for `bmsit`/`cgpa`, `klardatalabs`/`zurich`, `contact`/`phone`, and `resume`/`cv`.
+- **Verification Outcome**: `npm run build` succeeded in 369ms with 0 errors.
+- **Status**: Completed & Verified.
+
 
 
 
