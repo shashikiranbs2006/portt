@@ -71,6 +71,31 @@ This document records each iteration cycle of the autonomous portfolio improveme
   - VIP Backstage Pass easter egg modal verified with code `AMTS-2027` and pre-filled email recruiter link.
 - **Status**: Completed & Verified.
 
+---
+
+## Iteration 04
+- **Timestamp**: 2026-09-27T16:07:00+05:30
+- **Observations & Diagnosis**:
+  - *Broken / Outdated Content*: `MessengerWindow.tsx` bot replies contained outdated filler strings ("full project list coming soon", "project list is secret menu only") instead of Shashi's real engineering work.
+  - *Unpolished*: Message sending and receiving lacked audio feedback; long messages could clip without proper word-wrap.
+  - *Missing*: Iconic retro MSN Messenger "Nudge" (window vibration shake + sound) and 1-click recruiter conversation chips ("Tell me about Multi-Tenant Platform", "Why hire you for Summer 2027?", "Send Nudge 📳").
+- **Tasks Chosen for this Iteration**:
+  1. Synchronize `MessengerWindow.tsx` chatbot knowledge base with real projects (Multi-Tenant platform, Relay LLM router, EduRAG).
+  2. Implement interactive MSN Nudge vibration effect (`@keyframes msn-shake`).
+  3. Add quick recruiter conversation starter chips.
+  4. Wire `retroAudio` chime on send, receive, and nudge triggers.
+- **Deferred to Later Iterations**:
+  - Webhook delivery to a live external Discord/Slack channel.
+  - Custom emoticon sticker picker.
+- **Verification Outcome**:
+  - `npm run build` (`tsc -b && vite build`) built in 181ms with 0 errors.
+  - Chatbot knowledge base synchronized with real Multi-Tenant Platform, Relay AI router, EduRAG, and NIRMAAN hackathon data.
+  - Interactive MSN Nudge with `@keyframes msn-shake` and alert sound verified.
+  - 1-click recruiter conversation prompt chips verified.
+- **Status**: Completed & Verified.
+
+
+
 
 
 
