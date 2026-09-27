@@ -30,111 +30,121 @@ import { ErrorBoundary } from "../effects/ErrorBoundary";
 import { DesktopContextMenu } from "./DesktopContextMenu";
 import { retroAudio } from "../../utils/audioSystem";
 
-const INITIAL_WINDOWS: WindowState[] = [
-  {
-    id: "about",
-    title: "Meet The Artist — Notepad",
-    icon: "📝",
-    isOpen: true,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 20,
-    position: { x: window.innerWidth > 900 ? 100 : 10, y: 18 },
-    size: { width: window.innerWidth > 900 ? 700 : "95vw", height: 560 }
-  },
-  {
-    id: "idbadge",
-    title: "Mitarbeiterkarte [3D ID Pass]",
-    icon: "🪪",
-    isOpen: window.innerWidth > 1100,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 25,
-    position: { x: window.innerWidth > 1200 ? 820 : 40, y: 20 },
-    size: { width: 400, height: 600 }
-  },
-  {
-    id: "projects",
-    title: "C:\\Portfolio\\Projects",
-    icon: "📁",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 70, y: 60 },
-    size: { width: 720, height: 500 }
-  },
-  {
-    id: "paint",
-    title: "untitled - Paint",
-    icon: "🎨",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 140, y: 40 },
-    size: { width: 740, height: 520 }
-  },
-  {
-    id: "phone",
-    title: "Motorola Razr — Quick SMS",
-    icon: "📱",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: window.innerWidth > 900 ? 320 : 20, y: 30 },
-    size: { width: 520, height: 480 }
-  },
-  {
-    id: "terminal",
-    title: "Command Prompt (C:\\SHASHI)",
-    icon: "📟",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 180, y: 120 },
-    size: { width: 620, height: 400 }
-  },
-  {
-    id: "music",
-    title: "CD Player — Can't Tell Me Nothing",
-    icon: "💿",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 50, y: 380 },
-    size: { width: 420, height: 280 }
-  },
-  {
-    id: "minesweeper",
-    title: "Minesweeper — Shashi Edition",
-    icon: "💣",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 300, y: 80 },
-    size: { width: 280, height: 380 }
-  },
-  {
-    id: "messenger",
-    title: "MSN Messenger — shashikiran_bs",
-    icon: "💬",
-    isOpen: false,
-    isMinimized: false,
-    isMaximized: false,
-    zIndex: 10,
-    position: { x: 200, y: 50 },
-    size: { width: 400, height: 520 }
-  }
-];
+const getInitialWindows = (): WindowState[] => {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  const isTablet = typeof window !== "undefined" && window.innerWidth >= 768 && window.innerWidth <= 1100;
+  const W = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const H = typeof window !== "undefined" ? window.innerHeight : 800;
+
+  return [
+    {
+      id: "about",
+      title: "Meet The Artist — Notepad",
+      icon: "📝",
+      isOpen: true,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 20,
+      position: { x: isMobile ? 8 : isTablet ? 30 : 100, y: isMobile ? 8 : 18 },
+      size: {
+        width: isMobile ? "96vw" : isTablet ? 680 : 720,
+        height: isMobile ? Math.min(520, H - 70) : 560
+      }
+    },
+    {
+      id: "idbadge",
+      title: "Mitarbeiterkarte [3D ID Pass]",
+      icon: "🪪",
+      isOpen: !isMobile && W > 1100,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 25,
+      position: { x: isMobile ? 12 : W > 1200 ? 840 : 40, y: isMobile ? 12 : 20 },
+      size: { width: isMobile ? 320 : 400, height: isMobile ? Math.min(540, H - 80) : 600 }
+    },
+    {
+      id: "projects",
+      title: "C:\\Portfolio\\Projects",
+      icon: "📁",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 10 : 70, y: isMobile ? 20 : 60 },
+      size: { width: isMobile ? "95vw" : 720, height: isMobile ? Math.min(500, H - 70) : 500 }
+    },
+    {
+      id: "paint",
+      title: "untitled - Paint",
+      icon: "🎨",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 10 : 140, y: isMobile ? 20 : 40 },
+      size: { width: isMobile ? "95vw" : 740, height: isMobile ? Math.min(480, H - 70) : 520 }
+    },
+    {
+      id: "phone",
+      title: "Motorola Razr — Quick SMS",
+      icon: "📱",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 8 : 320, y: isMobile ? 16 : 30 },
+      size: { width: isMobile ? "96vw" : 520, height: isMobile ? Math.min(480, H - 70) : 480 }
+    },
+    {
+      id: "terminal",
+      title: "Command Prompt (C:\\SHASHI)",
+      icon: "📟",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 10 : 180, y: isMobile ? 30 : 120 },
+      size: { width: isMobile ? "95vw" : 620, height: isMobile ? Math.min(420, H - 70) : 400 }
+    },
+    {
+      id: "music",
+      title: "CD Player — Can't Tell Me Nothing",
+      icon: "💿",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 10 : 50, y: isMobile ? 50 : 380 },
+      size: { width: isMobile ? "95vw" : 420, height: 280 }
+    },
+    {
+      id: "minesweeper",
+      title: "Minesweeper — Shashi Edition",
+      icon: "💣",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 20 : 300, y: isMobile ? 40 : 80 },
+      size: { width: isMobile ? 290 : 280, height: 380 }
+    },
+    {
+      id: "messenger",
+      title: "MSN Messenger — shashikiran_bs",
+      icon: "💬",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 10,
+      position: { x: isMobile ? 10 : 200, y: isMobile ? 30 : 50 },
+      size: { width: isMobile ? "95vw" : 400, height: isMobile ? Math.min(480, H - 70) : 520 }
+    }
+  ];
+};
 
 export const Desktop: React.FC = () => {
   const [booted, setBooted] = useState(false);
-  const [windows, setWindows] = useState<WindowState[]>(INITIAL_WINDOWS);
+  const [windows, setWindows] = useState<WindowState[]>(getInitialWindows);
   const [activeWindowId, setActiveWindowId] = useState<WindowId | null>("about");
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<WallpaperTheme>("bliss");
