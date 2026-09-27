@@ -8,42 +8,45 @@ interface StickyNote {
   x: number;
   y: number;
   rotation: number;
-  pinned: boolean;
+  minimized?: boolean;
+  tag?: string;
 }
 
-const NOTE_COLORS = ["#fff9a5", "#a8f0c6", "#f0a8c6", "#a8d4f0", "#f0c6a8", "#d4a8f0"];
+const RISO_PALETTE = [
+  { name: "Sunlight Yellow", bg: "#fff9a5", border: "#f2ea79" },
+  { name: "Fluorescent Pink", bg: "#ffd1dc", border: "#f5a6b8" },
+  { name: "Mint Teal", bg: "#c8f7dc", border: "#9be4ba" },
+  { name: "Federal Blue", bg: "#d0e8ff", border: "#a3cfff" },
+  { name: "Peach Coral", bg: "#ffe0cc", border: "#f5ba98" }
+];
 
-// All notes on right side or bottom — never blocking main windows
 const getInitialNotes = (): StickyNote[] => {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
+  const isClient = typeof window !== "undefined";
+  const W = isClient ? window.innerWidth : 1200;
+  const H = isClient ? window.innerHeight : 800;
+  const isMobile = W < 800;
+
+  // On mobile, keep them minimized by default so they never block windows
   return [
     {
       id: "n1",
-      text: "🔥 hire me\nbefore someone\nelse does!!!",
+      text: "⚡ HIRE ME\nSummer 2027 SWE Intern\nAMTS Target ★",
       color: "#fff9a5",
-      x: W - 195,
-      y: H - 340,
-      rotation: 3,
-      pinned: false
+      x: Math.max(12, W - 185),
+      y: isMobile ? H - 120 : Math.max(20, H - 380),
+      rotation: 2.5,
+      minimized: isMobile,
+      tag: "PRIORITY"
     },
     {
       id: "n2",
-      text: "todo:\n- deploy world domination\n- fix that one bug\n- eat lunch",
-      color: "#a8f0c6",
-      x: W - 200,
-      y: H - 175,
+      text: "TODO:\n- Multi-tenant isolation\n- LLM routing pipeline\n- Eat ramen 🍜",
+      color: "#c8f7dc",
+      x: Math.max(12, W - 190),
+      y: isMobile ? H - 80 : Math.max(20, H - 220),
       rotation: -2,
-      pinned: false
-    },
-    {
-      id: "n3",
-      text: "SHASHI\n2024\nB.E. CSE (AI/ML)\nBMSIT",
-      color: "#a8d4f0",
-      x: W - 205,
-      y: H - 500,
-      rotation: 2,
-      pinned: false
+      minimized: isMobile,
+      tag: "SPRINT"
     }
   ];
 };
@@ -51,53 +54,74 @@ const getInitialNotes = (): StickyNote[] => {
 export const StickyNotesDesktop: React.FC = () => {
   const [notes, setNotes] = useState<StickyNote[]>(getInitialNotes);
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [allHidden, setAllHidden] = useState(false);
   const dragOffset = useRef({ dx: 0, dy: 0 });
 
   const addNote = () => {
     retroAudio.playClick(1.2);
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    const colorObj = RISO_PALETTE[Math.floor(Math.random() * RISO_PALETTE.length)];
     const newNote: StickyNote = {
       id: Date.now().toString(),
       text: "New note...",
-      color: NOTE_COLORS[Math.floor(Math.random() * NOTE_COLORS.length)],
-      x: 100 + Math.random() * 300,
-      y: 100 + Math.random() * 200,
-      rotation: (Math.random() - 0.5) * 8,
-      pinned: false
+      color: colorObj.bg,
+      x: Math.max(20, W - 220),
+      y: Math.max(50, Math.min(H - 260, 100 + Math.random() * 150)),
+      rotation: (Math.random() - 0.5) * 6,
+      minimized: false,
+      tag: "MEMO"
     };
-    setNotes(prev => [...prev, newNote]);
+    setNotes((prev) => [...prev, newNote]);
+    setFocusedId(newNote.id);
     setEditingId(newNote.id);
   };
 
   const deleteNote = (id: string) => {
-    retroAudio.playClick(0.8);
-    setNotes(prev => prev.filter(n => n.id !== id));
+    retroAudio.playClick(0.85);
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const toggleMinimize = (id: string) => {
+    retroAudio.playClick(1.1);
+    setNotes((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, minimized: !n.minimized } : n))
+    );
   };
 
   const updateText = (id: string, text: string) => {
-    setNotes(prev => prev.map(n => n.id === id ? { ...n, text } : n));
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, text } : n)));
+  };
+
+  const updateColor = (id: string, color: string) => {
+    retroAudio.playClick(1.15);
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, color } : n)));
   };
 
   const handleMouseDown = (e: React.MouseEvent, id: string) => {
     if (e.button !== 0) return;
     retroAudio.playPeel();
-    const note = notes.find(n => n.id === id)!;
+    const note = notes.find((n) => n.id === id);
+    if (!note) return;
     dragOffset.current = { dx: e.clientX - note.x, dy: e.clientY - note.y };
     setDraggingId(id);
-    setNotes(prev => {
-      const note = prev.find(n => n.id === id)!;
-      return [...prev.filter(n => n.id !== id), note];
-    });
+    setFocusedId(id);
     e.preventDefault();
   };
 
   useEffect(() => {
     if (!draggingId) return;
     const onMove = (e: MouseEvent) => {
-      setNotes(prev => prev.map(n => n.id === draggingId
-        ? { ...n, x: e.clientX - dragOffset.current.dx, y: e.clientY - dragOffset.current.dy }
-        : n
-      ));
+      const W = window.innerWidth;
+      const H = window.innerHeight;
+      const newX = Math.max(4, Math.min(W - 170, e.clientX - dragOffset.current.dx));
+      const newY = Math.max(4, Math.min(H - 60, e.clientY - dragOffset.current.dy));
+
+      setNotes((prev) =>
+        prev.map((n) => (n.id === draggingId ? { ...n, x: newX, y: newY } : n))
+      );
     };
     const onUp = () => setDraggingId(null);
     window.addEventListener("mousemove", onMove);
@@ -108,189 +132,375 @@ export const StickyNotesDesktop: React.FC = () => {
     };
   }, [draggingId]);
 
+  if (allHidden) {
+    return (
+      <button
+        type="button"
+        onClick={() => {
+          retroAudio.playClick(1.1);
+          setAllHidden(false);
+        }}
+        title="Show Sticky Notes"
+        style={{
+          position: "fixed",
+          bottom: "44px",
+          right: "12px",
+          zIndex: 9,
+          padding: "4px 8px",
+          background: "#fff9a5",
+          border: "1px solid #000",
+          fontFamily: "var(--font-silkscreen, monospace)",
+          fontSize: "10px",
+          boxShadow: "2px 2px 0px #000",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "4px"
+        }}
+      >
+        <span>📝</span>
+        <span>NOTES ({notes.length})</span>
+      </button>
+    );
+  }
+
   return (
     <>
-      {notes.map(note => (
-        <div
-          key={note.id}
-          style={{
-            position: "fixed",
-            left: note.x,
-            top: note.y,
-            zIndex: 50000,
-            transform: `rotate(${note.rotation}deg)`,
-            userSelect: "none",
-            cursor: draggingId === note.id ? "grabbing" : "grab",
-            filter: "drop-shadow(3px 6px 10px rgba(0,0,0,0.3))"
-          }}
-          onMouseDown={(e) => {
-            if (editingId === note.id) return;
-            handleMouseDown(e, note.id);
-          }}
-        >
-          {/* Tape strip at top */}
-          <div style={{
-            position: "absolute",
-            top: "-12px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "54px",
-            height: "22px",
-            background: "rgba(200,220,255,0.55)",
-            border: "1px solid rgba(180,200,240,0.4)",
-            borderRadius: "2px",
-            backdropFilter: "blur(1px)",
-            zIndex: 5
-          }} />
+      {notes.map((note) => {
+        const isInteracting = draggingId === note.id || focusedId === note.id;
+        // CRITICAL FIX: Base zIndex is 7 (desktop layer, strictly under open windows which start at 10-25)
+        // Elevates to 28 temporarily only when actively dragged or edited
+        const currentZIndex = isInteracting ? 28 : 7;
 
-          {/* Paper note */}
+        return (
           <div
+            key={note.id}
             style={{
-              width: "175px",
-              minHeight: "130px",
-              backgroundColor: note.color,
-              padding: "16px 12px 14px",
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-              backgroundImage: `
-                repeating-linear-gradient(
-                  transparent,
-                  transparent 23px,
-                  rgba(0,0,0,0.07) 23px,
-                  rgba(0,0,0,0.07) 24px
-                )
-              `,
-              backgroundSize: "100% 24px",
-              backgroundPosition: "0 30px",
-              borderLeft: "4px solid rgba(0,0,0,0.07)"
+              position: "fixed",
+              left: note.x,
+              top: note.y,
+              zIndex: currentZIndex,
+              transform: `rotate(${note.rotation}deg)`,
+              userSelect: "none",
+              cursor: draggingId === note.id ? "grabbing" : "grab",
+              filter: isInteracting
+                ? "drop-shadow(3px 8px 12px rgba(0,0,0,0.35))"
+                : "drop-shadow(2px 3px 6px rgba(0,0,0,0.2))",
+              transition: draggingId === note.id ? "none" : "filter 0.15s ease"
+            }}
+            onMouseDown={(e) => {
+              if (editingId === note.id) return;
+              handleMouseDown(e, note.id);
             }}
           >
-            {/* Folded corner */}
-            <div style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              width: 0,
-              height: 0,
-              borderStyle: "solid",
-              borderWidth: "0 0 20px 20px",
-              borderColor: `transparent transparent rgba(0,0,0,0.18) transparent`,
-              zIndex: 2
-            }} />
+            {/* Washi Paper Tape at top */}
+            <div
+              style={{
+                position: "absolute",
+                top: "-10px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "48px",
+                height: "18px",
+                background: "rgba(255, 255, 255, 0.7)",
+                border: "1px solid rgba(200, 200, 200, 0.5)",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                backdropFilter: "blur(1px)",
+                zIndex: 5
+              }}
+            />
 
-            {/* Toolbar */}
-            <div style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "4px",
-              marginBottom: "4px",
-              position: "absolute",
-              top: "6px",
-              right: "6px",
-              zIndex: 3
-            }}>
-              <button
-                type="button"
-                onClick={() => setEditingId(editingId === note.id ? null : note.id)}
-                style={{
-                  width: "18px", height: "18px",
-                  fontSize: "9px",
-                  border: "1px solid rgba(0,0,0,0.2)",
-                  borderRadius: "2px",
-                  cursor: "pointer",
-                  background: "rgba(255,255,255,0.6)",
-                  lineHeight: 1,
-                  padding: 0
-                }}
-              >
-                ✏️
-              </button>
-              <button
-                type="button"
-                onClick={() => deleteNote(note.id)}
-                style={{
-                  width: "18px", height: "18px",
-                  fontSize: "11px",
-                  border: "1px solid rgba(0,0,0,0.2)",
-                  borderRadius: "2px",
-                  cursor: "pointer",
-                  background: "rgba(255,255,255,0.6)",
-                  lineHeight: 1,
-                  padding: 0,
-                  fontWeight: "bold"
-                }}
-              >
-                ×
-              </button>
-            </div>
-
-            {/* Content */}
-            {editingId === note.id ? (
-              <textarea
-                autoFocus
-                value={note.text}
-                onChange={(e) => updateText(note.id, e.target.value)}
-                onBlur={() => setEditingId(null)}
-                style={{
-                  width: "100%",
-                  minHeight: "90px",
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  resize: "none",
-                  fontFamily: "'Caveat', cursive",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  color: "#1a1a1a",
-                  cursor: "text"
-                }}
-              />
-            ) : (
+            {/* Minimized Pill View */}
+            {note.minimized ? (
               <div
                 style={{
-                  fontFamily: "'Caveat', cursive",
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  color: "#1a1a1a",
-                  whiteSpace: "pre-wrap",
-                  minHeight: "90px",
-                  paddingTop: "4px"
+                  backgroundColor: note.color,
+                  border: "1px solid rgba(0,0,0,0.2)",
+                  padding: "4px 8px",
+                  borderRadius: "2px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  fontFamily: "var(--font-pixel, monospace)",
+                  fontSize: "10px",
+                  color: "#111",
+                  boxShadow: "1px 1px 0px rgba(0,0,0,0.2)"
                 }}
               >
-                {note.text}
+                <span>📌</span>
+                <span style={{ fontWeight: "bold" }}>
+                  {note.text.split("\n")[0].slice(0, 16)}...
+                </span>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMinimize(note.id);
+                  }}
+                  title="Expand Note"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "10px",
+                    padding: "0 2px"
+                  }}
+                >
+                  ▲
+                </button>
+              </div>
+            ) : (
+              /* Expanded Paper Note */
+              <div
+                style={{
+                  width: "168px",
+                  minHeight: "120px",
+                  backgroundColor: note.color,
+                  padding: "14px 10px 10px",
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "relative",
+                  backgroundImage:
+                    "repeating-linear-gradient(transparent, transparent 21px, rgba(0,0,0,0.06) 21px, rgba(0,0,0,0.06) 22px)",
+                  backgroundSize: "100% 22px",
+                  backgroundPosition: "0 26px",
+                  borderLeft: "3px solid rgba(0,0,0,0.1)",
+                  borderBottom: "1px solid rgba(0,0,0,0.12)"
+                }}
+              >
+                {/* Riso Stamp Tag */}
+                {note.tag && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      bottom: "5px",
+                      left: "8px",
+                      fontFamily: "var(--font-silkscreen, monospace)",
+                      fontSize: "7px",
+                      color: "rgba(0,0,0,0.4)",
+                      letterSpacing: "1px"
+                    }}
+                  >
+                    ★ {note.tag}
+                  </span>
+                )}
+
+                {/* Folded Corner */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                    width: 0,
+                    height: 0,
+                    borderStyle: "solid",
+                    borderWidth: "0 0 16px 16px",
+                    borderColor: "transparent transparent rgba(0,0,0,0.15) transparent",
+                    zIndex: 2
+                  }}
+                />
+
+                {/* Toolbar */}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    position: "absolute",
+                    top: "4px",
+                    left: "6px",
+                    right: "6px",
+                    zIndex: 3
+                  }}
+                >
+                  {/* Color Swatch Dots */}
+                  <div style={{ display: "flex", gap: "2px" }}>
+                    {RISO_PALETTE.map((c) => (
+                      <span
+                        key={c.name}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateColor(note.id, c.bg);
+                        }}
+                        title={c.name}
+                        style={{
+                          width: "7px",
+                          height: "7px",
+                          borderRadius: "50%",
+                          backgroundColor: c.bg,
+                          border: "1px solid rgba(0,0,0,0.3)",
+                          cursor: "pointer",
+                          display: "inline-block"
+                        }}
+                      />
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", gap: "2px" }}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingId(editingId === note.id ? null : note.id);
+                      }}
+                      title="Edit Note"
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        fontSize: "8px",
+                        border: "1px solid rgba(0,0,0,0.2)",
+                        borderRadius: "2px",
+                        cursor: "pointer",
+                        background: "rgba(255,255,255,0.7)",
+                        lineHeight: 1,
+                        padding: 0
+                      }}
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMinimize(note.id);
+                      }}
+                      title="Minimize Note"
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        fontSize: "9px",
+                        border: "1px solid rgba(0,0,0,0.2)",
+                        borderRadius: "2px",
+                        cursor: "pointer",
+                        background: "rgba(255,255,255,0.7)",
+                        lineHeight: 1,
+                        padding: 0
+                      }}
+                    >
+                      –
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteNote(note.id);
+                      }}
+                      title="Delete Note"
+                      style={{
+                        width: "16px",
+                        height: "16px",
+                        fontSize: "10px",
+                        border: "1px solid rgba(0,0,0,0.2)",
+                        borderRadius: "2px",
+                        cursor: "pointer",
+                        background: "rgba(255,255,255,0.7)",
+                        lineHeight: 1,
+                        padding: 0,
+                        fontWeight: "bold"
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+
+                {/* Content */}
+                {editingId === note.id ? (
+                  <textarea
+                    autoFocus
+                    value={note.text}
+                    onChange={(e) => updateText(note.id, e.target.value)}
+                    onBlur={() => setEditingId(null)}
+                    style={{
+                      width: "100%",
+                      minHeight: "75px",
+                      border: "none",
+                      outline: "none",
+                      background: "transparent",
+                      resize: "none",
+                      fontFamily: "'Caveat', cursive, sans-serif",
+                      fontSize: "15px",
+                      lineHeight: "22px",
+                      color: "#1a1a1a",
+                      cursor: "text",
+                      marginTop: "4px"
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      fontFamily: "'Caveat', cursive, sans-serif",
+                      fontSize: "15px",
+                      lineHeight: "22px",
+                      color: "#1a1a1a",
+                      whiteSpace: "pre-wrap",
+                      minHeight: "75px",
+                      paddingTop: "6px"
+                    }}
+                  >
+                    {note.text}
+                  </div>
+                )}
               </div>
             )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
-      {/* Add note FAB */}
-      <button
-        type="button"
-        onClick={addNote}
-        title="Add Sticky Note"
+      {/* Floating Add Note + Toggle Dock */}
+      <div
         style={{
           position: "fixed",
-          bottom: "60px",
+          bottom: "44px",
           right: "12px",
-          zIndex: 55000,
-          width: "38px",
-          height: "38px",
-          borderRadius: "50%",
-          backgroundColor: "#fff9a5",
-          border: "2px solid rgba(0,0,0,0.2)",
-          boxShadow: "2px 2px 10px rgba(0,0,0,0.35)",
-          cursor: "pointer",
-          fontSize: "18px",
+          zIndex: 8,
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          lineHeight: 1
+          gap: "6px"
         }}
       >
-        📌
-      </button>
+        <button
+          type="button"
+          onClick={() => {
+            retroAudio.playClick(0.9);
+            setAllHidden(true);
+          }}
+          title="Hide All Sticky Notes"
+          style={{
+            padding: "2px 6px",
+            background: "rgba(255,255,255,0.85)",
+            border: "1px solid rgba(0,0,0,0.3)",
+            borderRadius: "2px",
+            fontSize: "9px",
+            fontFamily: "var(--font-pixel, monospace)",
+            cursor: "pointer",
+            boxShadow: "1px 1px 2px rgba(0,0,0,0.2)"
+          }}
+        >
+          👁 HIDE
+        </button>
+
+        <button
+          type="button"
+          onClick={addNote}
+          title="Add Sticky Note"
+          style={{
+            width: "28px",
+            height: "28px",
+            borderRadius: "50%",
+            backgroundColor: "#fff9a5",
+            border: "1px solid #000",
+            boxShadow: "1px 1px 4px rgba(0,0,0,0.3)",
+            cursor: "pointer",
+            fontSize: "14px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            lineHeight: 1
+          }}
+        >
+          📌
+        </button>
+      </div>
     </>
   );
 };
