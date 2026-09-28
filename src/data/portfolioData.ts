@@ -154,6 +154,66 @@ export const portfolioData: PortfolioData = {
   ],
   projects: [
     {
+      id: "proj-relay-ai",
+      title: "The Relay – AI Coding Assistant",
+      subtitle: "VS Code Extension with Multi-Provider LLM Router & Web Simulation",
+      category: "Agentic AI",
+      description: "Priority queue request router with automatic provider failover, real-time quota tracking, and seamless state preservation.",
+      longDescription: "Features an intelligent context-compression and handoff pipeline that transfers active conversation state between LLM backends on quota exhaustion without dropping session context. Built with VS Code Workspace & WorkspaceEdit APIs. Includes an interactive web simulation deployed on Vercel and full extension download on GitHub.",
+      tech: ["TypeScript", "React", "AWS Bedrock", "VS Code API", "LLM Tooling", "Vercel"],
+      demoUrl: "https://relay-jofk.vercel.app/",
+      githubUrl: "https://github.com/shashikiranbs2006/relay",
+      featured: true
+    },
+    {
+      id: "proj-edurag",
+      title: "Yoru Chatbot (EduRAG)",
+      subtitle: "AI Educational RAG Chatbot & Document Retrieval Microservice",
+      category: "Agentic AI",
+      description: "Containerized educational chatbot and vector retrieval microservice engineered over 500+ pages of academic and technical curriculum with sub-2s query latency.",
+      longDescription: "Implements hybrid semantic search and BM25 reranking using ChromaDB and FastAPI. Built to assist students by indexing complex technical documentation and providing precise contextual answers with source attribution and graceful out-of-scope fallback handling. Deployed live on Render.",
+      tech: ["Python", "FastAPI", "ChromaDB", "Docker", "Embeddings", "Render"],
+      demoUrl: "https://edu-rag.onrender.com/",
+      githubUrl: "https://github.com/shashikiranbs2006/yoru_chatbot",
+      featured: true
+    },
+    {
+      id: "proj-prompt-compiler",
+      title: "Prompt Compiler",
+      subtitle: "Google Chrome Extension & Interactive Prompt Optimization Playground",
+      category: "Tooling",
+      description: "Developer productivity tool and Google Chrome extension that parses, structures, and compiles raw prompts into optimized LLM instructions with token estimation and templating.",
+      longDescription: "Bridges chaotic human intent and deterministic model output with automated prompt structuring, XML tag standardization, token reduction algorithms, and dynamic variable injection. Interactive web simulation deployed on Vercel with unpackaged browser extension install on GitHub.",
+      tech: ["TypeScript", "React", "Chrome Extension API", "LLM Tooling", "Vercel"],
+      demoUrl: "https://prompt-compiler-five.vercel.app/",
+      githubUrl: "https://github.com/shashikiranbs2006/prompt-compiler",
+      featured: true
+    },
+    {
+      id: "proj-credit-card",
+      title: "Credit Card Fraud Detection",
+      subtitle: "Real-Time Machine Learning Transaction Scoring & Imbalanced Data Analytics",
+      category: "Backend & Systems",
+      description: "Machine learning fraud detection platform analyzing high-volume transaction data with imbalanced classification techniques (SMOTE, XGBoost / Random Forest) and real-time transaction scoring.",
+      longDescription: "Engineered an end-to-end anomaly detection pipeline capable of identifying fraudulent credit card transactions in heavily imbalanced financial datasets (fraud rate < 0.2%). Implements feature scaling, SMOTE resampling, high-recall decision boundaries, and interactive risk scoring telemetry. Deployed live on Streamlit Cloud.",
+      tech: ["Python", "Scikit-Learn", "Pandas", "NumPy", "Streamlit", "Machine Learning"],
+      demoUrl: "https://credit-card-fraud-detection-by-shashikiran.streamlit.app/",
+      githubUrl: "https://github.com/shashikiranbs2006/credit-card-fraud-detection",
+      featured: true
+    },
+    {
+      id: "proj-fitphile",
+      title: "FitPhile",
+      subtitle: "Personalized Health, Fitness & Workout Tracking Platform",
+      category: "Backend & Systems",
+      description: "Full-stack fitness and wellness web application designed for tracking workouts, nutrition profiles, and body metrics with personalized health analytics.",
+      longDescription: "FitPhile delivers a clean, responsive fitness management system with custom workout logging, caloric intake tracking, body composition metrics, and routine planning. Designed with structured relational schemas, clean API endpoints, and production deployment on Render.",
+      tech: ["Python", "FastAPI", "PostgreSQL", "React", "Docker", "Render"],
+      demoUrl: "https://fitphile.onrender.com/",
+      githubUrl: "https://github.com/shashikiranbs2006/fitphile",
+      featured: true
+    },
+    {
       id: "proj-multi-tenant",
       title: "Multi-Tenant Ticketing Platform",
       subtitle: "Enterprise request-scoped tenant isolation & query routing",
@@ -161,30 +221,6 @@ export const portfolioData: PortfolioData = {
       description: "Designed a shared-schema multi-tenant data model across 9 relational tables with org_id scoping, composite indexes, and strict role-based access control.",
       longDescription: "Engineered query-level request-scoped isolation ensuring cross-organization access fails by construction, not by convention. Included pagination, filtering, sorting, and full audit logging. Rigorously tested with Testcontainers (Postgres) in GitHub Actions CI with zero merge on failing tests.",
       tech: ["Python", "FastAPI", "PostgreSQL", "Docker", "Testcontainers", "GitHub Actions"],
-      demoUrl: "https://github.com/shashikiranbs2006",
-      githubUrl: "https://github.com/shashikiranbs2006",
-      featured: true
-    },
-    {
-      id: "proj-relay-ai",
-      title: "Relay – AI Coding Assistant",
-      subtitle: "Multi-provider LLM router & context compression pipeline",
-      category: "Agentic AI",
-      description: "Priority queue request router with automatic provider failover, real-time quota tracking, and seamless state preservation.",
-      longDescription: "Features an intelligent context-compression and handoff pipeline that transfers active conversation state between LLM backends on quota exhaustion without dropping session context. Built a workspace indexer and diagnostics-aware context builder with VS Code Workspace & WorkspaceEdit APIs.",
-      tech: ["TypeScript", "React", "AWS Bedrock", "VS Code API", "LLM Tooling"],
-      demoUrl: "https://github.com/shashikiranbs2006",
-      githubUrl: "https://github.com/shashikiranbs2006",
-      featured: true
-    },
-    {
-      id: "proj-edurag",
-      title: "EduRAG – Document Retrieval Service",
-      subtitle: "Vector embedding search with sub-2s latency over 500+ pages",
-      category: "Agentic AI",
-      description: "Containerized document retrieval microservice engineered over 500+ pages of academic and technical curriculum.",
-      longDescription: "Implements hybrid semantic search and BM25 reranking using ChromaDB with graceful fallback handling for out-of-scope queries, returning high-precision responses in under 2 seconds.",
-      tech: ["Python", "ChromaDB", "Docker", "FastAPI", "Embeddings"],
       demoUrl: "https://github.com/shashikiranbs2006",
       githubUrl: "https://github.com/shashikiranbs2006",
       featured: false

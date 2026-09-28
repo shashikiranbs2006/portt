@@ -44,16 +44,29 @@ const SHASHI_RESPONSES: Record<string, string[]> = {
     "Check out the interactive simulator in the Projects window! You can toggle cross-tenant attacks and see the 403 Forbidden query guard in action."
   ],
   "relay|llm|agent|bedrock|router": [
-    "Relay is an AI Coding Assistant I built with a priority queue request router over multiple LLM backends. When a provider gets rate-limited (HTTP 429), it automatically compresses active conversation context and hands off state to AWS Bedrock in ~118ms!"
+    "Relay is an AI Coding Assistant I built with a priority queue request router over multiple LLM backends. When a provider gets rate-limited (HTTP 429), it automatically compresses active conversation context and hands off state to AWS Bedrock in ~118ms! Simulation live at relay-jofk.vercel.app.",
+    "Relay is built as a VS Code extension with a deployed web simulation playground. Check it out in the Projects window!"
   ],
-  "edurag|rag|chromadb|retrieval": [
-    "EduRAG is a document retrieval microservice over 500+ pages of curriculum material. It uses ChromaDB for vector embeddings and BM25 reranking with a sub-2.0s SLA latency."
+  "edurag|yoru|rag|chromadb|retrieval": [
+    "Yoru Chatbot (EduRAG) is a document retrieval microservice and educational assistant over 500+ pages of curriculum material. It uses ChromaDB for vector embeddings and BM25 reranking with a sub-2.0s SLA latency. Deployed live on Render at edu-rag.onrender.com!"
+  ],
+  "prompt|compiler|prompt compiler|chrome": [
+    "Prompt Compiler is a Google Chrome extension & web tool that parses, structures, and compiles raw prompts into optimized LLM directives with token reduction (-34%) and XML templating! Simulation live at prompt-compiler-five.vercel.app.",
+    "Try the interactive Prompt Compiler simulator in the Projects window to see how messy prompts get transformed into structured system directives!"
+  ],
+  "credit card|fraud|fraud detection|ml|machine learning": [
+    "My Credit Card Fraud Detection platform uses machine learning (XGBoost, SMOTE, Scikit-Learn) to identify fraudulent transactions in imbalanced financial data. Deployed live on Streamlit Cloud at credit-card-fraud-detection-by-shashikiran.streamlit.app!",
+    "Check out the real-time anomaly scorer in the Projects window or test the live Streamlit app!"
+  ],
+  "fitphile|fitness|workout|nutrition": [
+    "FitPhile is a full-stack health & workout tracking platform deployed live on Render at fitphile.onrender.com! It logs workout splits, tracks macronutrient telemetry, and monitors progress over time.",
+    "Open the Projects window to test the FitPhile nutrition and workout split calculator!"
   ],
   "nirmaan|hackathon|bmsit": [
     "I was the Lead Organiser for NIRMAAN 2026, BMSIT's 24-hour flagship hackathon! Managed a ₹3,00,000 budget across 52 sponsor companies, 200+ participants, and ₹1,00,000 prize pool."
   ],
   "skills|stack|tech": [
-    "Core stack: Python, FastAPI, PostgreSQL, SQL, TypeScript, React, Docker, Testcontainers, AWS Bedrock, Strands Agents SDK, and pytest."
+    "Core stack: Python, FastAPI, PostgreSQL, SQL, TypeScript, React, Docker, Testcontainers, AWS Bedrock, Scikit-Learn, ChromaDB, and pytest."
   ],
   "nudge": [
     "📳 *BUZZZZ!* Whoa, that was a heavy nudge! I'm awake, I'm awake!"

@@ -24,11 +24,26 @@ export const ProjectsWindow: React.FC = () => {
   // Interactive NIRMAAN 2026 Evaluation State
   const [nirmaanScores, setNirmaanScores] = useState({ architecture: 9.0, innovation: 8.5, impact: 9.0 });
 
+  // Interactive Prompt Compiler State
+  const [rawPromptInput, setRawPromptInput] = useState<string>("Write an index optimization plan for multi-tenant PostgreSQL queries where org_id and status are queried together.");
+  const [compiledPromptResult, setCompiledPromptResult] = useState<{ originalTokens: number; compiledTokens: number; reduction: string; output: string } | null>(null);
+
+  // Interactive Credit Card Fraud Detection State
+  const [fraudAmount, setFraudAmount] = useState<number>(3420);
+  const [isOffshore, setIsOffshore] = useState<boolean>(true);
+  const [isBurstVelocity, setIsBurstVelocity] = useState<boolean>(true);
+  const [isMidnight, setIsMidnight] = useState<boolean>(false);
+  const [fraudResult, setFraudResult] = useState<{ riskScore: number; status: "FLAGGED_FRAUD" | "LEGITIMATE"; inferenceMs: number; flags: string[] } | null>(null);
+
+  // Interactive FitPhile State
+  const [fitnessGoal, setFitnessGoal] = useState<"Hypertrophy" | "Fat Loss" | "Endurance">("Hypertrophy");
+  const [userWeightKg, setUserWeightKg] = useState<number>(74);
+  const [fitphilePlan, setFitphilePlan] = useState<{ calories: number; protein: number; carbs: number; fats: number; split: string } | null>(null);
+
   const categories = [
     "All",
-    "Backend & Systems",
     "Agentic AI",
-    "Cloud & DevOps",
+    "Backend & Systems",
     "Tooling"
   ];
 
@@ -88,6 +103,83 @@ export const ProjectsWindow: React.FC = () => {
         snippet: `[ChromaDB Chunk #42] "In relational schema design, ON DELETE CASCADE maintains referential integrity by automatically purging child records when parent org_id partitions are dropped, preventing orphan foreign key leaks across tenant boundaries."`
       });
     }, 250);
+  };
+
+  const runPromptCompiler = () => {
+    retroAudio.playDriveRead();
+    const rawWords = rawPromptInput.trim().split(/\s+/).filter(Boolean).length;
+    const rawTokens = Math.max(28, Math.round(rawWords * 1.35) + 32);
+    const compiledTokens = Math.round(rawTokens * 0.64);
+    const reduction = (((rawTokens - compiledTokens) / rawTokens) * 100).toFixed(1);
+    setCompiledPromptResult({
+      originalTokens: rawTokens,
+      compiledTokens: compiledTokens,
+      reduction: `-${reduction}%`,
+      output: `<system_directive>\n  <role>Senior Staff Software Engineer & Systems Architect</role>\n  <context>Deterministic Execution Sandbox</context>\n  <task_specification>\n    ${rawPromptInput.trim()}\n  </task_specification>\n  <constraints>\n    - Fail-by-construction architectural guarantees\n    - Zero cross-context leakage\n    - Enforce verified type contracts & edge validation\n  </constraints>\n  <output_schema format="structured_xml" />\n</system_directive>`
+    });
+  };
+
+  const runFraudDetector = () => {
+    retroAudio.playDriveRead();
+    let score = 0.04;
+    const flags: string[] = [];
+    if (fraudAmount > 2000) {
+      score += 0.34;
+      flags.push(`Amount ($${fraudAmount.toLocaleString()}) exceeds 3σ deviation threshold`);
+    } else if (fraudAmount > 500) {
+      score += 0.12;
+    }
+    if (isOffshore) {
+      score += 0.38;
+      flags.push("High-risk foreign proxy IP / TOR exit node detected");
+    }
+    if (isBurstVelocity) {
+      score += 0.26;
+      flags.push("Burst velocity alert: 8 transactions in past 90 seconds");
+    }
+    if (isMidnight) {
+      score += 0.14;
+      flags.push("Off-hours circadian anomaly (03:42 AM local device time)");
+    }
+    const finalScore = Math.min(0.998, score);
+    const isFraud = finalScore >= 0.5;
+    if (isFraud) {
+      retroAudio.playErrorChord();
+    } else {
+      retroAudio.playClick(1.2);
+    }
+    setFraudResult({
+      riskScore: finalScore,
+      status: isFraud ? "FLAGGED_FRAUD" : "LEGITIMATE",
+      inferenceMs: 6.4,
+      flags: flags.length > 0 ? flags : ["All parameters within baseline normality (99.8% confidence)"]
+    });
+  };
+
+  const runFitPhileCalc = () => {
+    retroAudio.playClick(1.2);
+    let cals = userWeightKg * 33;
+    let split = "Push / Pull / Legs (PPL) 5-day cycle";
+    if (fitnessGoal === "Hypertrophy") {
+      cals = Math.round(userWeightKg * 36);
+      split = "Upper / Lower + Push / Pull / Legs (5-Day Hypertrophy)";
+    } else if (fitnessGoal === "Fat Loss") {
+      cals = Math.round(userWeightKg * 26);
+      split = "4-Day Full Body & Zone-2 Cardio Conditioning";
+    } else {
+      cals = Math.round(userWeightKg * 31);
+      split = "Hybrid Aerobic & Functional Compound Volume (5-Day)";
+    }
+    const protein = Math.round(userWeightKg * 2.2);
+    const fats = Math.round(userWeightKg * 0.9);
+    const carbs = Math.round((cals - (protein * 4 + fats * 9)) / 4);
+    setFitphilePlan({
+      calories: cals,
+      protein,
+      carbs,
+      fats,
+      split
+    });
   };
 
   return (
@@ -298,7 +390,12 @@ export const ProjectsWindow: React.FC = () => {
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                     <span style={{ fontSize: "18px" }}>
-                      {p.id === "proj-multi-tenant" ? "🏢" : p.id === "proj-relay-ai" ? "🤖" : p.id === "proj-edurag" ? "📚" : "🏆"}
+                      {p.id === "proj-relay-ai" ? "🤖" :
+                       p.id === "proj-edurag" ? "📚" :
+                       p.id === "proj-prompt-compiler" ? "⚡" :
+                       p.id === "proj-credit-card" ? "💳" :
+                       p.id === "proj-fitphile" ? "🏋️" :
+                       p.id === "proj-multi-tenant" ? "🏢" : "🏆"}
                     </span>
                     <span
                       style={{
@@ -383,9 +480,10 @@ export const ProjectsWindow: React.FC = () => {
               <div
                 style={{
                   display: "flex",
-                  gap: "6px",
+                  gap: "5px",
                   paddingTop: "8px",
-                  borderTop: "1px solid #dfdfdf"
+                  borderTop: "1px solid #dfdfdf",
+                  flexWrap: "wrap"
                 }}
               >
                 <button
@@ -396,16 +494,42 @@ export const ProjectsWindow: React.FC = () => {
                     setActiveProject(p);
                   }}
                   style={{
-                    flex: 1,
+                    flex: "1 1 auto",
                     fontSize: "11px",
                     fontWeight: "bold",
                     backgroundColor: "#ffe500",
                     color: "#000",
-                    padding: "4px 8px"
+                    padding: "4px 8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "4px"
                   }}
                 >
-                  ⚡ Live Architecture & Playground
+                  ⚡ Simulator & Spec
                 </button>
+                {p.demoUrl && (
+                  <a
+                    href={p.demoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bevel-button"
+                    onClick={() => retroAudio.playClick(1.1)}
+                    style={{
+                      textDecoration: "none",
+                      color: "#000",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      backgroundColor: "#39ff14",
+                      padding: "4px 8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "3px"
+                    }}
+                  >
+                    🚀 Live App
+                  </a>
+                )}
                 {p.githubUrl && (
                   <a
                     href={p.githubUrl}
@@ -420,7 +544,7 @@ export const ProjectsWindow: React.FC = () => {
                       padding: "4px 8px",
                       display: "flex",
                       alignItems: "center",
-                      gap: "4px"
+                      gap: "3px"
                     }}
                   >
                     🐙 Repo
@@ -507,6 +631,105 @@ export const ProjectsWindow: React.FC = () => {
                   {activeProject.subtitle}
                 </div>
               </div>
+
+              {/* Direct Deployment & Repo Action Bar */}
+              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+                {activeProject.demoUrl && (
+                  <a
+                    href={activeProject.demoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bevel-button"
+                    onClick={() => retroAudio.playClick(1.2)}
+                    style={{
+                      textDecoration: "none",
+                      color: "#000",
+                      backgroundColor: "#39ff14",
+                      fontWeight: "bold",
+                      fontSize: "12px",
+                      padding: "6px 12px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}
+                  >
+                    🚀 Open Live Deployment ({activeProject.demoUrl.replace("https://", "").replace(/\/$/, "")})
+                  </a>
+                )}
+                {activeProject.githubUrl && (
+                  <a
+                    href={activeProject.githubUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bevel-button"
+                    onClick={() => retroAudio.playClick(1.0)}
+                    style={{
+                      textDecoration: "none",
+                      color: "#000",
+                      backgroundColor: "#e8e8e8",
+                      fontWeight: "bold",
+                      fontSize: "12px",
+                      padding: "6px 12px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}
+                  >
+                    🐙 View GitHub Repository
+                  </a>
+                )}
+              </div>
+
+              {/* Platform Specific Deployment Notes */}
+              {activeProject.id === "proj-relay-ai" && (
+                <div style={{ backgroundColor: "#e6f7ff", border: "1px solid #1890ff", padding: "6px 10px", fontSize: "11px", color: "#0050b3", lineHeight: 1.4 }}>
+                  ℹ️ <b>VS Code Extension:</b> An interactive web simulation is deployed at{" "}
+                  <a href="https://relay-jofk.vercel.app/" target="_blank" rel="noreferrer" style={{ color: "#0050b3", fontWeight: "bold" }}>
+                    relay-jofk.vercel.app
+                  </a>
+                  . Full VS Code extension unpackaged / VSIX available in the GitHub repository.
+                </div>
+              )}
+
+              {activeProject.id === "proj-prompt-compiler" && (
+                <div style={{ backgroundColor: "#f6ffed", border: "1px solid #52c41a", padding: "6px 10px", fontSize: "11px", color: "#237804", lineHeight: 1.4 }}>
+                  ℹ️ <b>Google Chrome Extension:</b> An interactive web simulation is deployed at{" "}
+                  <a href="https://prompt-compiler-five.vercel.app/" target="_blank" rel="noreferrer" style={{ color: "#237804", fontWeight: "bold" }}>
+                    prompt-compiler-five.vercel.app
+                  </a>
+                  . To install into Chrome, load unpackaged extension files from the GitHub repository.
+                </div>
+              )}
+
+              {activeProject.id === "proj-credit-card" && (
+                <div style={{ backgroundColor: "#fff7e6", border: "1px solid #fa8c16", padding: "6px 10px", fontSize: "11px", color: "#d46b08", lineHeight: 1.4 }}>
+                  ℹ️ <b>ML Production Deployment:</b> Machine learning pipeline and interactive scoring web UI deployed live on{" "}
+                  <a href="https://credit-card-fraud-detection-by-shashikiran.streamlit.app/" target="_blank" rel="noreferrer" style={{ color: "#d46b08", fontWeight: "bold" }}>
+                    Streamlit Cloud
+                  </a>
+                  .
+                </div>
+              )}
+
+              {activeProject.id === "proj-edurag" && (
+                <div style={{ backgroundColor: "#f9f0ff", border: "1px solid #722ed1", padding: "6px 10px", fontSize: "11px", color: "#531dab", lineHeight: 1.4 }}>
+                  ℹ️ <b>Educational RAG Microservice:</b> Containerized vector document retrieval API deployed live on{" "}
+                  <a href="https://edu-rag.onrender.com/" target="_blank" rel="noreferrer" style={{ color: "#531dab", fontWeight: "bold" }}>
+                    Render
+                  </a>
+                  .
+                </div>
+              )}
+
+              {activeProject.id === "proj-fitphile" && (
+                <div style={{ backgroundColor: "#e6fffb", border: "1px solid #13c2c2", padding: "6px 10px", fontSize: "11px", color: "#006d75", lineHeight: 1.4 }}>
+                  ℹ️ <b>Full-Stack Health Platform:</b> Responsive workout logging & health telemetry platform deployed live on{" "}
+                  <a href="https://fitphile.onrender.com/" target="_blank" rel="noreferrer" style={{ color: "#006d75", fontWeight: "bold" }}>
+                    Render
+                  </a>
+                  .
+                </div>
+              )}
 
               <div
                 style={{
@@ -714,6 +937,321 @@ export const ProjectsWindow: React.FC = () => {
                 </div>
               )}
 
+              {activeProject.id === "proj-prompt-compiler" && (
+                <div
+                  className="bevel-sunken"
+                  style={{
+                    backgroundColor: "#111",
+                    color: "#39ff14",
+                    padding: "10px",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: "11px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px"
+                  }}
+                >
+                  <div style={{ color: "#ffe500", fontWeight: "bold" }}>
+                    ★ INTERACTIVE PROMPT COMPILER SIMULATOR:
+                  </div>
+
+                  <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}>
+                    <span>Preset Directives:</span>
+                    {[
+                      { label: "SQL Optimizer", prompt: "Write an index optimization plan for multi-tenant PostgreSQL queries where org_id and status are queried together." },
+                      { label: "Bug Resolver", prompt: "Diagnose why database connection pool is exhausting under 500 rps and eliminate socket leaks." },
+                      { label: "FastAPI Spec", prompt: "Build a production-grade FastAPI microservice endpoint with strict Pydantic v2 validation and JWT auth." }
+                    ].map((item) => (
+                      <button
+                        key={item.label}
+                        type="button"
+                        onClick={() => {
+                          retroAudio.playClick(1.1);
+                          setRawPromptInput(item.prompt);
+                          setCompiledPromptResult(null);
+                        }}
+                        style={{
+                          background: rawPromptInput === item.prompt ? "#ffe500" : "#222",
+                          color: rawPromptInput === item.prompt ? "#000" : "#fff",
+                          border: "1px solid #ffe500",
+                          padding: "2px 6px",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-pixel)",
+                          fontSize: "10px"
+                        }}
+                      >
+                        ⚡ {item.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <span style={{ color: "#fff", fontSize: "10px" }}>Raw Prompt Input:</span>
+                    <textarea
+                      value={rawPromptInput}
+                      onChange={(e) => {
+                        setRawPromptInput(e.target.value);
+                        setCompiledPromptResult(null);
+                      }}
+                      rows={3}
+                      style={{
+                        backgroundColor: "#000",
+                        color: "#39ff14",
+                        border: "1px solid #333",
+                        padding: "6px",
+                        fontFamily: "var(--font-pixel)",
+                        fontSize: "10px",
+                        resize: "vertical"
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={runPromptCompiler}
+                    style={{
+                      background: "#ffe500",
+                      color: "#000",
+                      fontWeight: "bold",
+                      border: "none",
+                      padding: "5px 12px",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-pixel)"
+                    }}
+                  >
+                    ▶ COMPILE & STRUCTURE PROMPT
+                  </button>
+
+                  {compiledPromptResult && (
+                    <div style={{ backgroundColor: "#000", padding: "8px", border: "1px dashed #39ff14", display: "flex", flexDirection: "column", gap: "6px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", color: "#ffe500" }}>
+                        <span>Token Compression: {compiledPromptResult.originalTokens} tokens ➔ {compiledPromptResult.compiledTokens} tokens</span>
+                        <span style={{ color: "#39ff14", fontWeight: "bold" }}>{compiledPromptResult.reduction} Tokens Saved</span>
+                      </div>
+                      <pre
+                        style={{
+                          margin: 0,
+                          backgroundColor: "#0a0a0a",
+                          padding: "8px",
+                          color: "#38bdf8",
+                          whiteSpace: "pre-wrap",
+                          fontSize: "10px",
+                          lineHeight: "1.4",
+                          border: "1px solid #222"
+                        }}
+                      >
+                        {compiledPromptResult.output}
+                      </pre>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeProject.id === "proj-credit-card" && (
+                <div
+                  className="bevel-sunken"
+                  style={{
+                    backgroundColor: "#111",
+                    color: "#39ff14",
+                    padding: "10px",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: "11px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px"
+                  }}
+                >
+                  <div style={{ color: "#ffe500", fontWeight: "bold" }}>
+                    ★ REAL-TIME MACHINE LEARNING TRANSACTION ANOMALY SCORER:
+                  </div>
+
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <span style={{ color: "#fff" }}>Transaction Amount: <b style={{ color: "#ffe500" }}>${fraudAmount.toLocaleString()}</b></span>
+                      <input
+                        type="range"
+                        min="10"
+                        max="8000"
+                        step="50"
+                        value={fraudAmount}
+                        onChange={(e) => {
+                          setFraudAmount(parseInt(e.target.value, 10));
+                          setFraudResult(null);
+                        }}
+                        style={{ accentColor: "#ffe500" }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <span style={{ color: "#fff" }}>Anomaly Risk Factors:</span>
+                      <label style={{ display: "flex", alignItems: "center", gap: "4px", color: isOffshore ? "#ff4444" : "#ccc", cursor: "pointer", fontSize: "10px" }}>
+                        <input
+                          type="checkbox"
+                          checked={isOffshore}
+                          onChange={(e) => {
+                            setIsOffshore(e.target.checked);
+                            setFraudResult(null);
+                          }}
+                        />
+                        <span>Foreign High-Risk IP Proxy</span>
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: "4px", color: isBurstVelocity ? "#ff4444" : "#ccc", cursor: "pointer", fontSize: "10px" }}>
+                        <input
+                          type="checkbox"
+                          checked={isBurstVelocity}
+                          onChange={(e) => {
+                            setIsBurstVelocity(e.target.checked);
+                            setFraudResult(null);
+                          }}
+                        />
+                        <span>Burst Velocity (&gt; 5 tx / min)</span>
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: "4px", color: isMidnight ? "#ffaa00" : "#ccc", cursor: "pointer", fontSize: "10px" }}>
+                        <input
+                          type="checkbox"
+                          checked={isMidnight}
+                          onChange={(e) => {
+                            setIsMidnight(e.target.checked);
+                            setFraudResult(null);
+                          }}
+                        />
+                        <span>Off-Hours Timestamp (03:42 AM)</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={runFraudDetector}
+                    style={{
+                      background: "#ffe500",
+                      color: "#000",
+                      fontWeight: "bold",
+                      border: "none",
+                      padding: "5px 12px",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-pixel)"
+                    }}
+                  >
+                    ▶ RUN ML ANOMALY INFERENCE (XGBoost + SMOTE)
+                  </button>
+
+                  {fraudResult && (
+                    <div
+                      style={{
+                        backgroundColor: "#000",
+                        padding: "8px",
+                        border: fraudResult.status === "FLAGGED_FRAUD" ? "1px solid #ff3333" : "1px solid #39ff14"
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <span style={{ color: fraudResult.status === "FLAGGED_FRAUD" ? "#ff3333" : "#39ff14", fontWeight: "bold" }}>
+                          {fraudResult.status === "FLAGGED_FRAUD" ? "🚨 BLOCKED: HIGH-CONFIDENCE FRAUD ANOMALY" : "✅ APPROVED: NORMAL TRANSACTION"}
+                        </span>
+                        <span style={{ color: "#ffe500" }}>Inference: {fraudResult.inferenceMs}ms</span>
+                      </div>
+                      <div style={{ marginTop: "4px", color: "#fff", fontSize: "10px" }}>
+                        Anomaly Probability: <b style={{ color: fraudResult.status === "FLAGGED_FRAUD" ? "#ff4444" : "#39ff14" }}>{(fraudResult.riskScore * 100).toFixed(1)}%</b>
+                      </div>
+                      <div style={{ marginTop: "4px", color: "#aaa", fontSize: "9px" }}>
+                        Feature Telemetry:
+                        {fraudResult.flags.map((fl, idx) => (
+                          <div key={idx} style={{ color: fraudResult.status === "FLAGGED_FRAUD" ? "#ffaa00" : "#39ff14" }}>
+                            • {fl}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeProject.id === "proj-fitphile" && (
+                <div
+                  className="bevel-sunken"
+                  style={{
+                    backgroundColor: "#111",
+                    color: "#39ff14",
+                    padding: "10px",
+                    fontFamily: "var(--font-pixel)",
+                    fontSize: "11px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px"
+                  }}
+                >
+                  <div style={{ color: "#ffe500", fontWeight: "bold" }}>
+                    ★ FITPHILE TELEMETRY & NUTRITION ENGINE:
+                  </div>
+
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                    <span>Target Directive:</span>
+                    {(["Hypertrophy", "Fat Loss", "Endurance"] as const).map((g) => (
+                      <button
+                        key={g}
+                        type="button"
+                        onClick={() => {
+                          retroAudio.playClick(1.1);
+                          setFitnessGoal(g);
+                        }}
+                        style={{
+                          background: fitnessGoal === g ? "#ffe500" : "#222",
+                          color: fitnessGoal === g ? "#000" : "#fff",
+                          border: "1px solid #ffe500",
+                          padding: "2px 8px",
+                          cursor: "pointer",
+                          fontFamily: "var(--font-pixel)",
+                          fontSize: "10px"
+                        }}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span style={{ color: "#fff" }}>Bodyweight: <b style={{ color: "#ffe500" }}>{userWeightKg} kg</b></span>
+                    <input
+                      type="range"
+                      min="50"
+                      max="110"
+                      value={userWeightKg}
+                      onChange={(e) => setUserWeightKg(parseInt(e.target.value, 10))}
+                      style={{ flex: 1, accentColor: "#ffe500" }}
+                    />
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={runFitPhileCalc}
+                    style={{
+                      background: "#ffe500",
+                      color: "#000",
+                      fontWeight: "bold",
+                      border: "none",
+                      padding: "5px 12px",
+                      cursor: "pointer",
+                      fontFamily: "var(--font-pixel)"
+                    }}
+                  >
+                    ▶ GENERATE WORKOUT & NUTRITIONAL PROFILE
+                  </button>
+
+                  {fitphilePlan && (
+                    <div style={{ backgroundColor: "#000", padding: "8px", border: "1px dashed #39ff14", display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <div style={{ color: "#ffe500", fontWeight: "bold" }}>Daily Caloric Budget: {fitphilePlan.calories} kcal</div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "4px", fontSize: "10px", color: "#38bdf8" }}>
+                        <div>🥩 Protein: <b>{fitphilePlan.protein}g</b></div>
+                        <div>🍚 Carbs: <b>{fitphilePlan.carbs}g</b></div>
+                        <div>🥑 Fats: <b>{fitphilePlan.fats}g</b></div>
+                      </div>
+                      <div style={{ marginTop: "4px", color: "#fff", fontSize: "10px" }}>
+                        Recommended Protocol: <b style={{ color: "#39ff14" }}>{fitphilePlan.split}</b>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {activeProject.id === "proj-nirmaan" && (
                 <div
                   className="bevel-sunken"
@@ -846,7 +1384,7 @@ export const ProjectsWindow: React.FC = () => {
         }}
       >
         <span>{filteredProjects.length} authentic project(s) ready</span>
-        <span>PostgreSQL · Testcontainers · AWS Bedrock</span>
+        <span>Vercel · Render · Streamlit · AWS Bedrock · GitHub</span>
       </div>
     </div>
   );

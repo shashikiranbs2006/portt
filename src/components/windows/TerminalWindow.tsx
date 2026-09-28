@@ -260,7 +260,7 @@ export const TerminalWindow: React.FC = () => {
             <div>• Backend & Agentic AI Engineer | CSE (AI/ML) @ BMSIT (CGPA 8.7/10)</div>
             <div>• KlarDataLabs Intern: Agent orchestration with Strands Agents SDK & AWS Bedrock</div>
             <div>• NIRMAAN 2026 Lead Organiser: ₹1,00,000 prize pool, 200+ participants, 52 sponsors</div>
-            <div>• Projects: Multi-Tenant Ticketing Platform, Relay AI Assistant, EduRAG</div>
+            <div>• Shipped Projects: The Relay (VS Code Ext), Yoru Chatbot / EduRAG, Prompt Compiler, Credit Card Fraud Detection, FitPhile</div>
             <div style={{ marginTop: "6px" }}>
               <a
                 href={portfolioData.contact.resumeUrl}
