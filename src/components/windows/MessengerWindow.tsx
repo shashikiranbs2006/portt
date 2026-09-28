@@ -12,12 +12,12 @@ const getTime = () => new Date().toLocaleTimeString([], { hour: "2-digit", minut
 const SHASHI_RESPONSES: Record<string, string[]> = {
   "hi|hello|hey|yo|sup": [
     "hey!! welcome to MSN Messenger 👋 I'm Shashi — 3rd year CSE (AI/ML) @ BMSIT. Ask me anything about my projects, my KlarDataLabs internship, or hiring for Summer 2027!",
-    "heyyy!! glad you found the messenger. What are you looking to chat about? Systems architecture, multi-tenant isolation, or hackathons?",
+    "heyyy!! glad you found the messenger. What are you looking to chat about? The Relay VS Code extension, Yoru Chatbot, or hackathons?",
     "Yo! Welcome to the cyber deck 🌐 Feel free to ask about my shipped work or hit the Nudge button!"
   ],
   "who are you|who r u|introduce yourself|bio": [
     "I'm Shashikiran B S! 3rd year CSE (AI/ML) at BMSIT, Bengaluru (CGPA 8.7/10). Currently interning at KlarDataLabs (Zurich, Remote) building agentic workflows with AWS Bedrock. Seeking Summer 2027 SWE Intern (AMTS) roles!",
-    "Backend & Agentic AI engineer. I build multi-tenant query systems by day and retro OS gig-poster portfolios by night!"
+    "Full-Stack & AI engineer. I build developer tools, AI workflows and retro OS portfolios!"
   ],
   "bmsit|college|cgpa|education|degree|gpa": [
     "I am pursuing B.E. Computer Science & Engineering (AI/ML) at BMS Institute of Technology & Management (BMSIT), Bengaluru. Current CGPA: 8.7 / 10.0, graduating May 2028!",
@@ -37,43 +37,37 @@ const SHASHI_RESPONSES: Record<string, string[]> = {
   ],
   "resume|cv|pdf": [
     "You can download my verified 1-page resume directly from /resume.pdf or click 'Download Resume' in the Meet The Artist window!",
-    "Check out my resume at /resume.pdf — it highlights my Multi-Tenant architecture, Relay AI router, and EduRAG service."
-  ],
-  "multi-tenant|ticket|postgres|database": [
-    "My Multi-Tenant Ticketing Platform is built on FastAPI & PostgreSQL with a shared-schema model across 9 relational tables. Tenant isolation happens at the query-builder level via request-scoped org_id. Tested using Testcontainers in CI so cross-tenant leakage fails by construction!",
-    "Check out the interactive simulator in the Projects window! You can toggle cross-tenant attacks and see the 403 Forbidden query guard in action."
+    "Check out my resume at /resume.pdf — it highlights The Relay, Yoru Chatbot, Prompt Compiler, Credit Card Fraud Detection, and FitPhile."
   ],
   "relay|llm|agent|bedrock|router": [
     "Relay is an AI Coding Assistant I built with a priority queue request router over multiple LLM backends. When a provider gets rate-limited (HTTP 429), it automatically compresses active conversation context and hands off state to AWS Bedrock in ~118ms! Simulation live at relay-jofk.vercel.app.",
-    "Relay is built as a VS Code extension with a deployed web simulation playground. Check it out in the Projects window!"
+    "Relay is built as a VS Code extension with a deployed web simulation playground. Open the Projects window to launch it!"
   ],
   "edurag|yoru|rag|chromadb|retrieval": [
     "Yoru Chatbot (EduRAG) is a document retrieval microservice and educational assistant over 500+ pages of curriculum material. It uses ChromaDB for vector embeddings and BM25 reranking with a sub-2.0s SLA latency. Deployed live on Render at edu-rag.onrender.com!"
   ],
   "prompt|compiler|prompt compiler|chrome": [
     "Prompt Compiler is a Google Chrome extension & web tool that parses, structures, and compiles raw prompts into optimized LLM directives with token reduction (-34%) and XML templating! Simulation live at prompt-compiler-five.vercel.app.",
-    "Try the interactive Prompt Compiler simulator in the Projects window to see how messy prompts get transformed into structured system directives!"
+    "You can find Prompt Compiler in the Projects window and launch the live app directly!"
   ],
   "credit card|fraud|fraud detection|ml|machine learning": [
-    "My Credit Card Fraud Detection platform uses machine learning (XGBoost, SMOTE, Scikit-Learn) to identify fraudulent transactions in imbalanced financial data. Deployed live on Streamlit Cloud at credit-card-fraud-detection-by-shashikiran.streamlit.app!",
-    "Check out the real-time anomaly scorer in the Projects window or test the live Streamlit app!"
+    "My Credit Card Fraud Detection platform uses machine learning (XGBoost, SMOTE, Scikit-Learn) to identify fraudulent transactions in imbalanced financial data. Deployed live on Streamlit Cloud at credit-card-fraud-detection-by-shashikiran.streamlit.app!"
   ],
   "fitphile|fitness|workout|nutrition": [
-    "FitPhile is a full-stack health & workout tracking platform deployed live on Render at fitphile.onrender.com! It logs workout splits, tracks macronutrient telemetry, and monitors progress over time.",
-    "Open the Projects window to test the FitPhile nutrition and workout split calculator!"
+    "FitPhile is a full-stack health & workout tracking platform deployed live on Render at fitphile.onrender.com! It logs workout splits, tracks macronutrient telemetry, and monitors progress over time."
   ],
   "nirmaan|hackathon|bmsit": [
     "I was the Lead Organiser for NIRMAAN 2026, BMSIT's 24-hour flagship hackathon! Managed a ₹3,00,000 budget across 52 sponsor companies, 200+ participants, and ₹1,00,000 prize pool."
   ],
   "skills|stack|tech": [
-    "Core stack: Python, FastAPI, PostgreSQL, SQL, TypeScript, React, Docker, Testcontainers, AWS Bedrock, Scikit-Learn, ChromaDB, and pytest."
+    "Core stack: Python, TypeScript, React, FastAPI, PostgreSQL, SQL, AWS Bedrock, Strands Agents SDK, Scikit-Learn, ChromaDB, Docker, and Git."
   ],
   "nudge": [
     "📳 *BUZZZZ!* Whoa, that was a heavy nudge! I'm awake, I'm awake!"
   ],
   "default": [
-    "Haha interesting question! Feel free to ask about my Multi-Tenant Ticketing Platform, Relay AI router, or email me directly at shashibs238@gmail.com!",
-    "That's cool! Check out the interactive playgrounds in the Projects window or ping me at shashibs238@gmail.com ⚡",
+    "Haha interesting question! Feel free to ask about The Relay, Yoru Chatbot, Prompt Compiler, Credit Card Fraud Detection, or FitPhile!",
+    "Check out the live deployments in the Projects window or ping me at shashibs238@gmail.com ⚡",
     "Catch me on GitHub at github.com/shashikiranbs2006 or LinkedIn at linkedin.com/in/shashikiran-bs!"
   ]
 };
@@ -91,8 +85,8 @@ function getShashiReply(input: string): string {
 }
 
 const QUICK_PROMPTS = [
-  "🏢 Multi-Tenant architecture",
-  "⚡ Relay LLM router failover",
+  "🤖 The Relay VS Code extension",
+  "⚡ Prompt Compiler Chrome ext",
   "💼 Why hire for Summer 2027?",
   "🏷️ NIRMAAN 2026 Hackathon",
   "📄 How can I view your resume?",
@@ -295,7 +289,7 @@ export const MessengerWindow: React.FC = () => {
           justifyContent: "space-between"
         }}
       >
-        <span>💡 Ask about multi-tenant architecture, LLM routers, or internships!</span>
+        <span>💡 Ask about The Relay, Chrome extensions, ML, or internships!</span>
         <span style={{ color: "#008000", fontWeight: "bold" }}>MSN v7.5</span>
       </div>
 

@@ -69,7 +69,7 @@ export const AboutWindow: React.FC = () => {
       date: "SUMMER 2027",
       city: "PAN-INDIA / GLOBAL",
       venue: "SOFTWARE ENGINEER INTERN (AMTS)",
-      act: "Full-Time Internship Role (Relational Schema & Systems)",
+      act: "Software Engineer Intern Role (AI & Full-Stack Systems)",
       status: "BOOKING NOW",
       statusColor: "#ff3b30",
       statusBg: "#ffe500"

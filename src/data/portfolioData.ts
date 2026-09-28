@@ -78,16 +78,16 @@ export const portfolioData: PortfolioData = {
   user: {
     name: "Shashikiran B S",
     alias: "shashikiran.exe",
-    role: "Backend & Agentic AI Engineer",
-    tagline: "CSE (AI/ML) @ BMSIT · Agentic AI Intern @ KlarDataLabs · Shipped multi-tenant systems & LLM tooling.",
+    role: "AI & Full-Stack Engineer",
+    tagline: "CSE (AI/ML) @ BMSIT · Agentic AI Intern @ KlarDataLabs · Built VS Code & Chrome extensions, RAG & ML platforms.",
     location: "Bengaluru, India",
     education: "B.E. Computer Science & Engineering (AI/ML) — BMS Institute of Technology & Management",
     cgpa: "8.7 / 10.0 (Graduating May 2028)",
     avatarUrl: "/avatar.jpg",
     bio: [
       "Third-year B.E. Computer Science & Engineering (AI/ML) student at BMSIT, Bengaluru (CGPA 8.7/10).",
-      "Backend-focused engineer with shipped work in multi-tenant architectures, agentic orchestration, testing infrastructure, and developer tooling.",
-      "Comfortable navigating ambiguous problems and owning services end-to-end—from relational schema design and query isolation to deployment pipelines and CI."
+      "Software engineer with shipped work in agentic AI orchestration, developer tooling, VS Code & Chrome extensions, and full-stack platforms.",
+      "Comfortable navigating ambiguous problems and owning services end-to-end—from architecture and ML pipelines to frontend UX and deployment."
     ]
   },
   stickyNote: {
@@ -98,26 +98,26 @@ export const portfolioData: PortfolioData = {
       { label: "github/shashikiranbs2006", url: "https://github.com/shashikiranbs2006" },
       { label: "in/shashikiran-bs", url: "https://linkedin.com/in/shashikiran-bs" }
     ],
-    quote: "Cross-organization access should fail by construction, not by convention."
+    quote: "Build software that solves real friction, cleanly and reliably."
   },
   likesAndDislikes: {
     likes: [
-      "Multi-tenant isolation & clean schemas",
-      "FastAPI & strict type safety",
+      "Clean architecture & type safety",
+      "FastAPI, React & TypeScript",
       "Strands Agents SDK & AWS Bedrock",
-      "Testcontainers & CI merge gates",
-      "PostgreSQL indexing & query tuning",
+      "Vector search & RAG retrieval",
+      "Building practical developer tooling",
       "Hackathons (Organised NIRMAAN 2026)",
       "Pixel-perfect retro interfaces",
-      "Late-night systems engineering"
+      "Late-night engineering flow"
     ],
     dislikes: [
-      "Cross-tenant data leaks",
+      "Bloated dependencies & unneeded complexity",
       "Skipping unit/integration tests",
-      "Overengineered microservices without schema",
-      "Unindexed foreign key queries",
-      "Generic template code without personality",
+      "Unoptimized, slow API endpoints",
       "Silent pipeline failures",
+      "Generic template code without personality",
+      "Broken live deployments",
       "Cold pizza during 24-hr hackathons",
       "Flaky test suites"
     ]
@@ -126,9 +126,9 @@ export const portfolioData: PortfolioData = {
     { id: "1", name: "Dev Laptop", emoji: "💻", detail: "Arch / Linux environment & Docker" },
     { id: "2", name: "AWS Bedrock", emoji: "⚡", detail: "Agent orchestration sandbox" },
     { id: "3", name: "Hackathon Badge", emoji: "🏷️", detail: "NIRMAAN 2026 Lead Organiser" },
-    { id: "4", name: "Testcontainers", emoji: "🐳", detail: "Postgres integration testing" },
-    { id: "5", name: "Sticky Notes", emoji: "📝", detail: "Database schema wireframing" },
-    { id: "6", name: "Espresso Mug", emoji: "☕", detail: "Fuel for 24-hr sprint sessions" }
+    { id: "4", name: "VS Code & Git", emoji: "🛠️", detail: "Extension & tooling development" },
+    { id: "5", name: "Sticky Notes", emoji: "📝", detail: "Architecture & flow wireframing" },
+    { id: "6", name: "Espresso Mug", emoji: "☕", detail: "Fuel for sprint sessions" }
   ],
   experience: [
     {
@@ -147,8 +147,8 @@ export const portfolioData: PortfolioData = {
       location: "Bengaluru, India",
       period: "Aug 2024 – Present",
       highlights: [
-        "Lead Organiser for NIRMAAN 2026, a 24-hour hackathon with a Rs. 1,00,000 prize pool, 200+ participants, and Rs. 3,00,000 budget across 52 sponsor companies.",
-        "Manage finances for 100+ member community; conducted DSA, Python, and ML workshops for batches of 30–40 students."
+        "Lead Organiser for NIRMAAN 2026, a 24-hour hackathon with a Rs. 1,00,000 prize pool, 200+ participants, sponsorship outreach to 52 companies, and a ~Rs. 3,00,000 budget.",
+        "Manage finances for a 100+ member technical community; conduct DSA, Python, and ML workshops for batches of 30–40 students."
       ]
     }
   ],
@@ -212,30 +212,6 @@ export const portfolioData: PortfolioData = {
       demoUrl: "https://fitphile.onrender.com/",
       githubUrl: "https://github.com/shashikiranbs2006/fitphile",
       featured: true
-    },
-    {
-      id: "proj-multi-tenant",
-      title: "Multi-Tenant Ticketing Platform",
-      subtitle: "Enterprise request-scoped tenant isolation & query routing",
-      category: "Backend & Systems",
-      description: "Designed a shared-schema multi-tenant data model across 9 relational tables with org_id scoping, composite indexes, and strict role-based access control.",
-      longDescription: "Engineered query-level request-scoped isolation ensuring cross-organization access fails by construction, not by convention. Included pagination, filtering, sorting, and full audit logging. Rigorously tested with Testcontainers (Postgres) in GitHub Actions CI with zero merge on failing tests.",
-      tech: ["Python", "FastAPI", "PostgreSQL", "Docker", "Testcontainers", "GitHub Actions"],
-      demoUrl: "https://github.com/shashikiranbs2006",
-      githubUrl: "https://github.com/shashikiranbs2006",
-      featured: false
-    },
-    {
-      id: "proj-nirmaan",
-      title: "NIRMAAN 2026 Hackathon Hub",
-      subtitle: "24-hr Hackathon orchestration platform & participant portal",
-      category: "Tooling",
-      description: "Hackathon management platform coordinating 200+ participants, ₹1,00,000 prize pool, and 52 sponsor companies.",
-      longDescription: "Centralized submission verification, team matching, live judging rubric calculation, and finance tracking system for BMSIT's flagship annual technical symposium.",
-      tech: ["TypeScript", "FastAPI", "PostgreSQL", "TailwindCSS"],
-      demoUrl: "https://github.com/shashikiranbs2006",
-      githubUrl: "https://github.com/shashikiranbs2006",
-      featured: false
     }
   ],
   skills: [
@@ -244,16 +220,16 @@ export const portfolioData: PortfolioData = {
       items: ["Python", "SQL", "JavaScript", "TypeScript", "C", "C++ (fundamentals)"]
     },
     {
-      category: "Backend & Systems",
-      items: ["FastAPI", "PostgreSQL", "REST API Design", "Relational Database Design", "Multi-Tenant Isolation", "Access Control"]
+      category: "Full-Stack & Systems",
+      items: ["FastAPI", "React", "PostgreSQL", "REST API Design", "Relational Database Design", "Access Control"]
     },
     {
-      category: "Testing & Infrastructure",
-      items: ["pytest", "Testcontainers Postgres", "GitHub Actions CI", "Docker", "Git"]
+      category: "AI, ML & Tooling",
+      items: ["Strands Agents SDK", "AWS Bedrock", "ChromaDB", "Scikit-Learn", "VS Code API", "Chrome Extension API"]
     },
     {
-      category: "Agentic AI & Cloud",
-      items: ["Strands Agents SDK", "AWS Bedrock", "EC2 (fundamentals)", "ChromaDB", "LLM Tooling"]
+      category: "DevOps & Infrastructure",
+      items: ["Docker", "Git", "GitHub Actions CI", "pytest", "Linux"]
     },
     {
       category: "Core Computer Science",

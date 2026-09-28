@@ -519,7 +519,7 @@ export const IDBadgeWindow: React.FC = () => {
 
               {/* Skill chips */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
-                {["FastAPI", "PostgreSQL", "Docker", "AWS Bedrock", "Testcontainers", "React 19", "TypeScript", "LLM Routing", "RAG", "Multi-Tenant SaaS"].map((skill, i) => (
+                {["FastAPI", "PostgreSQL", "Docker", "AWS Bedrock", "Scikit-Learn", "React 19", "TypeScript", "LLM Tooling", "RAG", "Chrome Ext"].map((skill, i) => (
                   <span
                     key={skill}
                     style={{

@@ -7,13 +7,13 @@ import { retroAudio } from "../../utils/audioSystem";
 // Contextual, witty messages referencing real portfolio features
 const MESSAGES: string[] = [
   "It looks like you're evaluating a developer! I can help you draft a hire request. 📋",
-  "👀 Psst — open the PROJECTS window. There's an interactive multi-tenant SQL attack simulator in there.",
+  "👀 Psst — open the PROJECTS window. You can launch live deployed apps for The Relay, Yoru Chatbot, Prompt Compiler & more!",
   "Fun fact: this whole OS was built by one person. One chaotic, over-engineered person. Hire them.",
   "⚡ Have you tried the MS Paint window? You can stamp riso-print art on a canvas. It slaps.",
   "I see you haven't clicked CONTACT yet. Shall I schedule an interview on your behalf? I'm very persuasive.",
-  "🧠 The Agentic AI projects window has a live LLM router simulator. It's not a screenshot. It actually routes.",
+  "🧠 Check out The Relay and Prompt Compiler in the Projects window — both have live deployed simulations!",
   "Between you and me, the Minesweeper game has a secret easter egg. Win it to find out. 👀",
-  "RAG-based PDF Q&A, multi-tenant SaaS, LLM routing... Shashi builds things that actually *do* things.",
+  "VS Code extensions, Chrome extensions, RAG retrieval & ML fraud scoring... Shashi builds things that actually work.",
   "🎸 Check the ABOUT window — there's a full tour schedule of Shashi's 2026–2027 career gigs.",
   "I've been a paperclip since 1997. I've seen a LOT of portfolios. This one is different. Trust me.",
   "Recruiter tip: The MESSENGER window has quick-prompt shortcuts. You can ask me anything. Well, not me. The other bot.",

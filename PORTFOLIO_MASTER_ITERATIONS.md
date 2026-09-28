@@ -8,25 +8,14 @@
 
 ## 🚀 Live Iterations & Deployment Record
 
-### Phase I: Authentic Core Engineering & Data
-- [x] **Iter 01**: Replaced generic placeholder projects with authentic resume projects:
-  - *Multi-Tenant Ticketing Platform* (FastAPI, PostgreSQL, Docker, Testcontainers).
-  - *Relay – AI Coding Assistant* (TypeScript, React, multi-provider LLM priority queue).
-  - *EduRAG – Document Retrieval Service* (Python, ChromaDB, 500+ pages, <2s latency).
-  - *NIRMAAN 2026 Portal* (24-hr Hackathon orchestration platform, 200+ participants, ₹1L prize pool).
+### Phase I: Authentic Core Engineering & Resume Baseline
+- [x] **Iter 01**: Extracted Shashi's real CV from `Shashikiran_BS_Resume_Salesforce (1).pdf` using `pdfminer`:
+  - Verified BMSIT B.E. CSE (AI/ML) degree, 8.7 CGPA (expected May 2028).
+  - Verified KlarDataLabs Zurich internship (Agentic AI, AWS Bedrock, Strands Agents SDK).
+  - Verified Coding Club BMSIT Leadership (Treasurer & Core Member, NIRMAAN 2026 Lead Organiser, 200+ participants, ₹1L prize pool, 52 sponsors, ₹3L budget).
 - [x] **Iter 02**: Synchronized career milestones: KlarDataLabs Zurich (Remote) Agentic AI Intern & BMSIT Coding Club Core Member / Lead Organiser.
-- [x] **Iter 03**: Upgraded verified technical skills: Python, SQL, TypeScript, FastAPI, PostgreSQL, AWS Bedrock, Strands Agents SDK, Testcontainers, Docker.
-- [x] **Iter 04**: **Interactive Multi-Tenant Isolation Simulator** added directly into the project specs dialog:
-  - Dynamic tenant context switcher (`Org 101: Acme Corp`, `Org 202: Wayne Ent`, `Org 303: Cyberdyne`).
-  - Request-scoped query builder demonstration (`WHERE org_id = ...`) with composite index execution in 1.42ms.
-  - "Inject Cross-Tenant Header Attack" toggle demonstrating 403 Forbidden rejection before query execution.
-- [x] **Iter 05**: **Interactive LLM Provider Router Simulator** for Relay:
-  - Live simulation of primary Claude 3.5 Sonnet quota exhaustion (HTTP 429).
-  - Context compression pipeline reducing session payload from 4,820 to 1,190 tokens.
-  - Sub-120ms automatic failover handoff to AWS Bedrock sandbox.
-- [x] **Iter 06**: **Interactive Vector RAG Search Simulator** for EduRAG:
-  - Live ChromaDB query runner with semantic similarity scoring and sub-2.0s SLA latency validation.
-- [x] **Iter 07**: Verified PDF resume download wired directly to `/resume.pdf` with in-browser preview tab.
+- [x] **Iter 03**: Upgraded verified technical skills: Python, SQL, TypeScript, React, FastAPI, PostgreSQL, AWS Bedrock, Strands Agents SDK, Docker, Scikit-Learn.
+- [x] **Iter 07**: Verified PDF resume download wired directly to `/resume.pdf` with in-browser preview and download.
 - [x] **Iter 08**: Cleaned up React duplicate key warnings and resolved all TypeScript unused variable warnings.
 - [x] **Iter 09**: Fixed type definitions in `Clippy.tsx` to enforce strict `WindowId` typing.
 
@@ -92,11 +81,19 @@
   - **Credit Card Fraud Detection**: Real-time ML anomaly detection app deployed on Streamlit Cloud at `https://credit-card-fraud-detection-by-shashikiran.streamlit.app/` and repository at `https://github.com/shashikiranbs2006/credit-card-fraud-detection`.
   - **FitPhile**: Full-stack health & fitness tracking platform deployed on Render at `https://fitphile.onrender.com/` and repository at `https://github.com/shashikiranbs2006/fitphile`.
 - [x] **Iter 64**: Added prominent **🚀 Live App / Sim** action buttons on all project cards for instant one-click launch in new browser tabs.
-- [x] **Iter 65**: Built 3 brand-new interactive in-OS simulators:
-  - **Interactive Prompt Compiler Simulator**: Live token reduction telemetry (-36%) and structured XML prompt compilation.
-  - **Real-Time ML Fraud Anomaly Scorer**: Interactive transaction parameter knobs with XGBoost + SMOTE inference, risk gauge, and decision telemetry.
-  - **FitPhile Macro & Telemetry Calculator**: Custom caloric expenditure, protein/carb/fat split, and training split generator.
-- [x] **Iter 66**: Synchronized Terminal (`cat resume`, `projects`), MSN Messenger responses, and OS status bar with the authentic project portfolio.
+- [x] **Iter 65**: Synchronized Terminal (`cat resume`, `projects`), MSN Messenger responses, and OS status bar with the authentic project portfolio.
+
+### Phase VIII: Extensive Cleanup & De-Junking Session (Authenticity & Intentionality)
+- [x] **Iter 66**: **Purged All Mock Simulators & Gimmicks**:
+  - Removed all 700+ lines of toy simulators (attack simulators, rate limit resets, mock terminal traces, rubric sliders).
+  - Kept project cards clean, aesthetic, and functional with direct links to real live deployed apps/simulations and GitHub repositories.
+- [x] **Iter 67**: **De-coupled Software Stacks from Hackathon Organizing**:
+  - Clarified that **NIRMAAN 2026** is BMSIT's 24-hour flagship hackathon organized by Shashi as **Treasurer & Lead Organiser** (₹1L prize pool, 200+ participants, 52 sponsors, ₹3L budget).
+  - Permanently removed fabricated "FastAPI/Postgres portal" software project entry and mock rubric evaluation sliders.
+  - Placed NIRMAAN exclusively under Leadership & Experience (Coding Club, BMSIT).
+- [x] **Iter 68**: **Total Metadata & System Harmonization**:
+  - Cleaned `index.html` meta tags, OpenGraph previews, and keywords.
+  - Aligned Messenger chatbot knowledge base, Terminal commands (`cat resume`, `neofetch`, `skills`, `projects`), and ID badge to strictly reflect Shashi's authentic stack and real 5 deployed projects.
 
 ---
 

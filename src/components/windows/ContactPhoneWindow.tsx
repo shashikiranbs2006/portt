@@ -17,7 +17,7 @@ export const ContactPhoneWindow: React.FC = () => {
 
   const PRESET_MESSAGES = [
     "💼 Let's discuss Summer 2027 SWE Intern role!",
-    "⚡ Loved your multi-tenant isolation architecture!",
+    "⚡ Loved your Relay VS Code extension & projects!",
     "🔥 Awesome portfolio! Wanted to connect with you.",
     "☕ Free for a tech chat in Bengaluru?"
   ];

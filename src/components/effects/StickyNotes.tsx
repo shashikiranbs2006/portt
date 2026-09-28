@@ -40,7 +40,7 @@ const getInitialNotes = (): StickyNote[] => {
     },
     {
       id: "n2",
-      text: "TODO:\n- Multi-tenant isolation\n- LLM routing pipeline\n- Eat ramen 🍜",
+      text: "TODO:\n- Relay VS Code Ext\n- Prompt Compiler updates\n- Eat ramen 🍜",
       color: "#c8f7dc",
       x: Math.max(12, W - 190),
       y: isMobile ? H - 80 : Math.max(20, H - 220),

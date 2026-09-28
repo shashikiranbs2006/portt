@@ -41,8 +41,7 @@ const GIT_LOG_OUTPUT = (
 
     <div style={{ marginTop: "6px" }}><span style={{ color: "#f5a623" }}>commit 7d4a2f1</span></div>
     <div style={{ color: "#888" }}>Author: Shashikiran B S &lt;shashikiranbs2006@gmail.com&gt;</div>
-    <div style={{ color: "#888" }}>Date:   Wed Sep 25 2026</div>
-    <div style={{ color: "#ffe500", marginLeft: "8px" }}>feat: multi-tenant SQL isolation simulator + interactive RAG playground</div>
+    <div style={{ color: "#ffe500", marginLeft: "8px" }}>feat: integrate deployed projects: The Relay, Yoru Chatbot, Prompt Compiler, ML Fraud Scorer</div>
 
     <div style={{ marginTop: "6px" }}><span style={{ color: "#f5a623" }}>commit 1e9b5c8</span></div>
     <div style={{ color: "#888" }}>Date:   Tue Sep 24 2026</div>
@@ -80,11 +79,11 @@ const CURL_OUTPUT = (
       <div style={{ color: "#f472b6" }}>{"{"}</div>
       <div style={{ paddingLeft: "12px" }}>
         <div><span style={{ color: "#38bdf8" }}>"name"</span>: <span style={{ color: "#ffe500" }}>"Shashikiran B S"</span>,</div>
-        <div><span style={{ color: "#38bdf8" }}>"role"</span>: <span style={{ color: "#ffe500" }}>"Backend & Agentic AI Engineer"</span>,</div>
+        <div><span style={{ color: "#38bdf8" }}>"role"</span>: <span style={{ color: "#ffe500" }}>"AI & Full-Stack Engineer"</span>,</div>
         <div><span style={{ color: "#38bdf8" }}>"status"</span>: <span style={{ color: "#39ff14" }}>"AVAILABLE FOR SUMMER 2027"</span>,</div>
         <div><span style={{ color: "#38bdf8" }}>"cgpa"</span>: <span style={{ color: "#ffe500" }}>8.7</span>,</div>
-        <div><span style={{ color: "#38bdf8" }}>"stack"</span>: [<span style={{ color: "#ffe500" }}>"FastAPI"</span>, <span style={{ color: "#ffe500" }}>"PostgreSQL"</span>, <span style={{ color: "#ffe500" }}>"AWS Bedrock"</span>, <span style={{ color: "#ffe500" }}>"Docker"</span>],</div>
-        <div><span style={{ color: "#38bdf8" }}>"contact"</span>: <span style={{ color: "#ffe500" }}>"shashikiranbs2006@gmail.com"</span>,</div>
+        <div><span style={{ color: "#38bdf8" }}>"stack"</span>: [<span style={{ color: "#ffe500" }}>"TypeScript"</span>, <span style={{ color: "#ffe500" }}>"Python"</span>, <span style={{ color: "#ffe500" }}>"React"</span>, <span style={{ color: "#ffe500" }}>"AWS Bedrock"</span>, <span style={{ color: "#ffe500" }}>"FastAPI"</span>],</div>
+        <div><span style={{ color: "#38bdf8" }}>"contact"</span>: <span style={{ color: "#ffe500" }}>"shashibs238@gmail.com"</span>,</div>
         <div><span style={{ color: "#38bdf8" }}>"hire_probability"</span>: <span style={{ color: "#39ff14" }}>"99.7%"</span></div>
       </div>
       <div style={{ color: "#f472b6" }}>{"}"}</div>
@@ -110,7 +109,7 @@ const UPTIME_OUTPUT = (
   <div style={{ color: "#39ff14", fontFamily: "monospace", fontSize: "12px" }}>
     <div>09:44:23 up 2 years,  3 months,  14 days,  7:22</div>
     <div>load average: 8.70 (CGPA), 0.93 (Coffee Cups Today), 99.7 (Hire Index)</div>
-    <div style={{ marginTop: "4px", color: "#888" }}>Processes: 12 projects running, 3 in progress, 0 zombie.</div>
+    <div style={{ marginTop: "4px", color: "#888" }}>Processes: 5 live projects running, 0 zombie.</div>
   </div>
 );
 
@@ -200,7 +199,7 @@ export const TerminalWindow: React.FC = () => {
               <div><b style={{ color: "#ffe500" }}>Kernel:</b> 6.8.0-agentic-bedrock</div>
               <div><b style={{ color: "#ffe500" }}>Uptime:</b> 8.7 CGPA / 10.0</div>
               <div><b style={{ color: "#ffe500" }}>Internship:</b> KlarDataLabs (Zurich, Remote)</div>
-              <div><b style={{ color: "#ffe500" }}>Packages:</b> FastAPI, PostgreSQL, Docker</div>
+              <div><b style={{ color: "#ffe500" }}>Stack:</b> TypeScript, Python, React, Bedrock, FastAPI</div>
               <div><b style={{ color: "#ffe500" }}>Target:</b> Summer 2027 SWE Intern (AMTS)</div>
               <div style={{ marginTop: "4px", display: "flex", gap: "4px" }}>
                 {["#ff3b30", "#ffe500", "#39ff14", "#00d2ff", "#bf5af2"].map((c, i) => (
@@ -257,7 +256,7 @@ export const TerminalWindow: React.FC = () => {
         response = (
           <div style={{ color: "#fff", backgroundColor: "#0a0a14", padding: "8px", border: "1px solid #333" }}>
             <div style={{ color: "#ffe500", fontWeight: "bold" }}>RESUME SUMMARY (Shashikiran B S):</div>
-            <div>• Backend & Agentic AI Engineer | CSE (AI/ML) @ BMSIT (CGPA 8.7/10)</div>
+            <div>• AI & Full-Stack Engineer | CSE (AI/ML) @ BMSIT (CGPA 8.7/10)</div>
             <div>• KlarDataLabs Intern: Agent orchestration with Strands Agents SDK & AWS Bedrock</div>
             <div>• NIRMAAN 2026 Lead Organiser: ₹1,00,000 prize pool, 200+ participants, 52 sponsors</div>
             <div>• Shipped Projects: The Relay (VS Code Ext), Yoru Chatbot / EduRAG, Prompt Compiler, Credit Card Fraud Detection, FitPhile</div>
@@ -363,8 +362,8 @@ export const TerminalWindow: React.FC = () => {
         response = (
           <div style={{ color: "#22c55e", fontFamily: "monospace" }}>
             <div>01010011 01001000 01000001 01010011 01001000 01001001</div>
-            <div>SYSTEM ARCHITECTURE: ZERO-TRUST MULTI-TENANT ISOLATION ACTIVATED.</div>
-            <div style={{ color: "#888", fontSize: "11px" }}>// Powered by PostgreSQL RLS + Testcontainers isolation matrix</div>
+            <div>SYSTEM ARCHITECTURE: AUTHENTIC DISTRIBUTED DEPLOYMENTS ACTIVE.</div>
+            <div style={{ color: "#888", fontSize: "11px" }}>// Vercel · Render · Streamlit Cloud · AWS Bedrock</div>
           </div>
         );
         break;

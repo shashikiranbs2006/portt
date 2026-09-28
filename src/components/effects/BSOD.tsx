@@ -71,7 +71,7 @@ export const BSOD: React.FC<BSODProps> = ({ isVisible, onDismiss }) => {
 
             <div style={{ marginBottom: "20px", paddingLeft: "16px" }}>
               <div>• Check to make sure you actually looked at the Projects section.</div>
-              <div>• Verify that you explored the Multi-Tenant Scoped Query Simulator.</div>
+              <div>• Verify that you launched live apps in the Projects window.</div>
               <div>• If problems continue, disable or remove any recently installed hiring biases.</div>
               <div>• For immediate recovery, send an interview offer to shashibs238@gmail.com.</div>
             </div>
