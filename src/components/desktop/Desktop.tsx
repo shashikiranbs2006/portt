@@ -228,15 +228,67 @@ export const Desktop: React.FC = () => {
     setShowBSOD(true);
   };
 
+  const handlePositionChange = (id: WindowId, pos: { x: number; y: number }) => {
+    setWindows((prev) =>
+      prev.map((w) => (w.id === id ? { ...w, position: pos } : w))
+    );
+  };
+
+  const toggleShowDesktop = () => {
+    retroAudio.playClick(1.0);
+    const anyOpenNotMinimized = windows.some((w) => w.isOpen && !w.isMinimized);
+    if (anyOpenNotMinimized) {
+      // Minimize all open windows
+      setWindows((prev) => prev.map((w) => (w.isOpen ? { ...w, isMinimized: true } : w)));
+      setActiveWindowId(null);
+    } else {
+      // Restore all open windows
+      setWindows((prev) => prev.map((w) => (w.isOpen ? { ...w, isMinimized: false } : w)));
+      const firstOpen = windows.find((w) => w.isOpen);
+      if (firstOpen) setActiveWindowId(firstOpen.id);
+    }
+  };
+
+  // Global Keyboard Shortcuts (Win Key, Esc, Win+D)
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't intercept when user is typing in inputs or textareas
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
+      if (e.key === "Meta" || (e.ctrlKey && e.key === "Escape")) {
+        e.preventDefault();
+        retroAudio.playClick(1.15);
+        setIsStartOpen((prev) => !prev);
+      } else if (e.key === "Escape") {
+        setIsStartOpen(false);
+        setContextMenu(null);
+      } else if ((e.metaKey || e.altKey) && e.key.toLowerCase() === "d") {
+        e.preventDefault();
+        toggleShowDesktop();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [windows]);
+
   const handleDesktopRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY });
     setIsStartOpen(false);
   };
 
-  const handleDesktopClick = () => {
-    setContextMenu(null);
-    setIsStartOpen(false);
+  const handleDesktopClick = (e: React.MouseEvent) => {
+    // Only close start menu or context menu if click was directly on background
+    if (e.target === e.currentTarget) {
+      setContextMenu(null);
+      setIsStartOpen(false);
+    }
   };
 
   return (
@@ -316,55 +368,17 @@ export const Desktop: React.FC = () => {
         })}
       </div>
 
-      {/* Top Controls Quick Pill (CRT & Wallpaper) */}
-      <div
-        className="bevel-raised"
-        style={{
-          position: "fixed",
-          top: "8px",
-          right: "12px",
-          zIndex: 9999,
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "3px 8px",
-          fontSize: "11px",
-          fontFamily: "var(--font-pixel)",
-          backgroundColor: "#c0c0c0"
-        }}
-      >
-        <button
-          type="button"
-          className={`bevel-button ${enableCRT ? "active" : ""}`}
-          onClick={() => setEnableCRT(!enableCRT)}
-          style={{ fontSize: "11px", padding: "1px 6px" }}
-        >
-          CRT: {enableCRT ? "ON" : "OFF"}
-        </button>
-        <span style={{ color: "#666" }}>|</span>
-        <button
-          type="button"
-          className="bevel-button"
-          onClick={() => {
-            const themes: WallpaperTheme[] = ["bliss", "cyber", "sunset", "matrix", "riso"];
-            const next = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
-            setCurrentTheme(next);
-          }}
-          style={{ fontSize: "11px", padding: "1px 6px" }}
-        >
-          Theme: {currentTheme}
-        </button>
-      </div>
-
       {/* Active Windows Manager */}
       {windows.map((win) => (
         <RetroWindow
           key={win.id}
           window={win}
+          isActive={activeWindowId === win.id && !win.isMinimized}
           onFocus={() => focusWindow(win.id)}
           onClose={() => closeWindow(win.id)}
           onMinimize={() => toggleMinimize(win.id)}
           onToggleMaximize={() => toggleMaximize(win.id)}
+          onPositionChange={handlePositionChange}
         >
           {win.id === "about" && <AboutWindow />}
           {win.id === "projects" && <ProjectsWindow />}
@@ -427,6 +441,8 @@ export const Desktop: React.FC = () => {
             focusWindow(id);
           }
         }}
+        onOpenWindow={openWindow}
+        onToggleShowDesktop={toggleShowDesktop}
         isStartOpen={isStartOpen}
         onToggleStart={() => setIsStartOpen(!isStartOpen)}
         isMuted={isMuted}
@@ -434,7 +450,10 @@ export const Desktop: React.FC = () => {
           retroAudio.isMuted = !isMuted;
           setIsMuted(!isMuted);
         }}
+        enableCRT={enableCRT}
+        onToggleCRT={() => setEnableCRT((e) => !e)}
       />
     </div>
   );
 };
+

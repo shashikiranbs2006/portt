@@ -4,19 +4,23 @@ import type { WindowState } from "../../types/os";
 
 interface RetroWindowProps {
   window: WindowState;
+  isActive?: boolean;
   onFocus: () => void;
   onClose: () => void;
   onMinimize: () => void;
   onToggleMaximize: () => void;
+  onPositionChange?: (id: WindowState["id"], pos: { x: number; y: number }) => void;
   children: React.ReactNode;
 }
 
 export const RetroWindow: React.FC<RetroWindowProps> = ({
   window: win,
+  isActive = true,
   onFocus,
   onClose,
   onMinimize,
   onToggleMaximize,
+  onPositionChange,
   children
 }) => {
   const windowRef = useRef<HTMLDivElement>(null);
@@ -33,10 +37,18 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
         ref={windowRef}
         drag={!isMax}
         dragMomentum={false}
-        dragElastic={0.05}
+        dragElastic={0.02}
+        onDragEnd={(_e, info) => {
+          if (!isMax && onPositionChange) {
+            onPositionChange(win.id, {
+              x: Math.max(0, Math.min(window.innerWidth - 100, win.position.x + info.offset.x)),
+              y: Math.max(0, Math.min(window.innerHeight - 80, win.position.y + info.offset.y))
+            });
+          }
+        }}
         initial={{
           opacity: 0,
-          scale: 0.92,
+          scale: 0.94,
           x: win.position.x,
           y: win.position.y
         }}
@@ -46,7 +58,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
           x: isMax ? 0 : win.position.x,
           y: isMax ? 0 : win.position.y,
           width: isMax ? "100vw" : win.size.width,
-          height: isMax ? "calc(100vh - 36px)" : win.size.height
+          height: isMax ? "calc(100vh - 34px)" : win.size.height
         }}
         exit={{ opacity: 0, scale: 0.85 }}
         transition={{ type: "spring", stiffness: 350, damping: 28 }}
@@ -59,13 +71,16 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
           display: "flex",
           flexDirection: "column",
           maxWidth: "100vw",
-          maxHeight: "calc(100vh - 36px)"
+          maxHeight: "calc(100vh - 34px)",
+          boxShadow: isActive
+            ? "3px 3px 12px rgba(0, 0, 0, 0.45)"
+            : "2px 2px 8px rgba(0, 0, 0, 0.25)"
         }}
         className="bevel-raised"
       >
         {/* Retro Titlebar */}
         <div
-          className="win-titlebar"
+          className={`win-titlebar ${!isActive ? "inactive" : ""}`}
           onDoubleClick={onToggleMaximize}
           style={{ cursor: isMax ? "default" : "grab" }}
         >
@@ -92,7 +107,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
           </div>
 
           {/* Window Control Buttons */}
-          <div className="win-controls">
+          <div className="win-controls" onPointerDown={(e) => e.stopPropagation()}>
             <button
               type="button"
               className="win-btn"
@@ -139,6 +154,18 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
             flexDirection: "column",
             backgroundColor: "#c0c0c0",
             padding: "4px"
+          }}
+          onPointerDown={(e) => {
+            // Prevent motion drag on interactive child elements
+            if (
+              e.target instanceof HTMLInputElement ||
+              e.target instanceof HTMLTextAreaElement ||
+              e.target instanceof HTMLButtonElement ||
+              e.target instanceof HTMLCanvasElement ||
+              e.target instanceof HTMLAnchorElement
+            ) {
+              e.stopPropagation();
+            }
           }}
         >
           {children}

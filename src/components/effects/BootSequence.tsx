@@ -93,9 +93,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          onClick={() => {
-            if (phase === "logo") finish();
-          }}
+          onClick={finish}
           style={{
             position: "fixed",
             inset: 0,

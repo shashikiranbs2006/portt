@@ -116,8 +116,8 @@ const UPTIME_OUTPUT = (
 const LS_OUTPUT = (
   <div style={{ fontFamily: "monospace", fontSize: "12px", lineHeight: 1.5 }}>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2px 16px" }}>
-      {["projects/", "skills/", "experience/", "education/", "contact/", "resume.pdf", "portfolio.tsx", "README.md", ".secrets/", "AMTS_2027.txt", "easter_egg.sh", "riso_stamps/"].map((item) => (
-        <span key={item} style={{ color: item.endsWith("/") ? "#38bdf8" : item.endsWith(".sh") ? "#39ff14" : item.startsWith(".") ? "#888" : "#fff" }}>
+      {["projects/", "skills/", "experience/", "education/", "contact/", "resume.pdf", "portfolio.tsx", "README.md", ".secrets/", "AMTS_2027.txt", "easter_egg.sh", "riso_stamps/"].map((item, idx) => (
+        <span key={`${item}-${idx}`} style={{ color: item.endsWith("/") ? "#38bdf8" : item.endsWith(".sh") ? "#39ff14" : item.startsWith(".") ? "#888" : "#fff" }}>
           {item}
         </span>
       ))}

@@ -205,6 +205,64 @@ class RetroAudioEngine {
     } catch {}
   }
 
+  // 8. MSN Messenger two-tone chime (F#5 -> B5)
+  playMSNChime() {
+    if (this.isMuted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+
+      const tones = [
+        { freq: 739.99, time: 0, dur: 0.1 },     // F#5
+        { freq: 987.77, time: 0.1, dur: 0.22 }   // B5
+      ];
+
+      tones.forEach(({ freq, time, dur }) => {
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + time);
+
+        gain.gain.setValueAtTime(0, this.ctx.currentTime + time);
+        gain.gain.linearRampToValueAtTime(0.12, this.ctx.currentTime + time + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + time + dur);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(this.ctx.currentTime + time);
+        osc.stop(this.ctx.currentTime + time + dur);
+      });
+    } catch {}
+  }
+
+  // 9. MSN Nudge screen-shake buzz
+  playNudge() {
+    if (this.isMuted) return;
+    try {
+      this.initCtx();
+      if (!this.ctx) return;
+
+      for (let i = 0; i < 4; i++) {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(95, this.ctx.currentTime + i * 0.08);
+
+        gain.gain.setValueAtTime(0.14, this.ctx.currentTime + i * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 0.06);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start(this.ctx.currentTime + i * 0.08);
+      }
+    } catch {}
+  }
+
   // 7. Sticky note peel sound
   playPeel() {
     if (this.isMuted) return;
@@ -231,3 +289,4 @@ class RetroAudioEngine {
 }
 
 export const retroAudio = new RetroAudioEngine();
+

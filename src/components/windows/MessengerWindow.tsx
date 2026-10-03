@@ -1,26 +1,28 @@
 import React, { useState, useRef, useEffect } from "react";
 import { retroAudio } from "../../utils/audioSystem";
+import { getStoredGroqKey, sendGroqChatMessage } from "../../utils/groqChat";
 
 interface Message {
   from: "visitor" | "shashi";
   text: string;
   time: string;
+  isError?: boolean;
 }
 
 const getTime = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
 const SHASHI_RESPONSES: Record<string, string[]> = {
   "hi|hello|hey|yo|sup": [
-    "hey!! welcome to MSN Messenger 👋 I'm Shashi — 3rd year CSE (AI/ML) @ BMSIT. Ask me anything about my projects, my KlarDataLabs internship, or hiring for Summer 2027!",
-    "heyyy!! glad you found the messenger. What are you looking to chat about? The Relay VS Code extension, Yoru Chatbot, or hackathons?",
-    "Yo! Welcome to the cyber deck 🌐 Feel free to ask about my shipped work or hit the Nudge button!"
+    "heyy!! welcome to MSN Messenger 👋 I'm Shashi — 3rd year CSE (AI/ML) @ BMSIT. Ask me anything about my projects, my KlarDataLabs internship, or hiring for Summer 2027!",
+    "yo!! Glad you found the messenger! What are you looking to chat about? The Relay VS Code extension, Yoru Chatbot, Prompt Compiler, or my KlarDataLabs work?",
+    "Yo! Welcome to the cyber deck 🌐 Feel free to ask about my shipped work, or hit the Nudge button!"
   ],
   "who are you|who r u|introduce yourself|bio": [
-    "I'm Shashikiran B S! 3rd year CSE (AI/ML) at BMSIT, Bengaluru (CGPA 8.7/10). Currently interning at KlarDataLabs (Zurich, Remote) building agentic workflows with AWS Bedrock. Seeking Summer 2027 SWE Intern (AMTS) roles!",
-    "Full-Stack & AI engineer. I build developer tools, AI workflows and retro OS portfolios!"
+    "I'm Shashikiran B S! 3rd year CSE (AI/ML) at BMSIT, Bengaluru (CGPA 8.7/10). Currently interning at KlarDataLabs (Zurich, Remote) building agentic workflows with AWS Bedrock. Actively seeking Summer 2027 SWE Intern (AMTS) roles!",
+    "Full-Stack & AI engineer from Bengaluru. I build developer tools, agentic workflows, extensions, and high-performance ML platforms!"
   ],
   "bmsit|college|cgpa|education|degree|gpa": [
-    "I am pursuing B.E. Computer Science & Engineering (AI/ML) at BMS Institute of Technology & Management (BMSIT), Bengaluru. Current CGPA: 8.7 / 10.0, graduating May 2028!",
+    "I'm pursuing B.E. Computer Science & Engineering (AI/ML) at BMS Institute of Technology & Management (BMSIT), Bengaluru. Current CGPA: 8.7 / 10.0, graduating May 2028!",
     "BMSIT CSE (AI/ML) student with an 8.7 CGPA. Also serve as Treasurer of Coding Club and was Lead Organiser for NIRMAAN 2026."
   ],
   "klar|klardatalabs|zurich|internship|work experience": [
@@ -62,9 +64,6 @@ const SHASHI_RESPONSES: Record<string, string[]> = {
   "skills|stack|tech": [
     "Core stack: Python, TypeScript, React, FastAPI, PostgreSQL, SQL, AWS Bedrock, Strands Agents SDK, Scikit-Learn, ChromaDB, Docker, and Git."
   ],
-  "nudge": [
-    "📳 *BUZZZZ!* Whoa, that was a heavy nudge! I'm awake, I'm awake!"
-  ],
   "default": [
     "Haha interesting question! Feel free to ask about The Relay, Yoru Chatbot, Prompt Compiler, Credit Card Fraud Detection, or FitPhile!",
     "Check out the live deployments in the Projects window or ping me at shashibs238@gmail.com ⚡",
@@ -87,6 +86,7 @@ function getShashiReply(input: string): string {
 const QUICK_PROMPTS = [
   "🤖 The Relay VS Code extension",
   "⚡ Prompt Compiler Chrome ext",
+  "📚 Yoru Chatbot & EduRAG",
   "💼 Why hire for Summer 2027?",
   "🏷️ NIRMAAN 2026 Hackathon",
   "📄 How can I view your resume?",
@@ -97,7 +97,7 @@ export const MessengerWindow: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       from: "shashi",
-      text: "heyyy!! you found MSN Messenger 👋 Ask me anything about my projects, my KlarDataLabs internship, or hiring for Summer 2027!",
+      text: "heyyy!! you found MSN Messenger 👋 I'm Shashi's AI assistant powered by Groq Llama-3.3-70B. Ask me anything about my projects, my KlarDataLabs internship, tech stack, or hiring for Summer 2027!",
       time: getTime()
     }
   ]);
@@ -107,11 +107,14 @@ export const MessengerWindow: React.FC = () => {
   const [userStatus, setUserStatus] = useState<"online" | "busy" | "away">("online");
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // Directly read key from .env (VITE_GROQ_API_KEY)
+  const groqKey = getStoredGroqKey();
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const handleSendText = (textToSend: string) => {
+  const handleSendText = async (textToSend: string) => {
     const trimmed = textToSend.trim();
     if (!trimmed) return;
 
@@ -122,22 +125,60 @@ export const MessengerWindow: React.FC = () => {
 
     retroAudio.playClick(1.1);
     const visitorMsg: Message = { from: "visitor", text: trimmed, time: getTime() };
-    setMessages((prev) => [...prev, visitorMsg]);
+    const updatedMessages = [...messages, visitorMsg];
+    setMessages(updatedMessages);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const reply = getShashiReply(trimmed);
-      setIsTyping(false);
-      // Dual-tone incoming MSN chime
-      retroAudio.playClick(1.4);
-      setTimeout(() => retroAudio.playClick(1.7), 80);
-      setMessages((prev) => [...prev, { from: "shashi", text: reply, time: getTime() }]);
-    }, 600 + Math.random() * 600);
+    const activeKey = groqKey.trim();
+
+    if (activeKey) {
+      try {
+        // Build history formatted for Groq API
+        const historyForGroq = updatedMessages
+          .filter((m) => !m.isError)
+          .slice(-10)
+          .map((m) => ({
+            role: m.from === "visitor" ? ("user" as const) : ("assistant" as const),
+            content: m.text
+          }));
+
+        const reply = await sendGroqChatMessage(historyForGroq, activeKey);
+        setIsTyping(false);
+        retroAudio.playMSNChime();
+        setMessages((prev) => [...prev, { from: "shashi", text: reply, time: getTime() }]);
+      } catch (err: unknown) {
+        setIsTyping(false);
+        retroAudio.playErrorChord();
+        const errMessage = err instanceof Error ? err.message : "Failed to communicate with Groq API.";
+        setMessages((prev) => [
+          ...prev,
+          {
+            from: "shashi",
+            text: `⚠️ Groq API Notice: ${errMessage}\n\nFalling back to offline simulated reply:`,
+            time: getTime(),
+            isError: true
+          },
+          {
+            from: "shashi",
+            text: getShashiReply(trimmed),
+            time: getTime()
+          }
+        ]);
+      }
+    } else {
+      // Offline fallback
+      setTimeout(() => {
+        const reply = getShashiReply(trimmed);
+        setIsTyping(false);
+        retroAudio.playMSNChime();
+        setMessages((prev) => [...prev, { from: "shashi", text: reply, time: getTime() }]);
+      }, 500);
+    }
   };
 
   const triggerNudge = () => {
-    retroAudio.playErrorChord();
+    retroAudio.playNudge();
     setIsNudging(true);
     setMessages((prev) => [
       ...prev,
@@ -149,15 +190,16 @@ export const MessengerWindow: React.FC = () => {
     ]);
     setTimeout(() => {
       setIsNudging(false);
+      retroAudio.playMSNChime();
       setMessages((prev) => [
         ...prev,
         {
           from: "shashi",
-          text: "📳 *BUZZZZ!* Whoa, you just sent a nudge! Screen is shaking lmaooo",
+          text: "📳 *BUZZZZ!* Whoa, that was a heavy nudge! My window was literally vibrating haha! What's on your mind?",
           time: getTime()
         }
       ]);
-    }, 600);
+    }, 700);
   };
 
   const clearChat = () => {
@@ -165,7 +207,7 @@ export const MessengerWindow: React.FC = () => {
     setMessages([
       {
         from: "shashi",
-        text: "Chat cleared! What else would you like to ask?",
+        text: "Chat history cleared! What would you like to explore next?",
         time: getTime()
       }
     ]);
@@ -185,7 +227,8 @@ export const MessengerWindow: React.FC = () => {
         backgroundColor: "#c0c0c0",
         fontFamily: "var(--font-body)",
         userSelect: "none",
-        animation: isNudging ? "msn-shake 0.4s ease-in-out" : "none"
+        position: "relative",
+        animation: isNudging ? "msn-shake 0.45s ease-in-out" : "none"
       }}
     >
       {/* MSN Header */}
@@ -202,8 +245,8 @@ export const MessengerWindow: React.FC = () => {
         {/* Real Shashi Avatar photo */}
         <div
           style={{
-            width: "38px",
-            height: "38px",
+            width: "40px",
+            height: "40px",
             borderRadius: "50%",
             overflow: "hidden",
             border: "2px solid #ffe500",
@@ -221,9 +264,9 @@ export const MessengerWindow: React.FC = () => {
           />
         </div>
 
-        <div>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ color: "#fff", fontWeight: "bold", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px" }}>
-            <span>Shashikiran B S</span>
+            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Shashikiran B S</span>
             <button
               type="button"
               onClick={cycleStatus}
@@ -240,12 +283,12 @@ export const MessengerWindow: React.FC = () => {
               ● {userStatus.toUpperCase()}
             </button>
           </div>
-          <div style={{ color: "#cde", fontSize: "11px" }}>
-            Agentic AI Intern @ KlarDataLabs · AMTS 2027
+          <div style={{ color: "#cde", fontSize: "11px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            🟢 Live AI Active (Llama-3.3-70B) · AMTS 2027
           </div>
         </div>
 
-        <div style={{ marginLeft: "auto", display: "flex", gap: "4px" }}>
+        <div style={{ display: "flex", gap: "4px", flexShrink: 0 }}>
           <button
             type="button"
             className="bevel-button"
@@ -277,20 +320,23 @@ export const MessengerWindow: React.FC = () => {
         </div>
       </div>
 
-      {/* Status banner */}
+      {/* Mode status banner */}
       <div
         style={{
-          backgroundColor: "#fffff0",
+          backgroundColor: "#e6ffed",
           padding: "4px 8px",
           fontSize: "11px",
           borderBottom: "1px solid #c0c0c0",
-          color: "#444",
+          color: "#155724",
           display: "flex",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          alignItems: "center"
         }}
       >
-        <span>💡 Ask about The Relay, Chrome extensions, ML, or internships!</span>
-        <span style={{ color: "#008000", fontWeight: "bold" }}>MSN v7.5</span>
+        <span>
+          ⚡ Live AI Chat enabled (Groq Llama 3.3 70B with GitHub & Project Knowledge)
+        </span>
+        <span style={{ color: "#008000", fontWeight: "bold", fontSize: "10px" }}>MSN v7.5</span>
       </div>
 
       {/* Messages Area */}
@@ -354,7 +400,7 @@ export const MessengerWindow: React.FC = () => {
 
             <div
               style={{
-                maxWidth: "78%",
+                maxWidth: "82%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: msg.from === "visitor" ? "flex-end" : "flex-start"
@@ -372,8 +418,18 @@ export const MessengerWindow: React.FC = () => {
               </div>
               <div
                 style={{
-                  backgroundColor: msg.from === "shashi" ? "#e8f4fd" : "#fff9e6",
-                  border: `1px solid ${msg.from === "shashi" ? "#bee3f8" : "#ffe566"}`,
+                  backgroundColor: msg.isError
+                    ? "#fff0f0"
+                    : msg.from === "shashi"
+                    ? "#e8f4fd"
+                    : "#fff9e6",
+                  border: `1px solid ${
+                    msg.isError
+                      ? "#f5c6cb"
+                      : msg.from === "shashi"
+                      ? "#bee3f8"
+                      : "#ffe566"
+                  }`,
                   borderRadius: msg.from === "shashi" ? "4px 12px 12px 4px" : "12px 4px 4px 12px",
                   padding: "6px 10px",
                   fontSize: "13px",
@@ -390,9 +446,9 @@ export const MessengerWindow: React.FC = () => {
         ))}
 
         {isTyping && (
-          <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", paddingLeft: "34px" }}>
             <span style={{ fontSize: "11px", color: "#666", fontStyle: "italic" }}>
-              shashikiran_bs is typing...
+              shashikiran_bs is typing... 💬
             </span>
           </div>
         )}
@@ -449,7 +505,7 @@ export const MessengerWindow: React.FC = () => {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Type an instant message..."
+          placeholder="Chat with AI Shashi (Groq Llama 3.3)..."
           style={{
             flex: 1,
             padding: "4px 8px",
@@ -478,10 +534,10 @@ export const MessengerWindow: React.FC = () => {
       <style>{`
         @keyframes msn-shake {
           0% { transform: translate(0, 0); }
-          20% { transform: translate(-6px, 4px); }
-          40% { transform: translate(6px, -4px); }
-          60% { transform: translate(-4px, -3px); }
-          80% { transform: translate(4px, 3px); }
+          20% { transform: translate(-8px, 5px); }
+          40% { transform: translate(8px, -5px); }
+          60% { transform: translate(-5px, -4px); }
+          80% { transform: translate(5px, 4px); }
           100% { transform: translate(0, 0); }
         }
       `}</style>
