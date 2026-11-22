@@ -42,8 +42,8 @@ export const StartMenu: React.FC<StartMenuProps> = ({
   const menuItems: MenuItem[] = [
     {
       id: "about",
-      title: "Meet The Artist",
-      subtitle: "Bio, Lore & Bags",
+      title: "About Shashi",
+      subtitle: "Bio, skills & experience",
       icon: "📝",
       action: () => handleLaunch("about"),
       keywords: ["about", "bio", "artist", "education", "bmsit", "skills", "story"]
@@ -73,12 +73,12 @@ export const StartMenu: React.FC<StartMenuProps> = ({
       keywords: ["terminal", "cmd", "dos", "cli", "bash", "ssh", "curl", "neofetch"]
     },
     {
-      id: "phone",
-      title: "Motorola Razr",
-      subtitle: "SMS & Instant Contact",
-      icon: "📱",
-      action: () => handleLaunch("phone"),
-      keywords: ["phone", "razr", "sms", "contact", "call", "email", "dialer"]
+      id: "arcade",
+      title: "SHASHI★ Arcade",
+      subtitle: "Snake, 2048 & Minesweeper",
+      icon: "🕹️",
+      action: () => handleLaunch("arcade"),
+      keywords: ["arcade", "games", "snake", "2048", "minesweeper", "play"]
     },
     {
       id: "paint",
@@ -98,19 +98,11 @@ export const StartMenu: React.FC<StartMenuProps> = ({
     },
     {
       id: "music",
-      title: "CD-ROM Player",
+      title: "CD Player",
       subtitle: "Kanye — Can't Tell Me Nothing",
       icon: "💿",
       action: () => handleLaunch("music"),
-      keywords: ["music", "cd", "player", "audio", "song", "playlist", "sound"]
-    },
-    {
-      id: "minesweeper",
-      title: "Minesweeper",
-      subtitle: "Easter Egg — Retro Game",
-      icon: "💣",
-      action: () => handleLaunch("minesweeper"),
-      keywords: ["minesweeper", "game", "bomb", "play", "easter egg"]
+      keywords: ["music", "cd", "player", "audio", "song", "sound"]
     },
     {
       id: "resume",

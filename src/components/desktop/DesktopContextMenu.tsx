@@ -119,10 +119,10 @@ export const DesktopContextMenu: React.FC<Props> = ({
       onClick={(e) => e.stopPropagation()}
     >
       {/* Quick Launchers */}
-      {item("Open Meet The Artist", "📝", () => onOpenWindow("about"))}
+      {item("Open About Shashi", "📝", () => onOpenWindow("about"))}
       {item("Open Projects Archive", "📁", () => onOpenWindow("projects"))}
       {item("Open Terminal (C:\\SHASHI)", "📟", () => onOpenWindow("terminal"))}
-      {item("Open Motorola RAZR", "📱", () => onOpenWindow("phone"))}
+      {item("Open Arcade", "🕹️", () => onOpenWindow("arcade"))}
       {item("Open MS Paint Studio", "🎨", () => onOpenWindow("paint"))}
       {item("Open MSN Messenger", "💬", () => onOpenWindow("messenger"))}
 

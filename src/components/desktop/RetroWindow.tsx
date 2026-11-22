@@ -165,6 +165,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
               e.target instanceof HTMLCanvasElement ||
               e.target instanceof HTMLAnchorElement
             ) {
+              onFocus();
               e.stopPropagation();
             }
           }}

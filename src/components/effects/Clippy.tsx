@@ -6,19 +6,19 @@ import { retroAudio } from "../../utils/audioSystem";
 // ─── Agentic Message Bank ───────────────────────────────────────────────────
 // Contextual, witty messages referencing real portfolio features
 const MESSAGES: string[] = [
-  "It looks like you're evaluating a developer! I can help you draft a hire request. 📋",
+  "Looking for the short version? Quick view has the projects, skills, and contact links in one place. 📋",
   "👀 Psst — open the PROJECTS window. You can launch live deployed apps for The Relay, Yoru Chatbot, Prompt Compiler & more!",
-  "Fun fact: this whole OS was built by one person. One chaotic, over-engineered person. Hire them.",
+  "Shashi built this little desktop. The projects window has the work behind the pixels.",
   "⚡ Have you tried the MS Paint window? You can stamp riso-print art on a canvas. It slaps.",
-  "I see you haven't clicked CONTACT yet. Shall I schedule an interview on your behalf? I'm very persuasive.",
+  "Want to get in touch? The welcome card has a direct email link.",
   "🧠 Check out The Relay and Prompt Compiler in the Projects window — both have live deployed simulations!",
-  "Between you and me, the Minesweeper game has a secret easter egg. Win it to find out. 👀",
+  "Need a break? The Arcade has Snake, 2048, and Minesweeper. Your score stays on this device. 🕹️",
   "VS Code extensions, Chrome extensions, RAG retrieval & ML fraud scoring... Shashi builds things that actually work.",
-  "🎸 Check the ABOUT window — there's a full tour schedule of Shashi's 2026–2027 career gigs.",
+  "The About window has the longer story if you want to know the person behind the projects.",
   "I've been a paperclip since 1997. I've seen a LOT of portfolios. This one is different. Trust me.",
   "Recruiter tip: The MESSENGER window has quick-prompt shortcuts. You can ask me anything. Well, not me. The other bot.",
-  "Did you know this entire audio system is zero external dependencies? Procedural Web Audio synthesis only. Nerd. 🔊",
-  "Shashi's building things at AMTS Summer 2027. You should probably reach out before someone else does.",
+  "The CD Player has one real track. Click play if you want a soundtrack while exploring. 🔊",
+  "Shashi is open to summer 2027 SWE internships. The résumé is one click away.",
   "🖨️ This portfolio has riso-print grain, halftone textures, and gig-poster typography. Intentional. It's *design*.",
   "The sticky notes on the desktop are draggable. Try it. Also try dragging me. I like it when you drag me.",
 ];
@@ -152,7 +152,7 @@ export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow, onDismiss }) => {
       return { label: "🎨 Paint", window: "paint" as WindowId };
     }
     if (msg.includes("Minesweeper") || msg.includes("easter")) {
-      return { label: "💣 Sweeper", window: "minesweeper" as WindowId };
+      return { label: "🕹️ Arcade", window: "arcade" as WindowId };
     }
     if (msg.includes("ABOUT") || msg.includes("tour") || msg.includes("gig")) {
       return { label: "👤 About", window: "about" as WindowId };
@@ -160,7 +160,7 @@ export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow, onDismiss }) => {
     if (msg.includes("MESSENGER") || msg.includes("quick-prompt") || msg.includes("bot")) {
       return { label: "💬 Chat", window: "messenger" as WindowId };
     }
-    return { label: "📱 Contact", window: "phone" as WindowId };
+    return { label: "💬 Chat", window: "messenger" as WindowId };
   };
 
   const actionBtn = getActionButton();

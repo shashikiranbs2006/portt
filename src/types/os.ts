@@ -3,10 +3,9 @@ export type WindowId =
   | "projects"
   | "idbadge"
   | "paint"
-  | "phone"
+  | "arcade"
   | "terminal"
   | "music"
-  | "minesweeper"
   | "messenger"
   | "warning";
 

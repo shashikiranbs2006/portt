@@ -30,23 +30,13 @@ const getInitialNotes = (): StickyNote[] => {
   return [
     {
       id: "n1",
-      text: "⚡ HIRE ME\nSummer 2027 SWE Intern\nAMTS Target ★",
+      text: "OPEN TO WORK\nSummer 2027 SWE internships\nBengaluru · remote",
       color: "#fff9a5",
       x: Math.max(12, W - 185),
       y: isMobile ? H - 120 : Math.max(20, H - 380),
       rotation: 2.5,
       minimized: isMobile,
-      tag: "PRIORITY"
-    },
-    {
-      id: "n2",
-      text: "TODO:\n- Relay VS Code Ext\n- Prompt Compiler updates\n- Eat ramen 🍜",
-      color: "#c8f7dc",
-      x: Math.max(12, W - 190),
-      y: isMobile ? H - 80 : Math.max(20, H - 220),
-      rotation: -2,
-      minimized: isMobile,
-      tag: "SPRINT"
+      tag: "NOTE"
     }
   ];
 };

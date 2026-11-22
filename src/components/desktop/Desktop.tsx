@@ -11,17 +11,15 @@ import { AboutWindow } from "../windows/AboutWindow";
 import { ProjectsWindow } from "../windows/ProjectsWindow";
 import { IDBadgeWindow } from "../windows/IDBadgeWindow";
 import { PaintWindow } from "../windows/PaintWindow";
-import { ContactPhoneWindow } from "../windows/ContactPhoneWindow";
+import { ArcadeWindow } from "../windows/ArcadeWindow";
 import { TerminalWindow } from "../windows/TerminalWindow";
 import { MusicPlayerWidget } from "../windows/MusicPlayerWidget";
 import { SystemWarningModal } from "../windows/SystemWarningModal";
-import { Minesweeper } from "../windows/Minesweeper";
 import { MessengerWindow } from "../windows/MessengerWindow";
 
 // Effects
 import { BootSequence } from "../effects/BootSequence";
 import { Clippy } from "../effects/Clippy";
-import { BSOD } from "../effects/BSOD";
 import { StickyNotesDesktop } from "../effects/StickyNotes";
 import { ErrorBoundary } from "../effects/ErrorBoundary";
 
@@ -85,15 +83,15 @@ const getInitialWindows = (): WindowState[] => {
       size: { width: isMobile ? "95vw" : 740, height: isMobile ? Math.min(480, H - 70) : 520 }
     },
     {
-      id: "phone",
-      title: "Motorola Razr — Quick SMS",
-      icon: "📱",
+      id: "arcade",
+      title: "SHASHI★ Arcade — 3 games",
+      icon: "🕹️",
       isOpen: false,
       isMinimized: false,
       isMaximized: false,
       zIndex: 10,
-      position: { x: isMobile ? 8 : 320, y: isMobile ? 16 : 30 },
-      size: { width: isMobile ? "96vw" : 520, height: isMobile ? Math.min(480, H - 70) : 480 }
+      position: { x: isMobile ? 8 : 240, y: isMobile ? 16 : 45 },
+      size: { width: isMobile ? "96vw" : 780, height: isMobile ? Math.min(610, H - 70) : 620 }
     },
     {
       id: "terminal",
@@ -115,18 +113,7 @@ const getInitialWindows = (): WindowState[] => {
       isMaximized: false,
       zIndex: 10,
       position: { x: isMobile ? 10 : 50, y: isMobile ? 50 : 380 },
-      size: { width: isMobile ? "95vw" : 420, height: 280 }
-    },
-    {
-      id: "minesweeper",
-      title: "Minesweeper — Shashi Edition",
-      icon: "💣",
-      isOpen: false,
-      isMinimized: false,
-      isMaximized: false,
-      zIndex: 10,
-      position: { x: isMobile ? 20 : 300, y: isMobile ? 40 : 80 },
-      size: { width: isMobile ? 290 : 280, height: 380 }
+      size: { width: isMobile ? "95vw" : 450, height: isMobile ? 340 : 350 }
     },
     {
       id: "messenger",
@@ -151,7 +138,6 @@ export const Desktop: React.FC = () => {
   const [currentTheme, setCurrentTheme] = useState<WallpaperTheme>("bliss");
   const [isMuted, setIsMuted] = useState(true);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
-  const [showBSOD, setShowBSOD] = useState(false);
   const [enableCRT, setEnableCRT] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
@@ -222,11 +208,6 @@ export const Desktop: React.FC = () => {
         w.id === id ? { ...w, isMaximized: !w.isMaximized } : w
       )
     );
-  };
-
-  const handleRecycleBin = () => {
-    retroAudio.playErrorChord();
-    setShowBSOD(true);
   };
 
   const handlePositionChange = (id: WindowId, pos: { x: number; y: number }) => {
@@ -339,15 +320,12 @@ export const Desktop: React.FC = () => {
         {[
           { id: "icon-about", title: "About Shashi", sublabel: ".txt", icon: "📝", onOpen: () => openWindow("about") },
           { id: "icon-projects", title: "Projects", sublabel: ".folder", icon: "📁", onOpen: () => openWindow("projects") },
-          { id: "icon-idbadge", title: "3D ID Badge", sublabel: ".pass", icon: "🪪", onOpen: () => openWindow("idbadge") },
           { id: "icon-paint", title: "MS Paint", sublabel: ".exe", icon: "🎨", onOpen: () => openWindow("paint") },
-          { id: "icon-phone", title: "Motorola Razr", sublabel: "SMS", icon: "📱", onOpen: () => openWindow("phone") },
+          { id: "icon-arcade", title: "Arcade", sublabel: "3 games", icon: "🕹️", onOpen: () => openWindow("arcade") },
           { id: "icon-terminal", title: "Terminal CLI", sublabel: ".bat", icon: "📟", onOpen: () => openWindow("terminal") },
           { id: "icon-music", title: "CD Player", sublabel: ".mp3", icon: "💿", onOpen: () => openWindow("music") },
           { id: "icon-messenger", title: "MSN Messenger", sublabel: ".chat", icon: "💬", onOpen: () => openWindow("messenger") },
-          { id: "icon-minesweeper", title: "Minesweeper", sublabel: ".game", icon: "💣", onOpen: () => openWindow("minesweeper") },
-          { id: "icon-resume", title: "Resume", sublabel: ".pdf", icon: "📄", onOpen: () => window.open("/resume.pdf", "_blank") },
-          { id: "icon-recycle", title: "Recycle Bin", sublabel: "empty", icon: "🗑️", onOpen: handleRecycleBin }
+          { id: "icon-resume", title: "Resume", sublabel: ".pdf", icon: "📄", onOpen: () => window.open("/resume.pdf", "_blank") }
         ].map((item, idx) => {
           const H = typeof window !== "undefined" ? window.innerHeight : 800;
           const itemHeight = 84;
@@ -384,19 +362,12 @@ export const Desktop: React.FC = () => {
           {win.id === "projects" && <ProjectsWindow />}
           {win.id === "idbadge" && <IDBadgeWindow />}
           {win.id === "paint" && <PaintWindow />}
-          {win.id === "phone" && <ContactPhoneWindow />}
+          {win.id === "arcade" && <ArcadeWindow isActive={activeWindowId === "arcade"} />}
           {win.id === "terminal" && <TerminalWindow />}
           {win.id === "music" && <MusicPlayerWidget />}
-          {win.id === "minesweeper" && <Minesweeper />}
           {win.id === "messenger" && <MessengerWindow />}
         </RetroWindow>
       ))}
-
-      {/* BSOD Easter Egg (replaces System Warning) */}
-      <BSOD
-        isVisible={showBSOD}
-        onDismiss={() => setShowBSOD(false)}
-      />
 
       {/* Legacy Warning Modal (kept for shutdown button) */}
       <SystemWarningModal

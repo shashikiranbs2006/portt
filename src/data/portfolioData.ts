@@ -56,17 +56,8 @@ export interface PortfolioData {
     items: string[];
   }[];
   certifications: string[];
-  musicPlaylist: {
-    id: string;
-    title: string;
-    artist: string;
-    album: string;
-    duration: string;
-    coverUrl?: string;
-  }[];
   contact: {
     email: string;
-    phone: string;
     github: string;
     linkedin: string;
     location: string;
@@ -240,32 +231,8 @@ export const portfolioData: PortfolioData = {
     "CS50: Intro to CS — Harvard (2024)",
     "Python Programming & SQL — GQT Institute (2023–2024)"
   ],
-  musicPlaylist: [
-    {
-      id: "track-1",
-      title: "Backburner (Nostalgia Mix)",
-      artist: "NIKI / 808s",
-      album: "Early 2000s Tape #1",
-      duration: "3:42"
-    },
-    {
-      id: "track-2",
-      title: "Color Outside The Lines",
-      artist: "CORTIS & Martin",
-      album: "Panasonic DV Tapes",
-      duration: "2:54"
-    },
-    {
-      id: "track-3",
-      title: "Cyber Bliss (Lo-Fi Drift)",
-      artist: "Digital★Decoy",
-      album: "XP Dreaming",
-      duration: "4:15"
-    }
-  ],
   contact: {
     email: "shashibs238@gmail.com",
-    phone: "+91 7676104288",
     github: "https://github.com/shashikiranbs2006",
     linkedin: "https://linkedin.com/in/shashikiran-bs",
     location: "Bengaluru, India",

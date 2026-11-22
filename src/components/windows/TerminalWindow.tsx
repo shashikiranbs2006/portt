@@ -37,7 +37,7 @@ const GIT_LOG_OUTPUT = (
     <div style={{ marginTop: "6px" }}><span style={{ color: "#f5a623" }}>commit 3bc91e4</span></div>
     <div style={{ color: "#888" }}>Author: Shashikiran B S &lt;shashikiranbs2006@gmail.com&gt;</div>
     <div style={{ color: "#888" }}>Date:   Thu Sep 26 2026</div>
-    <div style={{ color: "#ffe500", marginLeft: "8px" }}>feat: BSOD boot-recovery jingle + fluid typography</div>
+    <div style={{ color: "#ffe500", marginLeft: "8px" }}>feat: playable arcade + fluid typography</div>
 
     <div style={{ marginTop: "6px" }}><span style={{ color: "#f5a623" }}>commit 7d4a2f1</span></div>
     <div style={{ color: "#888" }}>Author: Shashikiran B S &lt;shashikiranbs2006@gmail.com&gt;</div>
@@ -161,7 +161,7 @@ export const TerminalWindow: React.FC = () => {
               ["projects", "List authentic backend & AI repositories"],
               ["cat resume", "Read plain text resume transcript"],
               ["sudo hire", "Launch superuser recruiter pipeline"],
-              ["contact", "Direct email, phone & social handles"],
+              ["contact", "Direct email & social handles"],
               ["git log", "Commit history of this portfolio"],
               ["ls", "List filesystem contents"],
               ["ping", "Ping recruiter server"],
@@ -295,7 +295,6 @@ export const TerminalWindow: React.FC = () => {
         response = (
           <div style={{ color: "#f472b6" }}>
             <div>✉ Email: <a href={`mailto:${portfolioData.contact.email}`} style={{ color: "#ffe500" }}>{portfolioData.contact.email}</a></div>
-            <div>📞 Phone: <a href={`tel:${portfolioData.contact.phone}`} style={{ color: "#ffe500" }}>{portfolioData.contact.phone}</a></div>
             <div>🐙 GitHub: <a href={portfolioData.contact.github} target="_blank" rel="noreferrer" style={{ color: "#ffe500" }}>{portfolioData.contact.github}</a></div>
             <div>💼 LinkedIn: <a href={portfolioData.contact.linkedin} target="_blank" rel="noreferrer" style={{ color: "#ffe500" }}>{portfolioData.contact.linkedin}</a></div>
             <div>📍 Location: {portfolioData.contact.location}</div>
@@ -374,10 +373,9 @@ export const TerminalWindow: React.FC = () => {
         retroAudio.playBootJingle();
         response = (
           <div style={{ color: "#f472b6", fontFamily: "monospace" }}>
-            <div style={{ fontWeight: "bold", fontSize: "14px" }}>🎸 EASTER EGG UNLOCKED: BACKSTAGE ACCESS</div>
-            <div style={{ marginTop: "4px" }}>Secret code: <b style={{ color: "#ffe500" }}>AMTS-2027</b></div>
-            <div style={{ color: "#888" }}>Enter this in Minesweeper after you win for the VIP Backstage Pass.</div>
-            <div style={{ color: "#39ff14", marginTop: "4px" }}>Good luck. It's Minesweeper. You'll need it.</div>
+            <div style={{ fontWeight: "bold", fontSize: "14px" }}>🎸 EASTER EGG UNLOCKED</div>
+            <div style={{ marginTop: "4px" }}>Take a break in the Arcade: Snake, 2048 and Minesweeper are ready.</div>
+            <div style={{ color: "#39ff14", marginTop: "4px" }}>Then come back and explore the projects.</div>
           </div>
         );
         break;

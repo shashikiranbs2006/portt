@@ -31,14 +31,14 @@ const SHASHI_RESPONSES: Record<string, string[]> = {
   ],
   "hire|job|intern|amts|recruiter|opportunity|role": [
     "Yes please! I am actively looking for Summer 2027 SWE Intern (AMTS) roles. My email is shashibs238@gmail.com — feel free to drop a note or send an offer!",
-    "Let's talk! You can email me at shashibs238@gmail.com or call +91 7676104288. You can also send a fast-track SMS via the Motorola RAZR on the desktop!"
+    "Let's talk! Email me at shashibs238@gmail.com, or connect with me on LinkedIn. My résumé is available right on the desktop."
   ],
-  "contact|email|phone|call|reach": [
-    "You can reach me at:\n✉️ Email: shashibs238@gmail.com\n📞 Phone: +91 7676104288\n🐙 GitHub: github.com/shashikiranbs2006\n💼 LinkedIn: linkedin.com/in/shashikiran-bs",
-    "Drop me an email at shashibs238@gmail.com or dial +91 7676104288 anytime!"
+  "contact|email|reach": [
+    "You can reach me at:\n✉️ Email: shashibs238@gmail.com\n🐙 GitHub: github.com/shashikiranbs2006\n💼 LinkedIn: linkedin.com/in/shashikiran-bs",
+    "Drop me an email at shashibs238@gmail.com anytime!"
   ],
   "resume|cv|pdf": [
-    "You can download my verified 1-page resume directly from /resume.pdf or click 'Download Resume' in the Meet The Artist window!",
+    "You can download my one-page resume from the desktop or the Start menu.",
     "Check out my resume at /resume.pdf — it highlights The Relay, Yoru Chatbot, Prompt Compiler, Credit Card Fraud Detection, and FitPhile."
   ],
   "relay|llm|agent|bedrock|router": [
