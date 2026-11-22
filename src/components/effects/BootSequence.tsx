@@ -90,6 +90,13 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     }
   }, [phase, finish]);
 
+  const quickViewLink = (
+    <a href="/?view=quick" className="boot-quick-link" onClick={(e) => e.stopPropagation()}>
+      <span className="boot-quick-link-icon" aria-hidden="true">↗</span>
+      Open Quick view
+    </a>
+  );
+
   return (
     <AnimatePresence>
       {phase !== "done" && (
@@ -154,35 +161,24 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             <span style={{ fontSize: "9px", opacity: 0.8 }}>SKIP ⏭</span>
           </button>
 
-          <a
-            href="/?view=quick"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: "fixed", top: "16px", left: "16px", zIndex: 1000000,
-              display: "inline-flex", alignItems: "center", minHeight: "36px", padding: "8px 14px",
-              color: "#17212b", background: "#f4d442", textDecoration: "none",
-              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 800,
-              boxShadow: "3px 3px 0 #594c18"
-            }}
-          >
-            Quick view ↗
-          </a>
-
           {/* BIOS Phase */}
           {phase === "bios" && (
             <div style={{ fontFamily: "monospace", fontSize: "13px", color: "#c0c0c0", lineHeight: "1.5" }}>
-              {biosLines.map((line, i) => (
-                <div
-                  key={`bios-line-${i}`}
-                  style={{
-                    color: line?.startsWith("SHASHI") ? "#ffe500" : (line?.startsWith("Detecting") || line?.startsWith("Loading") || line?.startsWith("Initializing")) ? "#ffffff" : "#c0c0c0",
-                    minHeight: "1.5em"
-                  }}
-                >
-                  {line || "\u00a0"}
-                </div>
-              ))}
-              <span style={{ color: "#ffe500", animation: "blink 1s step-end infinite" }}>_</span>
+              <div style={{ minHeight: "215px" }}>
+                {biosLines.map((line, i) => (
+                  <div
+                    key={`bios-line-${i}`}
+                    style={{
+                      color: line?.startsWith("SHASHI") ? "#ffe500" : (line?.startsWith("Detecting") || line?.startsWith("Loading") || line?.startsWith("Initializing")) ? "#ffffff" : "#c0c0c0",
+                      minHeight: "1.5em"
+                    }}
+                  >
+                    {line || "\u00a0"}
+                  </div>
+                ))}
+                <span style={{ color: "#ffe500", animation: "blink 1s step-end infinite" }}>_</span>
+              </div>
+              {quickViewLink}
             </div>
           )}
 
@@ -256,6 +252,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
                   Loading portfolio... {Math.round(progress)}%
                 </div>
               </div>
+              {quickViewLink}
             </div>
           )}
 
@@ -384,6 +381,7 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
               >
                 ▶ press any key or click to enter ◀
               </motion.div>
+              <div style={{ marginTop: "18px" }}>{quickViewLink}</div>
             </motion.div>
           )}
         </motion.div>
@@ -393,6 +391,31 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+        .boot-quick-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          min-height: 50px;
+          padding: 6px 20px 6px 7px;
+          color: #17212b;
+          background: #f4d442;
+          border: 1px solid #f7e789;
+          box-shadow: 4px 4px 0 #594c18;
+          text-decoration: none;
+          font: 800 15px var(--font-body);
+          cursor: pointer;
+        }
+        .boot-quick-link:hover { background: #ffe77b; }
+        .boot-quick-link:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+        .boot-quick-link-icon {
+          display: inline-grid;
+          place-items: center;
+          width: 36px;
+          height: 36px;
+          background: #173a72;
+          color: #fff;
+          font: 700 24px var(--font-display);
         }
       `}</style>
     </AnimatePresence>
