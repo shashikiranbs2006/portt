@@ -1,545 +1,127 @@
-import React, { useRef, useState, useEffect } from "react";
-import { retroAudio } from "../../utils/audioSystem";
+import { useEffect, useRef, useState } from "react";
+import { Brush, Download, Eraser, Paintbrush, Redo2, RotateCcw, SprayCan, Stamp, Undo2 } from "lucide-react";
+import "./paint-window.css";
 
-const PAINT_COLORS = [
-  "#000000", "#808080", "#800000", "#808000", "#008000", "#008080", "#000080", "#800080",
-  "#808040", "#004040", "#0080ff", "#004080", "#8000ff", "#804000", "#ffffff", "#c0c0c0",
-  "#ff3b30", "#ffe500", "#39ff14", "#00ffff", "#0000ff", "#ff00ff", "#ffff80", "#00ff80",
-  "#80ffff", "#8080ff", "#ff0080", "#ff8040"
+type Tool = "pencil" | "brush" | "spray" | "eraser" | "stamp";
+const WIDTH = 900;
+const HEIGHT = 560;
+const colors = ["#162b45", "#ffffff", "#f4d442", "#e45642", "#ed8a54", "#e89abc", "#7cb7a2", "#53a5c4", "#5485bb", "#795d9f", "#82482f", "#8a9aa4"];
+const tools: { id: Tool; name: string; icon: typeof Brush }[] = [
+  { id: "pencil", name: "Pencil", icon: Paintbrush },
+  { id: "brush", name: "Brush", icon: Brush },
+  { id: "spray", name: "Spray", icon: SprayCan },
+  { id: "eraser", name: "Eraser", icon: Eraser },
+  { id: "stamp", name: "Stamp", icon: Stamp },
 ];
+const stamps = ["★", "✦", "✓", "SHASHI★", "BUILD / SHIP"];
 
-const RISO_STAMPS = [
-  { id: "star", label: "★ STAR", icon: "★" },
-  { id: "approved", label: "[APPROVED]", icon: "✅" },
-  { id: "nirmaan", label: "[NIRMAAN 2026]", icon: "🏷️" },
-  { id: "shashi", label: "[SHASHI★]", icon: "⚡" },
-  { id: "gig", label: "[LIVE GIG]", icon: "🎸" }
-];
+function stampAt(ctx: CanvasRenderingContext2D, x: number, y: number, text: string, color: string) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.rotate(-0.08);
+  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 3;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = text.length > 2 ? "900 27px Arial" : "900 76px Arial";
+  ctx.fillText(text, 0, 0);
+  if (text.length > 2) ctx.strokeRect(-ctx.measureText(text).width / 2 - 12, -25, ctx.measureText(text).width + 24, 50);
+  ctx.restore();
+}
 
-export const PaintWindow: React.FC = () => {
+export function PaintWindow() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [currentColor, setCurrentColor] = useState("#000000");
-  const [brushSize, setBrushSize] = useState(4);
-  const [activeTool, setActiveTool] = useState<"pencil" | "brush" | "eraser" | "spray" | "stamp">("brush");
-  const [selectedStamp, setSelectedStamp] = useState<string>("star");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const drawing = useRef(false);
+  const snapshots = useRef<string[]>([]);
+  const [historyPos, setHistoryPos] = useState(0);
+  const [historyCount, setHistoryCount] = useState(1);
+  const [tool, setTool] = useState<Tool>("brush");
+  const [color, setColor] = useState(colors[0]);
+  const [size, setSize] = useState(8);
+  const [stamp, setStamp] = useState(stamps[0]);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    // Fill white background
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !ctx) return;
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Initial welcome sketch / gig-poster doodle
-    ctx.strokeStyle = "#ff3b30";
-    ctx.lineWidth = 3;
-    ctx.font = "bold 16px 'VT323', monospace";
-    ctx.fillStyle = "#000080";
-    ctx.fillText("🎨 MS PAINT // RISO STAMP STUDIO", 20, 30);
-    ctx.fillStyle = "#666";
-    ctx.font = "14px 'VT323', monospace";
-    ctx.fillText("Draw, spray paint, or stamp gig-poster badges! ★", 20, 52);
-
-    // Initial stamp demo
-    renderStamp(ctx, 480, 50, "star", "#ff3b30");
-    renderStamp(ctx, 450, 110, "shashi", "#000080");
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    snapshots.current = [canvas.toDataURL("image/png")];
   }, []);
 
-  const getCanvasCoords = (clientX: number, clientY: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return { x: 0, y: 0 };
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    return {
-      x: Math.round((clientX - rect.left) * scaleX),
-      y: Math.round((clientY - rect.top) * scaleY)
-    };
-  };
-
-  const renderStamp = (ctx: CanvasRenderingContext2D, x: number, y: number, stampId: string, color: string) => {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate((Math.random() - 0.5) * 0.15); // subtle riso print misregistration angle
-
-    if (stampId === "star") {
-      ctx.fillStyle = color;
-      ctx.font = "bold 38px 'Space Grotesk', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("★", 0, 0);
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "#000";
-      ctx.strokeText("★", 0, 0);
-    } else if (stampId === "approved") {
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 3;
-      ctx.strokeRect(-65, -16, 130, 32);
-      ctx.fillStyle = color;
-      ctx.font = "bold 14px 'Space Grotesk', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("APPROVED // 2026", 0, 0);
-    } else if (stampId === "nirmaan") {
-      ctx.fillStyle = color;
-      ctx.fillRect(-70, -15, 140, 30);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 12px 'Space Grotesk', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("NIRMAAN 2026 ★", 0, 0);
-    } else if (stampId === "shashi") {
-      ctx.strokeStyle = "#000";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(-55, -14, 110, 28);
-      ctx.fillStyle = color;
-      ctx.font = "bold 13px 'Silkscreen', monospace";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("SHASHI★ OS", 0, 0);
-    } else if (stampId === "gig") {
-      ctx.fillStyle = color;
-      ctx.font = "bold 14px 'Space Grotesk', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("🎸 LIVE IN PROD", 0, 0);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(-60, -15, 120, 30);
-    }
-    ctx.restore();
-  };
-
-  const handlePointerDown = (clientX: number, clientY: number) => {
+  const commit = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const { x, y } = getCanvasCoords(clientX, clientY);
+    snapshots.current = [...snapshots.current.slice(0, historyPos + 1), canvas.toDataURL("image/png")].slice(-20);
+    setHistoryPos(snapshots.current.length - 1);
+    setHistoryCount(snapshots.current.length);
+  };
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+  const restore = (index: number) => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    const snapshot = snapshots.current[index];
+    if (!canvas || !ctx || !snapshot) return;
+    const image = new Image();
+    image.onload = () => { ctx.clearRect(0, 0, WIDTH, HEIGHT); ctx.drawImage(image, 0, 0); };
+    image.src = snapshot;
+    setHistoryPos(index);
+  };
 
-    if (activeTool === "stamp") {
-      retroAudio.playPeel();
-      renderStamp(ctx, x, y, selectedStamp, currentColor);
-      return;
+  const coords = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    return { x: (event.clientX - rect.left) * WIDTH / rect.width, y: (event.clientY - rect.top) * HEIGHT / rect.height };
+  };
+
+  const spray = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+    ctx.fillStyle = color;
+    for (let i = 0; i < 28; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = Math.sqrt(Math.random()) * size * 2.8;
+      ctx.fillRect(x + Math.cos(angle) * radius, y + Math.sin(angle) * radius, 2, 2);
     }
+  };
 
-    setIsDrawing(true);
+  const pointerDown = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const ctx = event.currentTarget.getContext("2d");
+    if (!ctx) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const { x, y } = coords(event);
+    setPosition({ x: Math.round(x), y: Math.round(y) });
+    if (tool === "stamp") { stampAt(ctx, x, y, stamp, color); commit(); return; }
+    drawing.current = true;
     ctx.beginPath();
     ctx.moveTo(x, y);
-
-    if (activeTool === "spray") {
-      drawSpray(ctx, x, y);
-    }
+    ctx.strokeStyle = tool === "eraser" ? "#ffffff" : color;
+    ctx.fillStyle = tool === "eraser" ? "#ffffff" : color;
+    ctx.lineWidth = tool === "pencil" ? 2 : tool === "eraser" ? size * 3 : size;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    if (tool === "spray") spray(ctx, x, y);
+    else { ctx.lineTo(x + 0.1, y + 0.1); ctx.stroke(); }
   };
 
-  const handlePointerMove = (clientX: number, clientY: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const { x, y } = getCanvasCoords(clientX, clientY);
-    setMousePos({ x, y });
-
-    if (!isDrawing) return;
-    const ctx = canvas.getContext("2d");
+  const pointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
+    const { x, y } = coords(event);
+    setPosition({ x: Math.round(x), y: Math.round(y) });
+    if (!drawing.current) return;
+    const ctx = event.currentTarget.getContext("2d");
     if (!ctx) return;
-
-    if (activeTool === "eraser") {
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = brushSize * 4;
-      ctx.lineCap = "square";
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    } else if (activeTool === "pencil") {
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = 1;
-      ctx.lineCap = "square";
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    } else if (activeTool === "brush") {
-      ctx.strokeStyle = currentColor;
-      ctx.lineWidth = brushSize;
-      ctx.lineCap = "round";
-      ctx.lineTo(x, y);
-      ctx.stroke();
-    } else if (activeTool === "spray") {
-      drawSpray(ctx, x, y);
-    }
+    if (tool === "spray") spray(ctx, x, y);
+    else { ctx.lineTo(x, y); ctx.stroke(); }
   };
 
-  const drawSpray = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-    ctx.fillStyle = currentColor;
-    const density = 22;
-    for (let i = 0; i < density; i++) {
-      const offsetX = (Math.random() - 0.5) * brushSize * 5;
-      const offsetY = (Math.random() - 0.5) * brushSize * 5;
-      ctx.fillRect(x + offsetX, y + offsetY, 1.5, 1.5);
-    }
-  };
+  const pointerUp = () => { if (drawing.current) { drawing.current = false; commit(); } };
+  const clear = () => { const ctx = canvasRef.current?.getContext("2d"); if (!ctx) return; ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, WIDTH, HEIGHT); commit(); };
+  const download = () => { const canvas = canvasRef.current; if (!canvas) return; const link = document.createElement("a"); link.href = canvas.toDataURL("image/png"); link.download = "shashi-paint.png"; link.click(); };
 
-  const handlePointerUp = () => {
-    setIsDrawing(false);
-  };
-
-  const clearCanvas = () => {
-    retroAudio.playDriveRead();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
-
-  const downloadArt = () => {
-    retroAudio.playClick(1.2);
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const link = document.createElement("a");
-    link.download = "shashi_riso_art.png";
-    link.href = canvas.toDataURL();
-    link.click();
-  };
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        backgroundColor: "#c0c0c0",
-        fontFamily: "var(--font-pixel)",
-        userSelect: "none"
-      }}
-    >
-      {/* Menu Bar */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "3px 8px",
-          borderBottom: "1px solid #808080",
-          fontSize: "12px",
-          backgroundColor: "#f0f0f0"
-        }}
-      >
-        <div style={{ display: "flex", gap: "12px" }}>
-          <span><u>F</u>ile</span>
-          <span><u>E</u>dit</span>
-          <span><u>V</u>iew</span>
-          <span><u>I</u>mage</span>
-          <span><u>H</u>elp</span>
-        </div>
-        <span style={{ color: "#d91e18", fontWeight: "bold", fontSize: "11px" }}>
-          RISO STAMP STUDIO v2.0
-        </span>
-      </div>
-
-      {/* Main Workspace: Left Tool Palette + Canvas */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden", padding: "4px", gap: "6px" }}>
-        {/* Left Tool Palette */}
-        <div
-          className="bevel-raised"
-          style={{
-            width: "66px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-            padding: "4px",
-            backgroundColor: "#c0c0c0",
-            flexShrink: 0
-          }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "2px"
-            }}
-          >
-            <button
-              type="button"
-              className={`win-btn ${activeTool === "pencil" ? "active" : ""}`}
-              style={{ width: "26px", height: "26px" }}
-              onClick={() => {
-                retroAudio.playClick(1.0);
-                setActiveTool("pencil");
-              }}
-              title="Pencil"
-            >
-              ✏️
-            </button>
-            <button
-              type="button"
-              className={`win-btn ${activeTool === "brush" ? "active" : ""}`}
-              style={{ width: "26px", height: "26px" }}
-              onClick={() => {
-                retroAudio.playClick(1.0);
-                setActiveTool("brush");
-              }}
-              title="Brush"
-            >
-              🖌️
-            </button>
-            <button
-              type="button"
-              className={`win-btn ${activeTool === "spray" ? "active" : ""}`}
-              style={{ width: "26px", height: "26px" }}
-              onClick={() => {
-                retroAudio.playClick(1.0);
-                setActiveTool("spray");
-              }}
-              title="Airbrush"
-            >
-              💨
-            </button>
-            <button
-              type="button"
-              className={`win-btn ${activeTool === "eraser" ? "active" : ""}`}
-              style={{ width: "26px", height: "26px" }}
-              onClick={() => {
-                retroAudio.playClick(1.0);
-                setActiveTool("eraser");
-              }}
-              title="Eraser"
-            >
-              🧼
-            </button>
-            <button
-              type="button"
-              className={`win-btn ${activeTool === "stamp" ? "active" : ""}`}
-              style={{ width: "26px", height: "26px", gridColumn: "span 2", backgroundColor: activeTool === "stamp" ? "#ffe500" : "#c0c0c0" }}
-              onClick={() => {
-                retroAudio.playClick(1.2);
-                setActiveTool("stamp");
-              }}
-              title="Riso Rubber Stamp"
-            >
-              🏷️ STAMP
-            </button>
-          </div>
-
-          {/* Stamp selector if stamp tool active */}
-          {activeTool === "stamp" && (
-            <div
-              className="bevel-sunken"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "2px",
-                padding: "3px",
-                backgroundColor: "#fffde7"
-              }}
-            >
-              <span style={{ fontSize: "9px", fontWeight: "bold", color: "#d91e18" }}>BADGE:</span>
-              {RISO_STAMPS.map((s) => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => {
-                    retroAudio.playClick(1.1);
-                    setSelectedStamp(s.id);
-                  }}
-                  style={{
-                    fontSize: "8px",
-                    padding: "2px",
-                    background: selectedStamp === s.id ? "#000080" : "transparent",
-                    color: selectedStamp === s.id ? "#fff" : "#000",
-                    border: "none",
-                    textAlign: "left",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-pixel)"
-                  }}
-                >
-                  {s.icon} {s.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Size picker */}
-          <div
-            style={{
-              marginTop: "auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "4px",
-              padding: "4px 2px",
-              backgroundColor: "#dfdfdf"
-            }}
-            className="bevel-sunken"
-          >
-            {[2, 4, 8].map((size) => (
-              <div
-                key={size}
-                onClick={() => {
-                  retroAudio.playClick(0.95);
-                  setBrushSize(size);
-                }}
-                style={{
-                  height: "14px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: "pointer",
-                  backgroundColor: brushSize === size ? "#000080" : "transparent"
-                }}
-              >
-                <div
-                  style={{
-                    width: `${size * 2.5}px`,
-                    height: `${size}px`,
-                    backgroundColor: brushSize === size ? "#fff" : "#000"
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Center Drawing Canvas (with touch-action: none for full touch device support) */}
-        <div
-          className="bevel-sunken"
-          style={{
-            flex: 1,
-            overflow: "auto",
-            backgroundColor: "#7f7f7f",
-            display: "flex",
-            padding: "8px"
-          }}
-        >
-          <canvas
-            ref={canvasRef}
-            width={620}
-            height={390}
-            onMouseDown={(e) => handlePointerDown(e.clientX, e.clientY)}
-            onMouseMove={(e) => handlePointerMove(e.clientX, e.clientY)}
-            onMouseUp={handlePointerUp}
-            onMouseLeave={handlePointerUp}
-            onTouchStart={(e) => {
-              if (e.touches.length > 0) {
-                handlePointerDown(e.touches[0].clientX, e.touches[0].clientY);
-              }
-            }}
-            onTouchMove={(e) => {
-              if (e.touches.length > 0) {
-                handlePointerMove(e.touches[0].clientX, e.touches[0].clientY);
-              }
-            }}
-            onTouchEnd={handlePointerUp}
-            style={{
-              backgroundColor: "#ffffff",
-              cursor: activeTool === "stamp" ? "pointer" : "crosshair",
-              boxShadow: "3px 3px 8px rgba(0,0,0,0.6)",
-              touchAction: "none"
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Bottom Swatch Color Bar */}
-      <div
-        className="bevel-raised"
-        style={{
-          padding: "4px 8px",
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          backgroundColor: "#c0c0c0",
-          borderTop: "1px solid #808080",
-          flexWrap: "wrap"
-        }}
-      >
-        {/* Active Color Preview */}
-        <div
-          className="bevel-sunken"
-          style={{
-            width: "32px",
-            height: "32px",
-            backgroundColor: currentColor,
-            boxShadow: "inset 1px 1px 2px #000"
-          }}
-          title={`Active Color: ${currentColor}`}
-        />
-
-        {/* 28-color Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateRows: "1fr 1fr",
-            gridAutoFlow: "column",
-            gap: "2px",
-            flex: 1,
-            maxWidth: "340px"
-          }}
-        >
-          {PAINT_COLORS.map((c, i) => (
-            <div
-              key={i}
-              onClick={() => {
-                retroAudio.playClick(1.0);
-                setCurrentColor(c);
-              }}
-              style={{
-                width: "16px",
-                height: "14px",
-                backgroundColor: c,
-                cursor: "pointer",
-                boxShadow: currentColor === c ? "0 0 0 1px #000, inset 0 0 0 1px #fff" : "inset 1px 1px #fff, inset -1px -1px #000"
-              }}
-              title={c}
-            />
-          ))}
-        </div>
-
-        {/* Action Buttons: Clear & Download */}
-        <div style={{ display: "flex", gap: "6px", marginLeft: "auto" }}>
-          <button
-            type="button"
-            className="bevel-button"
-            onClick={clearCanvas}
-            style={{ fontSize: "11px", padding: "3px 8px" }}
-          >
-            🗑 Clear
-          </button>
-          <button
-            type="button"
-            className="bevel-button"
-            onClick={downloadArt}
-            style={{
-              fontSize: "11px",
-              padding: "3px 10px",
-              fontWeight: "bold",
-              backgroundColor: "#ffe500",
-              color: "#000"
-            }}
-          >
-            💾 Save PNG
-          </button>
-        </div>
-      </div>
-
-      {/* Status Bar */}
-      <div
-        className="bevel-raised"
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          padding: "2px 8px",
-          fontSize: "11px",
-          color: "#222"
-        }}
-      >
-        <span>Tool: {activeTool.toUpperCase()} {activeTool === "stamp" ? `(${selectedStamp})` : ""}</span>
-        <span>
-          {mousePos.x}, {mousePos.y}px
-        </span>
-      </div>
-    </div>
-  );
-};
+  return <div className="paint-app">
+    <div className="paint-header"><div><span>SHASHI★ OS / CREATIVE TOOLS</span><h1>PAINT<span>★</span></h1></div><p>Draw something. Make it yours.</p></div>
+    <div className="paint-toolbar"><div className="paint-tools" aria-label="Drawing tools">{tools.map((item) => <button key={item.id} type="button" className={tool === item.id ? "selected" : ""} aria-pressed={tool === item.id} onClick={() => setTool(item.id)} title={item.name}><item.icon size={18} /><span>{item.name}</span></button>)}</div><div className="paint-actions"><button type="button" onClick={() => restore(historyPos - 1)} disabled={historyPos <= 0} title="Undo"><Undo2 size={17} /> Undo</button><button type="button" onClick={() => restore(historyPos + 1)} disabled={historyPos >= historyCount - 1} title="Redo"><Redo2 size={17} /> Redo</button><button type="button" onClick={clear} title="Clear canvas"><RotateCcw size={17} /> Clear</button></div></div>
+    <div className="paint-workspace"><div className="paint-canvas-wrap"><canvas ref={canvasRef} width={WIDTH} height={HEIGHT} aria-label="Drawing canvas" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} /></div></div>
+    <div className="paint-bottom"><div className="paint-colors" aria-label="Paint colors">{colors.map((swatch) => <button key={swatch} type="button" className={color === swatch ? "selected" : ""} style={{ backgroundColor: swatch }} onClick={() => setColor(swatch)} aria-label={`Select ${swatch}`} aria-pressed={color === swatch} />)}<label className="paint-custom-color" title="Custom color"><input type="color" value={color} onChange={(event) => setColor(event.target.value)} aria-label="Custom color" />+</label></div><div className="paint-options">{tool === "stamp" ? <label>STAMP <select value={stamp} onChange={(event) => setStamp(event.target.value)}>{stamps.map((item) => <option key={item} value={item}>{item}</option>)}</select></label> : <label>SIZE <input type="range" min="2" max="32" value={size} onChange={(event) => setSize(Number(event.target.value))} /> {size}px</label>}<button type="button" className="paint-save" onClick={download}><Download size={16} /> Save PNG</button></div></div>
+    <div className="paint-status"><span>{tool.toUpperCase()} · {WIDTH} × {HEIGHT} PX</span><span>{position.x}, {position.y}</span></div>
+  </div>;
+}

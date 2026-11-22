@@ -110,9 +110,18 @@ export const IDBadgeWindow: React.FC = () => {
       {/* 3D Card Stage */}
       <div
         style={{ perspective: "1200px", cursor: "pointer" }}
+        role="button"
+        tabIndex={0}
+        aria-label={`Flip ID card to show ${isFlipped ? "front" : "back"}`}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onClick={() => setIsFlipped(!isFlipped)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setIsFlipped((current) => !current);
+          }
+        }}
       >
         <motion.div
           animate={{

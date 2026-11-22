@@ -40,9 +40,9 @@ export const DesktopContextMenu: React.FC<Props> = ({
 
   // Clamp to viewport
   const menuWidth = 220;
-  const menuHeight = 360;
-  const left = Math.min(x, window.innerWidth - menuWidth - 8);
-  const top = Math.min(y, window.innerHeight - menuHeight - 8);
+  const menuHeight = 440;
+  const left = Math.max(8, Math.min(x, window.innerWidth - menuWidth - 8));
+  const top = Math.max(8, Math.min(y, window.innerHeight - menuHeight - 8));
 
   const divider = (
     <div
@@ -114,6 +114,8 @@ export const DesktopContextMenu: React.FC<Props> = ({
         backgroundColor: "#c0c0c0",
         boxShadow: "3px 3px 10px rgba(0,0,0,0.5), inset 1px 1px 0 #fff, inset -1px -1px 0 #808080",
         padding: "3px 0",
+        maxHeight: "calc(100vh - 16px)",
+        overflowY: "auto",
         fontSize: "12px"
       }}
       onClick={(e) => e.stopPropagation()}
@@ -125,6 +127,8 @@ export const DesktopContextMenu: React.FC<Props> = ({
       {item("Open Arcade", "🕹️", () => onOpenWindow("arcade"))}
       {item("Open MS Paint Studio", "🎨", () => onOpenWindow("paint"))}
       {item("Open MSN Messenger", "💬", () => onOpenWindow("messenger"))}
+      {item("View Résumé", "📄", () => onOpenWindow("resume"))}
+      {item("View ID Card", "🪪", () => onOpenWindow("idbadge"))}
 
       {divider}
 
@@ -151,7 +155,6 @@ export const DesktopContextMenu: React.FC<Props> = ({
       {divider}
 
       {item("Toggle CRT Scanlines", "📺", onToggleCRT)}
-      {item("View Mitarbeiterkarte (3D ID)", "🪪", () => onOpenWindow("idbadge"))}
     </div>
   );
 };

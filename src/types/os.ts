@@ -2,6 +2,7 @@ export type WindowId =
   | "about"
   | "projects"
   | "idbadge"
+  | "resume"
   | "paint"
   | "arcade"
   | "terminal"

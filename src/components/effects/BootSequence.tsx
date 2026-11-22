@@ -6,6 +6,19 @@ interface BootSequenceProps {
   onComplete: () => void;
 }
 
+const BIOS_LINES = [
+  "SHASHI-DECK BIOS v2.0  ★  Sep 27 2026",
+  "Core: AMD Athlon XP 1800+    RAM: 786432K OK",
+  "",
+  "Detecting Primary Master  ... SHASHIKIRAN_BS [HDD]",
+  "Detecting Primary Slave   ... PORTFOLIO_V3.0 [SSD]",
+  "Detecting Remote Server   ... AWS_BEDROCK [AI ENGINE]",
+  "",
+  "Verifying soul data ......... DONE",
+  "Loading creative engine ..... OK",
+  "Initializing portfolio OS ...",
+];
+
 export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   const [phase, setPhase] = useState<"bios" | "loading" | "logo" | "done">("bios");
   const [progress, setProgress] = useState(0);
@@ -22,19 +35,6 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) finish();
   }, [finish]);
-
-  const BIOS_LINES = [
-    "SHASHI-DECK BIOS v2.0  ★  Sep 27 2026",
-    "Core: AMD Athlon XP 1800+    RAM: 786432K OK",
-    "",
-    "Detecting Primary Master  ... SHASHIKIRAN_BS [HDD]",
-    "Detecting Primary Slave   ... PORTFOLIO_V3.0 [SSD]",
-    "Detecting Remote Server   ... AWS_BEDROCK [AI ENGINE]",
-    "",
-    "Verifying soul data ......... DONE",
-    "Loading creative engine ..... OK",
-    "Initializing portfolio OS ...",
-  ];
 
   // Drive sound on mount
   useEffect(() => {

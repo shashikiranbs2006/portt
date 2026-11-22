@@ -10,6 +10,7 @@ import { StartMenu } from "./StartMenu";
 import { AboutWindow } from "../windows/AboutWindow";
 import { ProjectsWindow } from "../windows/ProjectsWindow";
 import { IDBadgeWindow } from "../windows/IDBadgeWindow";
+import { ResumeWindow } from "../windows/ResumeWindow";
 import { PaintWindow } from "../windows/PaintWindow";
 import { ArcadeWindow } from "../windows/ArcadeWindow";
 import { TerminalWindow } from "../windows/TerminalWindow";
@@ -59,6 +60,17 @@ const getInitialWindows = (): WindowState[] => {
       zIndex: 25,
       position: { x: isMobile ? 12 : W > 1200 ? 840 : 40, y: isMobile ? 12 : 20 },
       size: { width: isMobile ? 320 : 400, height: isMobile ? Math.min(540, H - 80) : 600 }
+    },
+    {
+      id: "resume",
+      title: "Shashikiran_BS_Resume.pdf",
+      icon: "📄",
+      isOpen: false,
+      isMinimized: false,
+      isMaximized: false,
+      zIndex: 15,
+      position: { x: isMobile ? 8 : 210, y: isMobile ? 12 : 28 },
+      size: { width: isMobile ? "96vw" : 760, height: isMobile ? Math.min(650, H - 70) : Math.min(740, H - 65) }
     },
     {
       id: "projects",
@@ -216,7 +228,7 @@ export const Desktop: React.FC = () => {
     );
   };
 
-  const toggleShowDesktop = () => {
+  const toggleShowDesktop = React.useCallback(() => {
     retroAudio.playClick(1.0);
     const anyOpenNotMinimized = windows.some((w) => w.isOpen && !w.isMinimized);
     if (anyOpenNotMinimized) {
@@ -229,7 +241,7 @@ export const Desktop: React.FC = () => {
       const firstOpen = windows.find((w) => w.isOpen);
       if (firstOpen) setActiveWindowId(firstOpen.id);
     }
-  };
+  }, [windows]);
 
   // Global Keyboard Shortcuts (Win Key, Esc, Win+D)
   React.useEffect(() => {
@@ -257,7 +269,7 @@ export const Desktop: React.FC = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [windows]);
+  }, [toggleShowDesktop]);
 
   const handleDesktopRightClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -325,7 +337,8 @@ export const Desktop: React.FC = () => {
           { id: "icon-terminal", title: "Terminal CLI", sublabel: ".bat", icon: "📟", onOpen: () => openWindow("terminal") },
           { id: "icon-music", title: "CD Player", sublabel: ".mp3", icon: "💿", onOpen: () => openWindow("music") },
           { id: "icon-messenger", title: "MSN Messenger", sublabel: ".chat", icon: "💬", onOpen: () => openWindow("messenger") },
-          { id: "icon-resume", title: "Resume", sublabel: ".pdf", icon: "📄", onOpen: () => window.open("/resume.pdf", "_blank") }
+          { id: "icon-resume", title: "Resume", sublabel: ".pdf", icon: "📄", onOpen: () => openWindow("resume") },
+          { id: "icon-idbadge", title: "3D ID Badge", sublabel: ".pass", icon: "🪪", onOpen: () => openWindow("idbadge") }
         ].map((item, idx) => {
           const H = typeof window !== "undefined" ? window.innerHeight : 800;
           const itemHeight = 84;
@@ -358,12 +371,13 @@ export const Desktop: React.FC = () => {
           onToggleMaximize={() => toggleMaximize(win.id)}
           onPositionChange={handlePositionChange}
         >
-          {win.id === "about" && <AboutWindow />}
+          {win.id === "about" && <AboutWindow onOpenWindow={openWindow} />}
           {win.id === "projects" && <ProjectsWindow />}
           {win.id === "idbadge" && <IDBadgeWindow />}
+          {win.id === "resume" && <ResumeWindow />}
           {win.id === "paint" && <PaintWindow />}
           {win.id === "arcade" && <ArcadeWindow isActive={activeWindowId === "arcade"} />}
-          {win.id === "terminal" && <TerminalWindow />}
+          {win.id === "terminal" && <TerminalWindow onOpenWindow={openWindow} />}
           {win.id === "music" && <MusicPlayerWidget />}
           {win.id === "messenger" && <MessengerWindow />}
         </RetroWindow>

@@ -13,7 +13,7 @@ interface StartMenuProps {
 }
 
 interface MenuItem {
-  id: WindowId | "resume" | "github" | "linkedin";
+  id: WindowId | "github" | "linkedin";
   title: string;
   subtitle: string;
   icon: string;
@@ -106,14 +106,10 @@ export const StartMenu: React.FC<StartMenuProps> = ({
     },
     {
       id: "resume",
-      title: "Download Resume",
-      subtitle: "Verified 1-Page PDF",
+      title: "View Résumé",
+      subtitle: "Preview or download PDF",
       icon: "📄",
-      action: () => {
-        retroAudio.playClick(1.2);
-        window.open(portfolioData.contact.resumeUrl, "_blank");
-        onClose();
-      },
+      action: () => handleLaunch("resume"),
       keywords: ["resume", "cv", "pdf", "download", "hire"]
     }
   ];

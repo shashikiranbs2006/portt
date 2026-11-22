@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUpRight, Download, Mail } from "lucide-react";
+import { ArrowRight, ArrowUpRight, FileText, Mail } from "lucide-react";
 import type { WindowId } from "../../types/os";
 import { portfolioData } from "../../data/portfolioData";
 import "./welcome-panel.css";
@@ -24,7 +24,7 @@ export function WelcomePanel({ onOpenWindow, onOpenClippy }: WelcomePanelProps) 
       <p className="welcome-context">Agentic AI intern at KlarDataLabs · CSE (AI/ML) at BMSIT, Bengaluru</p>
       <div className="welcome-actions">
         <button type="button" className="welcome-primary" onClick={() => onOpenWindow("projects")}>View projects <ArrowRight size={17} aria-hidden="true" /></button>
-        <a href={portfolioData.contact.resumeUrl} target="_blank" rel="noopener noreferrer">Résumé <Download size={16} aria-hidden="true" /></a>
+        <button type="button" onClick={() => onOpenWindow("resume")}>Résumé <FileText size={16} aria-hidden="true" /></button>
         <a href={`mailto:${portfolioData.contact.email}`}>Contact <Mail size={16} aria-hidden="true" /></a>
       </div>
       <div className="welcome-footer"><button type="button" onClick={() => onOpenWindow("about")}>More about me <ArrowUpRight size={14} aria-hidden="true" /></button><button type="button" onClick={onOpenClippy}>Meet Clippy ↗</button></div>
