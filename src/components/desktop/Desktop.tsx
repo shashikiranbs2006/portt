@@ -5,7 +5,6 @@ import { DesktopIcon } from "./DesktopIcon";
 import { RetroWindow } from "./RetroWindow";
 import { Taskbar } from "./Taskbar";
 import { StartMenu } from "./StartMenu";
-import { DraggableStickers } from "./DraggableStickers";
 
 // Windows
 import { AboutWindow } from "../windows/AboutWindow";
@@ -29,6 +28,7 @@ import { ErrorBoundary } from "../effects/ErrorBoundary";
 // Context menu
 import { DesktopContextMenu } from "./DesktopContextMenu";
 import { retroAudio } from "../../utils/audioSystem";
+import { WelcomePanel } from "./WelcomePanel";
 
 const getInitialWindows = (): WindowState[] => {
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
@@ -39,9 +39,9 @@ const getInitialWindows = (): WindowState[] => {
   return [
     {
       id: "about",
-      title: "Meet The Artist — Notepad",
+      title: "About Shashi — Notepad",
       icon: "📝",
-      isOpen: true,
+      isOpen: false,
       isMinimized: false,
       isMaximized: false,
       zIndex: 20,
@@ -55,7 +55,7 @@ const getInitialWindows = (): WindowState[] => {
       id: "idbadge",
       title: "Mitarbeiterkarte [3D ID Pass]",
       icon: "🪪",
-      isOpen: !isMobile && W > 1100,
+      isOpen: false,
       isMinimized: false,
       isMaximized: false,
       zIndex: 25,
@@ -71,7 +71,7 @@ const getInitialWindows = (): WindowState[] => {
       isMaximized: false,
       zIndex: 10,
       position: { x: isMobile ? 10 : 70, y: isMobile ? 20 : 60 },
-      size: { width: isMobile ? "95vw" : 720, height: isMobile ? Math.min(500, H - 70) : 500 }
+      size: { width: isMobile ? "95vw" : 900, height: isMobile ? Math.min(500, H - 70) : 620 }
     },
     {
       id: "paint",
@@ -145,13 +145,14 @@ const getInitialWindows = (): WindowState[] => {
 export const Desktop: React.FC = () => {
   const [booted, setBooted] = useState(false);
   const [windows, setWindows] = useState<WindowState[]>(getInitialWindows);
-  const [activeWindowId, setActiveWindowId] = useState<WindowId | null>("about");
+  const [activeWindowId, setActiveWindowId] = useState<WindowId | null>(null);
+  const [clippyActivated, setClippyActivated] = useState(false);
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [currentTheme, setCurrentTheme] = useState<WallpaperTheme>("bliss");
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [showBSOD, setShowBSOD] = useState(false);
-  const [enableCRT, setEnableCRT] = useState(true);
+  const [enableCRT, setEnableCRT] = useState(false);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
   // Highest z-index tracking
@@ -321,9 +322,6 @@ export const Desktop: React.FC = () => {
       {/* CRT Scanline overlay toggle */}
       {enableCRT && <div className="crt-overlay" />}
 
-      {/* Floating Draggable Stickers */}
-      <DraggableStickers />
-
       {/* Sticky Notes */}
       <ErrorBoundary name="StickyNotes">
         <StickyNotesDesktop />
@@ -331,13 +329,15 @@ export const Desktop: React.FC = () => {
 
       {/* Clippy Assistant */}
       <ErrorBoundary name="Clippy">
-        {booted && <Clippy onOpenWindow={openWindow} />}
+        {booted && clippyActivated && <Clippy onOpenWindow={openWindow} onDismiss={() => setClippyActivated(false)} />}
       </ErrorBoundary>
+
+      {booted && <WelcomePanel onOpenWindow={openWindow} onOpenClippy={() => setClippyActivated(true)} />}
 
       {/* Desktop Icons Multi-Column Responsive Grid */}
       <div style={{ position: "relative", zIndex: 10 }}>
         {[
-          { id: "icon-about", title: "Meet The Artist", sublabel: ".txt", icon: "📝", onOpen: () => openWindow("about") },
+          { id: "icon-about", title: "About Shashi", sublabel: ".txt", icon: "📝", onOpen: () => openWindow("about") },
           { id: "icon-projects", title: "Projects", sublabel: ".folder", icon: "📁", onOpen: () => openWindow("projects") },
           { id: "icon-idbadge", title: "3D ID Badge", sublabel: ".pass", icon: "🪪", onOpen: () => openWindow("idbadge") },
           { id: "icon-paint", title: "MS Paint", sublabel: ".exe", icon: "🎨", onOpen: () => openWindow("paint") },

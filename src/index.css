@@ -1,21 +1,21 @@
 /* Retro OS / Y2K Cyber Design System */
 :root {
-  --win-gray: #c0c0c0;
+  --win-gray: #d7d6d0;
   --win-light: #ffffff;
   --win-dark: #808080;
   --win-darker: #0a0a0a;
-  --win-mid: #dfdfdf;
-  --win-blue: #000080;
-  --win-blue-light: #1084d0;
+  --win-mid: #eae9e2;
+  --win-blue: #173a72;
+  --win-blue-light: #356aa4;
   --win-teal: #008080;
   --win-inactive: #808080;
   --win-inactive-light: #b5b5b5;
 
   /* Y2K Accent Palette */
-  --y2k-yellow: #ffe500;
-  --y2k-red: #ff3b30;
-  --y2k-lime: #39ff14;
-  --y2k-pink: #ff2a85;
+  --y2k-yellow: #f4d442;
+  --y2k-red: #d84c3f;
+  --y2k-lime: #75aa7a;
+  --y2k-pink: #c56b8b;
   --sticky-bg: #fff9a6;
   --sticky-shadow: rgba(0, 0, 0, 0.18);
 
@@ -111,6 +111,8 @@ html, body, #root {
   outline-offset: -4px;
 }
 
+.desktop-icon:focus-visible { outline: 3px solid #f4d442 !important; outline-offset: 3px; }
+
 /* Window Titlebar */
 .win-titlebar {
   background: linear-gradient(90deg, var(--win-blue) 0%, var(--win-blue-light) 100%);
@@ -200,4 +202,11 @@ html, body, #root {
 
 .animate-spin-slow {
   animation: spin-slow 8s linear infinite;
+}
+
+.projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; max-width: 1120px; margin-inline: auto; }
+@media (max-width: 700px) { .projects-grid { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee, .animate-spin-slow { animation: none !important; }
+  *, *::before, *::after { scroll-behavior: auto !important; }
 }

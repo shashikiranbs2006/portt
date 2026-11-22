@@ -3,7 +3,7 @@
 
 class RetroAudioEngine {
   private ctx: AudioContext | null = null;
-  public isMuted: boolean = false;
+  public isMuted: boolean = true;
 
   private initCtx() {
     if (!this.ctx && typeof window !== "undefined") {

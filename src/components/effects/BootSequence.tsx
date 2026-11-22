@@ -19,6 +19,10 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
     setTimeout(onComplete, 200);
   }, [onComplete]);
 
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) finish();
+  }, [finish]);
+
   const BIOS_LINES = [
     "SHASHI-DECK BIOS v2.0  ★  Sep 27 2026",
     "Core: AMD Athlon XP 1800+    RAM: 786432K OK",
@@ -149,6 +153,20 @@ export const BootSequence: React.FC<BootSequenceProps> = ({ onComplete }) => {
             <span>ESC</span>
             <span style={{ fontSize: "9px", opacity: 0.8 }}>SKIP ⏭</span>
           </button>
+
+          <a
+            href="/?view=quick"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "fixed", top: "16px", left: "16px", zIndex: 1000000,
+              display: "inline-flex", alignItems: "center", minHeight: "36px", padding: "8px 14px",
+              color: "#17212b", background: "#f4d442", textDecoration: "none",
+              fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 800,
+              boxShadow: "3px 3px 0 #594c18"
+            }}
+          >
+            Quick view ↗
+          </a>
 
           {/* BIOS Phase */}
           {phase === "bios" && (

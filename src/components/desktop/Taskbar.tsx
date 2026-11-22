@@ -100,6 +100,14 @@ export const Taskbar: React.FC<TaskbarProps> = ({
           <span>Start</span>
         </button>
 
+        <a
+          href="/?view=quick"
+          className="bevel-button"
+          style={{ height: "26px", padding: "0 9px", fontFamily: "var(--font-body)", fontSize: "11px", fontWeight: 800, whiteSpace: "nowrap", color: "#173a72", backgroundColor: "#f4d442", textDecoration: "none", flexShrink: 0 }}
+        >
+          Quick view ↗
+        </a>
+
         {/* Vertical divider */}
         <div
           style={{

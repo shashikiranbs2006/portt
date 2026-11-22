@@ -87,7 +87,7 @@ export const ProjectsWindow: React.FC = () => {
         flexDirection: "column",
         height: "100%",
         backgroundColor: "#f0f0f0",
-        fontFamily: "var(--font-sans)",
+        fontFamily: "var(--font-body)",
         userSelect: "none"
       }}
     >
@@ -199,12 +199,12 @@ export const ProjectsWindow: React.FC = () => {
 
       {/* Projects Grid Container */}
       <div
+        className="projects-grid"
         style={{
           flex: 1,
           overflowY: "auto",
           padding: "12px",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
           gap: "12px",
           alignContent: "start",
           backgroundColor: "#f5f5f5"
@@ -273,9 +273,11 @@ export const ProjectsWindow: React.FC = () => {
                       <div>
                         <div
                           style={{
-                            fontFamily: "var(--font-silkscreen)",
-                            fontSize: "13px",
-                            color: "#000080",
+                            fontFamily: "var(--font-display)",
+                            fontSize: "19px",
+                            lineHeight: "1.15",
+                            letterSpacing: "-0.025em",
+                            color: "#173a72",
                             fontWeight: "bold"
                           }}
                         >
@@ -283,8 +285,8 @@ export const ProjectsWindow: React.FC = () => {
                         </div>
                         <div
                           style={{
-                            fontSize: "11px",
-                            color: "#c0392b",
+                            fontSize: "12px",
+                            color: "#5b6670",
                             fontWeight: 600,
                             marginTop: "2px"
                           }}
@@ -313,7 +315,7 @@ export const ProjectsWindow: React.FC = () => {
                     <div
                       style={{
                         marginTop: "8px",
-                        fontSize: "10px",
+                        fontSize: "11px",
                         fontWeight: 600,
                         color: notice.accent,
                         backgroundColor: "#f7f9fc",
@@ -329,8 +331,8 @@ export const ProjectsWindow: React.FC = () => {
                   {/* Description */}
                   <p
                     style={{
-                      fontSize: "12px",
-                      lineHeight: "1.5",
+                      fontSize: "14px",
+                      lineHeight: "1.6",
                       color: "#333",
                       marginTop: "8px",
                       marginBottom: "6px"
@@ -348,12 +350,12 @@ export const ProjectsWindow: React.FC = () => {
                       marginTop: "6px"
                     }}
                   >
-                    {p.tech.map((t) => (
+                  {p.tech.slice(0, 4).map((t) => (
                       <span
                         key={t}
                         className="bevel-sunken"
                         style={{
-                          fontSize: "10px",
+                          fontSize: "11px",
                           padding: "2px 6px",
                           backgroundColor: "#f8f9fa",
                           color: "#000080",
@@ -387,17 +389,17 @@ export const ProjectsWindow: React.FC = () => {
                         flex: "1 1 auto",
                         textDecoration: "none",
                         color: "#000",
-                        fontSize: "11px",
+                        fontSize: "12px",
                         fontWeight: "bold",
-                        backgroundColor: "#39ff14",
-                        padding: "5px 10px",
+                        backgroundColor: "#f4d442",
+                        padding: "8px 12px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         gap: "4px"
                       }}
                     >
-                      🚀 Live App / Sim
+                      ↗ Live demo
                     </a>
                   )}
                   {p.githubUrl && (
@@ -410,8 +412,8 @@ export const ProjectsWindow: React.FC = () => {
                       style={{
                         textDecoration: "none",
                         color: "#000",
-                        fontSize: "11px",
-                        padding: "5px 10px",
+                        fontSize: "12px",
+                        padding: "8px 12px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -419,7 +421,7 @@ export const ProjectsWindow: React.FC = () => {
                         backgroundColor: "#e8e8e8"
                       }}
                     >
-                      🐙 GitHub Repo
+                      ↗ Source code
                     </a>
                   )}
                   <button
@@ -430,8 +432,8 @@ export const ProjectsWindow: React.FC = () => {
                       setActiveProject(p);
                     }}
                     style={{
-                      fontSize: "11px",
-                      padding: "5px 10px",
+                      fontSize: "12px",
+                      padding: "8px 12px",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",

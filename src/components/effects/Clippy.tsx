@@ -28,10 +28,11 @@ type ClippyMood = "idle" | "waving" | "thinking" | "excited";
 
 interface ClippyProps {
   onOpenWindow?: (id: WindowId) => void;
+  onDismiss?: () => void;
 }
 
-export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow }) => {
-  const [visible, setVisible] = useState(false);
+export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow, onDismiss }) => {
+  const [visible] = useState(true);
   const [msgIndex, setMsgIndex] = useState(0);
   const [showBubble, setShowBubble] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -48,12 +49,6 @@ export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow }) => {
   const bubbleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStartRef = useRef({ mx: 0, my: 0, px: 0, py: 0 });
   const didDragRef = useRef(false);
-
-  // Show Clippy after 8s
-  useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 8000);
-    return () => clearTimeout(t);
-  }, []);
 
   const showNextMessage = useCallback(() => {
     if (dismissed) return;
@@ -84,11 +79,9 @@ export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow }) => {
       bubbleTimerRef.current = setTimeout(() => setShowBubble(false), 7000);
     }, 900);
 
-    const interval = setInterval(showNextMessage, 20000);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (bubbleTimerRef.current) clearTimeout(bubbleTimerRef.current);
-      clearInterval(interval);
     };
   }, [visible, dismissed]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -401,6 +394,7 @@ export const Clippy: React.FC<ClippyProps> = ({ onOpenWindow }) => {
             e.stopPropagation();
             retroAudio.playClick(0.6);
             setDismissed(true);
+            onDismiss?.();
           }}
           title="Dismiss Clippy"
         >

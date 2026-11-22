@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import type { WindowState } from "../../types/os";
 
 interface RetroWindowProps {
@@ -24,6 +24,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
   children
 }) => {
   const windowRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   if (!win.isOpen || win.isMinimized) {
     return null;
@@ -46,7 +47,7 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
             });
           }
         }}
-        initial={{
+        initial={reduceMotion ? false : {
           opacity: 0,
           scale: 0.94,
           x: win.position.x,
@@ -60,8 +61,8 @@ export const RetroWindow: React.FC<RetroWindowProps> = ({
           width: isMax ? "100vw" : win.size.width,
           height: isMax ? "calc(100vh - 34px)" : win.size.height
         }}
-        exit={{ opacity: 0, scale: 0.85 }}
-        transition={{ type: "spring", stiffness: 350, damping: 28 }}
+        exit={reduceMotion ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.85 }}
+        transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 350, damping: 28 }}
         onPointerDown={onFocus}
         style={{
           position: "absolute",

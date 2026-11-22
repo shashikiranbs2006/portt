@@ -49,6 +49,7 @@ export const DesktopIcon: React.FC<DesktopIconProps> = ({
 
   return (
     <motion.div
+      className="desktop-icon"
       drag
       dragMomentum={false}
       initial={{ x: defaultPosition.x, y: defaultPosition.y }}
